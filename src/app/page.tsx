@@ -14,9 +14,7 @@ import {
   DollarSign,
   Smartphone,
   ChevronDown,
-  Check,
   Star,
-  Banknote,
   CreditCard
 } from "lucide-react"
 import { useAuth } from "@/app/core/contexts/auth-context"
@@ -56,7 +54,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
+      <section className="py-16 relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/50 via-purple-800/30 to-purple-600/50"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
