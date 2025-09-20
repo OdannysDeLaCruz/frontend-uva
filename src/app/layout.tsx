@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/app/core/components/header"
+import ConditionalHeader from "@/app/core/components/conditional-header"
+import ConditionalFooter from "@/app/core/components/conditional-footer"
 import { ThemeProvider } from "@/app/core/components/theme-provider"
 import { AuthProvider } from "@/app/core/contexts/auth-context"
 
@@ -27,8 +28,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <Header />
+            <ConditionalHeader />
             <main>{children}</main>
+            <ConditionalFooter />
           </AuthProvider>
         </ThemeProvider>
       </body>
