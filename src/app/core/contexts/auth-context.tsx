@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       return false
     }
-  }, [])
+  }, [authState.user])
   
   // Verificar autenticación al cargar el componente
   useEffect(() => {
