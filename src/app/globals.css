@@ -14,6 +14,7 @@
   --surface-light: #2D2748;
   --border: #4C3B7F;
   --text-muted: #A78BFA;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -104,10 +105,130 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Phone Input Dark Theme Styles */
+.phone-input-container .PhoneInputCountrySelect {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+  color: white !important;
+}
+
+.phone-input-container .PhoneInputCountrySelectArrow {
+  color: white !important;
+  opacity: 0.8 !important;
+}
+
+.phone-input-container .PhoneInputCountryIcon {
+  border: none !important;
+}
+
+.phone-input-container .PhoneInput {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 0.5rem !important;
+  color: white !important;
+  transition: all 0.2s ease !important;
+}
+
+.phone-input-container .PhoneInput:focus-within {
+  border-color: rgb(168, 85, 247) !important;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2) !important;
+}
+
+.phone-input-container .PhoneInputInput {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.phone-input-container .PhoneInputInput::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.phone-input-container .PhoneInputCountrySelect:focus {
+  border-color: rgb(168, 85, 247) !important;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2) !important;
+  outline: none !important;
+}
+
+/* Phone Input Dropdown Menu Styles - Clean approach */
+.phone-input-container {
+  color-scheme: dark;
+}
+
+.phone-input-container select,
+.phone-input-container .PhoneInputCountrySelect {
+  color-scheme: dark !important;
+  background-color: #1E1B3A !important;
+  color: white !important;
+}
+
+/* Force dark mode for the entire form container */
+.glass form {
+  color-scheme: dark;
+}
+
+.glass select {
+  color-scheme: dark !important;
+  background-color: #1E1B3A !important;
+  color: white !important;
+}
+
+.glass select option {
+  background-color: #1E1B3A !important;
+  color: white !important;
+}
+
+/* Global dark theme enforcement */
+html[data-theme="dark"] select,
+html[data-theme="dark"] .PhoneInputCountrySelect {
+  color-scheme: dark !important;
+  background-color: #1E1B3A !important;
+  color: white !important;
+}
+
+html[data-theme="dark"] select option {
+  background-color: #1E1B3A !important;
+  color: white !important;
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .sidebar-collapse {
     width: 0;
     overflow: hidden;
+  }
+}
+
+/* Force dark dropdown in all browsers - MUST BE LAST */
+* {
+  color-scheme: dark;
+}
+
+body[data-theme="dark"] select,
+html[data-theme="dark"] select,
+[data-theme="dark"] select {
+  color-scheme: dark !important;
+  background: #1E1B3A !important;
+  color: white !important;
+}
+
+body[data-theme="dark"] select option,
+html[data-theme="dark"] select option,
+[data-theme="dark"] select option {
+  background: #1E1B3A !important;
+  color: white !important;
+}
+
+/* Browser-specific overrides */
+@supports (-webkit-appearance: none) {
+  .phone-input-container select,
+  body[data-theme="dark"] select {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #1E1B3A !important;
+    color: white !important;
+    color-scheme: dark !important;
   }
 }

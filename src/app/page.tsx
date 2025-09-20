@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { useState } from "react"
 import { Button } from "@/app/core/ui/button"
 import {
@@ -14,8 +13,7 @@ import {
   DollarSign,
   Smartphone,
   ChevronDown,
-  Star,
-  CreditCard
+  Star
 } from "lucide-react"
 import { useAuth } from "@/app/core/contexts/auth-context"
 import { redirect } from "next/navigation"
@@ -266,66 +264,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-16 border-t border-white/10">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 mb-12">
-            <div className="col-span-2">
-              <div className="flex items-center mb-6">
-                <Image src="/images/logo-uva-1x.webp" alt="UVA Logo" width={150} height={0} className="h-12 w-auto" />
-              </div>
-              <p className="text-white/80 mb-6 max-w-md">
-                La plataforma financiera digital que está revolucionando la forma en que las personas generan ingresos y construyen su futuro económico.
-              </p>
-              <div className="flex space-x-4">
-                <div className="w-10 h-10 surface-bg rounded-full flex items-center justify-center border border-white/10 hover:border-purple-400/50 transition-colors cursor-pointer">
-                  <span className="text-white text-sm font-bold">f</span>
-                </div>
-                <div className="w-10 h-10 surface-bg rounded-full flex items-center justify-center border border-white/10 hover:border-purple-400/50 transition-colors cursor-pointer">
-                  <span className="text-white text-sm font-bold">t</span>
-                </div>
-                <div className="w-10 h-10 surface-bg rounded-full flex items-center justify-center border border-white/10 hover:border-purple-400/50 transition-colors cursor-pointer">
-                  <span className="text-white text-sm font-bold">in</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-white font-semibold mb-4">Plataforma</h4>
-              <ul className="space-y-2 text-white/70">
-                <li><a href="#" className="hover:text-white transition-colors">Cómo funciona</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Precios</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Seguridad</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-white font-semibold mb-4">Soporte</h4>
-              <ul className="space-y-2 text-white/70">
-                <li><a href="#" className="hover:text-white transition-colors">Centro de ayuda</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Términos</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-white/60 text-sm">© 2024 UVA. Todos los derechos reservados.</p>
-            <div className="flex items-center space-x-6 mt-4 md:mt-0">
-              <div className="flex items-center text-white/60 text-sm">
-                <Shield className="h-4 w-4 mr-2 text-green-400" />
-                Plataforma Segura
-              </div>
-              <div className="flex items-center text-white/60 text-sm">
-                <CreditCard className="h-4 w-4 mr-2 text-blue-400" />
-                Pagos Protegidos
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   )
 }
