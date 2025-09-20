@@ -21,8 +21,8 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
-    email: "a@a.co",
-    password: "123",
+    email: "",
+    password: "",
   })
 
   // Si ya está autenticado, redirigir al dashboard
