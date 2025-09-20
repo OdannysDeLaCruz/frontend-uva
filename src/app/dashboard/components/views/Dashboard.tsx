@@ -182,7 +182,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="space-y-3">
-          {recentPayments.map((payment, index) => (
+          {recentPayments.map((payment) => (
             <div key={payment.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all duration-200">
               <div className="flex items-center space-x-4">
                 <div className="bg-green-500/20 p-2 rounded-lg">
