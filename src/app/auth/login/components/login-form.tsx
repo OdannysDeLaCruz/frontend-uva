@@ -83,22 +83,25 @@ export default function LoginForm() {
 
   return (
     <>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md slide-in-up">
         <div className="flex justify-center">
-          <Image src="/images/logo-uva-1x.webp" width={150} height={0} alt="MultiNivel Logo"  style={{
-          width: '120px',
+          <Image src="/images/logo-blanco.png" width={150} height={0} alt="UVA Logo"  style={{
+          width: '150px',
           height: 'auto',
-        }} className="h-12 w-auto" />
+        }} className="h-16 w-auto transition-transform hover:scale-105" />
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Inicia sesión en tu cuenta</h2>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Inicia sesión en tu cuenta</h2>
+        <p className="mt-2 text-center text-sm text-white/80">
+          Accede a tu dashboard y gestiona tu red
+        </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md slide-in-up" style={{ animationDelay: '0.2s' }}>
+        <div className="glass py-8 px-4 border border-white/10 sm:rounded-2xl sm:px-10">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600 flex items-center">
-                <AlertCircle className="h-4 w-4 mr-1" />
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm">
+              <p className="text-sm text-red-300 flex items-center">
+                <AlertCircle className="h-4 w-4 mr-2" />
                 {error}
               </p>
             </div>
@@ -106,7 +109,7 @@ export default function LoginForm() {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <Label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
                 Usuario o correo electrónico
               </Label>
               <div className="mt-1">
@@ -119,17 +122,17 @@ export default function LoginForm() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                  className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                 />
               </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="password" className="block text-sm font-medium text-white/90">
                   Contraseña
                 </Label>
-                <Link href="/forgot-password" className="text-sm font-medium text-purple-600 hover:text-purple-500">
+                <Link href="/forgot-password" className="text-sm font-medium text-purple-300 hover:text-purple-200 transition-colors">
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
@@ -142,17 +145,17 @@ export default function LoginForm() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                  className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm pr-12"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center hover:scale-110 transition-transform"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
+                    <EyeOff className="h-5 w-5 text-white/60 hover:text-white" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
+                    <Eye className="h-5 w-5 text-white/60 hover:text-white" />
                   )}
                 </button>
               </div>
@@ -162,7 +165,7 @@ export default function LoginForm() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50"
+                className="w-full gradient-bg hover:scale-105 transition-all duration-200 text-white font-semibold py-3 px-6 rounded-lg border border-white/20 shadow-lg hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {isLoading ? "Iniciando sesión..." : "Entrar"}
               </Button>
@@ -170,12 +173,13 @@ export default function LoginForm() {
           </form>
 
           <div className="mt-6">
-            <div className="flex items-center justify-between">
-              <div className="text-sm">
-                <Link href="/auth/register" className="font-medium text-purple-600 hover:text-purple-500">
+            <div className="text-center">
+              <p className="text-sm text-white/70">
+                ¿No tienes cuenta?{" "}
+                <Link href="/auth/register" className="font-medium text-purple-300 hover:text-purple-200 transition-colors underline underline-offset-2">
                   Registrarse
                 </Link>
-              </div>
+              </p>
             </div>
           </div>
         </div>
