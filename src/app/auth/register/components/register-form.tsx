@@ -214,9 +214,6 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
   return (
     <>
       <div className="sm:mx-auto sm:w-full sm:max-w-md slide-in-up">
-        <div className="flex justify-center">
-          <Image src="/images/logo-blanco.png" width={150} height={0} alt="UVA Logo" className="h-16 w-auto transition-transform hover:scale-105" />
-        </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Crea tu cuenta</h2>
         <p className="mt-2 text-center text-sm text-white/80">
           Únete a la revolución financiera digital
