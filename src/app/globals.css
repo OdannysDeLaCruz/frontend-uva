@@ -27,7 +27,6 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background-image:
     radial-gradient(circle at 20% 80%, rgba(107, 70, 193, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.1) 0%, transparent 50%);
@@ -43,6 +42,17 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -74,6 +84,10 @@ body {
   animation: slideInUp 0.6s ease-out;
 }
 
+.animate-fade-in {
+  animation: fade-in 0.5s ease-in-out;
+}
+
 .glow-gold {
   animation: glow 2s ease-in-out infinite;
 }
@@ -84,6 +98,40 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Pacifico font */
+.font-pacifico {
+  font-family: var(--font-pacifico), cursive;
+}
+
+/* Hide scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom thin scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(119, 39, 131, 0.3) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(119, 39, 131, 0.3);
+  border-radius: 10px;
+  transition: background-color 0.2s;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(119, 39, 131, 0.5);
 }
 
 .gradient-bg {
@@ -231,4 +279,38 @@ html[data-theme="dark"] select option,
     color: white !important;
     color-scheme: dark !important;
   }
+}
+
+/* Brand Colors - Landing Page */
+.text-principal {
+  color: #772783;
+}
+
+.bg-principal {
+  background-color: #772783;
+}
+
+.border-principal {
+  border-color: #772783;
+}
+
+/* Additional landing colors */
+.text-secondary-uva {
+  color: #9333EA;
+}
+
+.bg-secondary-uva {
+  background-color: #9333EA;
+}
+
+.text-accent-green {
+  color: #10B981;
+}
+
+.bg-accent-green {
+  background-color: #10B981;
+}
+
+.hover\:bg-accent-green-dark:hover {
+  background-color: #059669;
 }
