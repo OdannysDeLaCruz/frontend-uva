@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Pacifico, Roboto } from "next/font/google";
 import "./globals.css";
 import ConditionalHeader from "@/app/core/components/conditional-header"
-import ConditionalFooter from "@/app/core/components/conditional-footer"
+// import ConditionalFooter from "@/app/core/components/conditional-footer"
 import { ThemeProvider } from "@/app/core/components/theme-provider"
 import { AuthProvider } from "@/app/core/contexts/auth-context"
 
-const inter = Inter({ subsets: ["latin"] })
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  variable: "--font-roboto"
+})
+const pacifico = Pacifico({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-pacifico"
+})
 
 export const metadata: Metadata = {
   title: "UVA",
@@ -20,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${roboto.className} ${pacifico.variable}`}>
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="dark"
@@ -30,7 +39,7 @@ export default function RootLayout({
           <AuthProvider>
             <ConditionalHeader />
             <main>{children}</main>
-            <ConditionalFooter />
+            {/* <ConditionalFooter /> */}
           </AuthProvider>
         </ThemeProvider>
       </body>
