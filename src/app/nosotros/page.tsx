@@ -47,7 +47,7 @@ export default function Nosotros() {
                 <div className="flex justify-center lg:justify-end">
                   <div className="relative w-full max-w-md lg:max-w-lg">
                     <Image
-                      src="/images/backgrounds/section2.png"
+                      src="/images/backgrounds/section2.webp"
                       alt="Nosotros - UVA Club Fintech"
                       width={600}
                       height={600}

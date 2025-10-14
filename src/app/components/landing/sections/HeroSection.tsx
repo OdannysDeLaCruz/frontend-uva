@@ -9,7 +9,7 @@ export default function HeroSection() {
       id="hero"
       className="max-h-[1100px] w-full bg-cover bg-no-repeat bg-[position:73%_50%] md:bg-[position:50%_50%] relative flex flex-col pb-12 md:pb-24 pt-24"
       style={{
-        backgroundImage: "url('/images/backgrounds/section1.png')"
+        backgroundImage: "url('/images/backgrounds/section1.webp')"
       }}
     >
       {/* Overlay morado oscuro solo en mobile */}

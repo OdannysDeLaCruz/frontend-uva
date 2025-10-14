@@ -18,7 +18,7 @@ export default function Ofrecemos() {
         id="ofrecemos"
         className="min-h-screen w-full bg-cover bg-no-repeat relative flex flex-col items-center justify-center py-12 md:py-24"
         style={{
-          backgroundImage: "url('/images/backgrounds/ofrecemos.png')",
+          backgroundImage: "url('/images/backgrounds/ofrecemos.webp')",
         }}
       >
         {/* Overlay para mejorar legibilidad */}
