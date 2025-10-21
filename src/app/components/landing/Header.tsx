@@ -21,7 +21,7 @@ export default function Header({ showNavigation = true, showAuthButtons = true }
     { href: "/membresia", label: "Membresía" },
     { href: "/aprendizaje", label: "Aprendizaje" },
     { href: "/ahorro", label: "Ahorro" },
-    { href: "/programa", label: "Fidelización" },
+    { href: "/fidelizacion", label: "Fidelización" },
     { href: "/soporte", label: "Soporte" }
   ]
 
@@ -84,7 +84,7 @@ export default function Header({ showNavigation = true, showAuthButtons = true }
               className="md:hidden p-2 text-white"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? <X className="size-8 text-gray-300" /> : <Menu className="size-9 text-gray-300" />}
             </button>
           )}
         </div>

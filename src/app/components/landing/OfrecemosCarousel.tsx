@@ -119,7 +119,7 @@ export default function OfrecemosCarousel() {
           >
             {items.map((item) => (
               <SwiperSlide key={item.id}>
-                <div className="bg-principal rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 p-2">
+                <div className="bg-principal rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 p-2 border border-gray-400">
                   <div className="relative h-64 w-full rounded-2xl overflow-hidden">
                     <Image
                       src={item.image}
