@@ -21,11 +21,20 @@ export default function ConditionalHeader() {
     return null
   }
 
+  // Páginas que deben mostrar el menú horizontal
+  const horizontalMenuPages = ['/ofrecemos', '/aprendizaje', '/ahorro', '/fidelizacion', '/programa']
+  const shouldShowHorizontalMenu = horizontalMenuPages.includes(pathname)
+
   // Para páginas de auth (/auth/login, /auth/register): mostrar header sin navegación
   if (pathname.startsWith('/auth')) {
-    return <LandingHeader showNavigation={false} showAuthButtons={true} />
+    return <LandingHeader showNavigation={false} showAuthButtons={true} showHorizontalMenu={false} />
   }
 
-  // Para otras páginas públicas (/nosotros, /ofrecemos, etc.): mostrar header completo
-  return <LandingHeader showNavigation={true} showAuthButtons={true} />
+  // Para páginas con menú horizontal: mostrar header con menú horizontal
+  if (shouldShowHorizontalMenu) {
+    return <LandingHeader showNavigation={true} showAuthButtons={true} showHorizontalMenu={true} />
+  }
+
+  // Para otras páginas públicas (/nosotros, /membresia, /soporte): mostrar header completo sin menú horizontal
+  return <LandingHeader showNavigation={true} showAuthButtons={true} showHorizontalMenu={false} />
 }

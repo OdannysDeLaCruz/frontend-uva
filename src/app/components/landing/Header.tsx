@@ -5,13 +5,19 @@ import Image from "next/image"
 import { useState } from "react"
 import { Button } from "@/app/core/ui/button"
 import { Globe, Menu, X } from "lucide-react"
+import HorizontalMenu from "./HorizontalMenu"
 
 type HeaderProps = {
   showNavigation?: boolean
   showAuthButtons?: boolean
+  showHorizontalMenu?: boolean
 }
 
-export default function Header({ showNavigation = true, showAuthButtons = true }: HeaderProps) {
+export default function Header({
+  showNavigation = true,
+  showAuthButtons = true,
+  showHorizontalMenu = false
+}: HeaderProps) {
   const [currentLanguage, setCurrentLanguage] = useState("Es")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -39,6 +45,9 @@ export default function Header({ showNavigation = true, showAuthButtons = true }
             className="cursor-pointer transition-transform md:w-[100px]"
           />
         </Link>
+
+        {/* Menú horizontal - solo si showHorizontalMenu es true */}
+        {showHorizontalMenu && <HorizontalMenu />}
 
         {/* Botones desktop y hamburger mobile */}
         <div className="flex items-center gap-2">
@@ -72,7 +81,7 @@ export default function Header({ showNavigation = true, showAuthButtons = true }
                 size="lg"
                 className="bg-principal hover:bg-principal/90 text-white px-4 lg:px-6 text-base"
               >
-                Registrarse
+                ¡Regístrate ya!
               </Button>
             </Link>
             </div>
