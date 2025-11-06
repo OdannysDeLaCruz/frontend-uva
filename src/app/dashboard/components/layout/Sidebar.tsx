@@ -89,14 +89,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       children: [
         {
           id: 'tree-view',
-          label: 'Directos',
+          label: 'Unilevel',
           icon: <Tree size={18} />,
           href: '/dashboard/tree-view',
           isActive: false
         },
         {
           id: 'unilevel',
-          label: 'Unilevel',
+          label: 'Directos',
           icon: <Tally3 size={20} />,
           href: '/dashboard/unilevel',
           isActive: false
