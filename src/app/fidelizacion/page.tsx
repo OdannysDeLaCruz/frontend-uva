@@ -35,7 +35,7 @@ export default function Fidelizacion() {
                 <div className="text-black text-base md:text-3xl font-light mt-[600px] md:mt-auto pb-20">
                   <h2 className="text-3xl lg:text-4xl font-bold mb-6 mt-32 md:mt-10 w-[220px] md:w-full text-principal md:hidden">MARKETING de REFERIDOS</h2>
 
-                  <p className="text-justify md:text-left text-bold md:text-normal md:text-center leading-4 md:leading-8 mt-9 md:mt-auto w-full md:w-[500px] mb-12"><strong className="text-principal font-bold">UVA</strong> busca premiar a sus Miembros más entregados. Por eso crea un <strong className="italic font-medium">Programa de Fidelización</strong> por medio de un <strong className="italic font-medium">Marketing de Referidos</strong>, con <strong className="italic font-medium">Recompensas Económicas por Referidos</strong> dentro de un <strong className="italic font-medium">Plan de Recompensas de 10 Niveles y sin Candados</strong>.</p>
+                  <p className="text-justify md:text-left text-bold md:text-normal md:text-center leading-4 md:leading-8 mt-9 md:mt-auto w-full md:max-w-[900px] mb-12"><strong className="text-principal font-bold">UVA</strong> busca premiar a sus Miembros más entregados. Por eso crea un <strong className="italic font-medium">Programa de Fidelización</strong> por medio de un <strong className="italic font-medium">Marketing de Referidos</strong>, con <strong className="italic font-medium">Recompensas Económicas por Referidos</strong> dentro de un <strong className="italic font-medium">Plan de Recompensas de 10 Niveles y sin Candados</strong>.</p>
 
                   {/* Botón entrar */}
                   <div className="md:hidden">

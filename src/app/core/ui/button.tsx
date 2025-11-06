@@ -43,13 +43,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button"
 
 // Simple Slot implementation for the asChild pattern
-const Slot = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
+const Slot = React.forwardRef<HTMLButtonElement, React.PropsWithChildren>(
   ({ children, ...props }, ref) => {
     const child = React.Children.only(children) as React.ReactElement
-    return React.cloneElement(child, {
-      ...props,
-      ref,
-    })
+    return React.cloneElement(child, Object.assign({}, props, { ref }))
   },
 )
 Slot.displayName = "Slot"
