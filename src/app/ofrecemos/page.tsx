@@ -16,7 +16,7 @@ export default function Ofrecemos() {
     <div className="min-h-screen">
       <section
         id="ofrecemos"
-        className="min-h-screen w-full bg-cover bg-no-repeat relative flex flex-col items-center justify-center py-12 md:py-24"
+        className="min-h-screen w-full bg-cover bg-no-repeat relative flex flex-col items-center pt-30 md:pt-50"
         style={{
           backgroundImage: "url('/images/backgrounds/ofrecemos.webp')",
         }}
@@ -29,9 +29,9 @@ export default function Ofrecemos() {
             <Image
               src="/images/texto-ofrecemos.png"
               alt="Ofrecemos"
-              width={500}
+              width={550}
               height={110}
-              className="w-[400px] h-auto max-w-full"
+              className="w-[460px] h-auto max-w-full"
               priority
             />
           </div>
