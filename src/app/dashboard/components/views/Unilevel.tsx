@@ -1,22 +1,22 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { AlertCircle, RefreshCw, User as UserIcon, Mail, Phone } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { useAuth } from '@/app/core/contexts/auth-context'
+// import { useAuth } from '@/app/core/contexts/auth-context'
 import { getDirectos, DirectosResponse } from '@/app/core/services/mlm-service'
 import toast, { Toaster } from 'react-hot-toast'
 
 const Unilevel: React.FC = () => {
   const { theme } = useTheme()
-  const { user: authUser } = useAuth()
+  // const { user: authUser } = useAuth()
 
   const [data, setData] = useState<DirectosResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
 
-  const fetchDirectos = async () => {
+  const fetchDirectos = useCallback(async () => {
     try {
       setRefreshing(true)
       const response = await getDirectos()
@@ -33,11 +33,11 @@ const Unilevel: React.FC = () => {
       setLoading(false)
       setRefreshing(false)
     }
-  }
+  }, [refreshing])
 
   useEffect(() => {
     fetchDirectos()
-  }, [authUser])
+  }, [fetchDirectos, refreshing])
 
   if (loading) {
     return (
@@ -105,11 +105,11 @@ const Unilevel: React.FC = () => {
       ? theme === 'dark' ? 'bg-orange-950/50 border-orange-800/50' : 'bg-orange-50 border-orange-200'
       : theme === 'dark' ? 'bg-purple-950/50 border-purple-800/50' : 'bg-purple-50 border-purple-200'
 
-    const borderColor = type === 'primary'
-      ? 'border-blue-800'
-      : type === 'secondary'
-      ? 'border-orange-800'
-      : 'border-purple-800'
+    // const borderColor = type === 'primary'
+    //   ? 'border-blue-800'
+    //   : type === 'secondary'
+    //   ? 'border-orange-800'
+    //   : 'border-purple-800'
 
     const headerColor = type === 'primary'
       ? theme === 'dark' ? 'text-blue-400' : 'text-blue-700'
