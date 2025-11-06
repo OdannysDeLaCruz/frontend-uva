@@ -415,6 +415,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
+                  placeholder="* * * * * * * *"
                   required
                   value={formData.password}
                   onChange={handleChange}
@@ -452,6 +453,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
+                  placeholder="* * * * * * * *"
                   type={showConfirmPassword ? "text" : "password"}
                   required
                   value={formData.confirmPassword}
@@ -515,9 +517,9 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
           <div className="mt-6">
             <div className="text-center">
               <p className="text-sm text-white/70">
-                ¿Ya tienes cuenta?{" "}
+                ¿Ya tienes cuenta?{" "} <br />
                 <Link href="/auth/login" className="font-medium text-purple-300 hover:text-purple-200 transition-colors underline underline-offset-2">
-                  Iniciar sesión
+                  Iniciar sesión aquí
                 </Link>
               </p>
             </div>

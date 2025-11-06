@@ -89,7 +89,7 @@ export default function LoginForm() {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md slide-in-up" style={{ animationDelay: '0.2s' }}>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md slide-in-up p-4" style={{ animationDelay: '0.2s' }}>
         <div className="glass py-8 px-4 border border-white/10 sm:rounded-2xl sm:px-10">
           {error && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm">
@@ -103,7 +103,7 @@ export default function LoginForm() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <Label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                Usuario o correo electrónico
+                Correo electrónico
               </Label>
               <div className="mt-1">
                 <Input
@@ -111,7 +111,7 @@ export default function LoginForm() {
                   name="email"
                   type="text"
                   autoComplete="username"
-                  placeholder="jose, jose@uva.com"
+                  placeholder="josedelacruz@uva.com"
                   required
                   value={formData.email}
                   onChange={handleChange}
@@ -125,9 +125,9 @@ export default function LoginForm() {
                 <Label htmlFor="password" className="block text-sm font-medium text-white/90">
                   Contraseña
                 </Label>
-                <Link href="/forgot-password" className="text-sm font-medium text-purple-300 hover:text-purple-200 transition-colors">
+                {/* <Link href="/forgot-password" className="text-sm font-medium text-purple-300 hover:text-purple-200 transition-colors">
                   ¿Olvidaste tu contraseña?
-                </Link>
+                </Link> */}
               </div>
               <div className="mt-1 relative">
                 <Input
@@ -136,6 +136,7 @@ export default function LoginForm() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
+                  placeholder="* * * * * * *"
                   value={formData.password}
                   onChange={handleChange}
                   className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm pr-12"
@@ -168,9 +169,9 @@ export default function LoginForm() {
           <div className="mt-6">
             <div className="text-center">
               <p className="text-sm text-white/70">
-                ¿No tienes cuenta?{" "}
+                ¿No tienes cuenta?{" "} <br />
                 <Link href="/auth/register" className="font-medium text-purple-300 hover:text-purple-200 transition-colors underline underline-offset-2">
-                  Registrarse
+                  Registrarse aquí
                 </Link>
               </p>
             </div>
