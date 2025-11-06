@@ -314,3 +314,17 @@ html[data-theme="dark"] select option,
 .hover\:bg-accent-green-dark:hover {
   background-color: #059669;
 }
+
+/* Fidelización page - responsive background */
+.fidelizacion-bg {
+  background-image: url('/images/fidelizacion/fidelizacion-mobile.webp');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  .fidelizacion-bg {
+    background-size: cover;
+    background-image: url('/images/fidelizacion/fidelizacion-background.webp') !important;
+  }
+}
