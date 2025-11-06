@@ -28,7 +28,7 @@ export default function Header({
     { href: "/aprendizaje", label: "Aprendizaje" },
     { href: "/ahorro", label: "Ahorro" },
     { href: "/fidelizacion", label: "Fidelización" },
-    { href: "/soporte", label: "Soporte" }
+    // { href: "/soporte", label: "Soporte" }
   ]
 
   return (
