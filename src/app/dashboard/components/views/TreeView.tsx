@@ -309,7 +309,7 @@ const TreeView: React.FC = () => {
                 {/* Información del usuario */}
                 <div className="flex-1 overflow-hidden pr-2">
                   <p className="font-medium text-sm truncate">{node.name}</p>
-                  <p className={`text-xs truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{node.username}</p>
+                  <p className={`text-xs truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{node.username} ({node.email})</p>
                 </div>
               </div>
             );
