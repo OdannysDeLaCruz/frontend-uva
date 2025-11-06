@@ -29,8 +29,8 @@ export default function VerticalMenu({
     { href: "/membresia", label: "Membresía" },
     { href: "/aprendizaje", label: "Aprendizaje" },
     { href: "/ahorro", label: "Ahorro" },
-    { href: "/programa", label: "Fidelización" },
-    { href: "/soporte", label: "Soporte" }
+    { href: "/fidelizacion", label: "Fidelización" },
+    // { href: "/soporte", label: "Soporte" }
   ]
 
   const isActive = (href: string) => pathname === href
