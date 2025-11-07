@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/app/core/contexts/auth-context'
-import LandingHeader from '@/app/components/landing/Header'
+import Header from '@/app/components/Header'
 
 export default function ConditionalHeader() {
   const pathname = usePathname()
@@ -27,14 +27,14 @@ export default function ConditionalHeader() {
 
   // Para páginas de auth (/auth/login, /auth/register): mostrar header sin navegación
   if (pathname.startsWith('/auth')) {
-    return <LandingHeader showNavigation={false} showAuthButtons={true} showHorizontalMenu={false} />
+    return <Header showNavigation={false} showAuthButtons={true} showHorizontalMenu={false} />
   }
 
   // Para páginas con menú horizontal: mostrar header con menú horizontal
   if (shouldShowHorizontalMenu) {
-    return <LandingHeader showNavigation={true} showAuthButtons={true} showHorizontalMenu={true} />
+    return <Header showNavigation={true} showAuthButtons={true} showHorizontalMenu={true} />
   }
 
   // Para otras páginas públicas (/nosotros, /membresia, /soporte): mostrar header completo sin menú horizontal
-  return <LandingHeader showNavigation={true} showAuthButtons={true} showHorizontalMenu={false} />
+  return <Header showNavigation={true} showAuthButtons={true} showHorizontalMenu={false} />
 }

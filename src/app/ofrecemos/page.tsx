@@ -3,7 +3,7 @@
 import { useAuth } from "@/app/core/contexts/auth-context"
 import { redirect } from "next/navigation"
 import Image from "next/image"
-import OfrecemosCarousel from "@/app/components/landing/OfrecemosCarousel"
+import OfrecemosCarousel from "@/app/components/OfrecemosCarousel"
 
 export default function Ofrecemos() {
   const { user } = useAuth()

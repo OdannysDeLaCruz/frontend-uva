@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import UvaButton from "../UvaButton"
+import UvaButton from "./UvaButton"
 
 type VerticalMenuProps = {
   textColor?: string
@@ -14,11 +14,11 @@ type VerticalMenuProps = {
 }
 
 export default function VerticalMenu({
-  textColor = "text-white",
-  activeTextColor = "text-white",
-  activeGradientFrom = "#772783",
+  textColor = "text-black",
+  activeTextColor = "text-black",
+  activeGradientFrom = "#7727839a",
   activeGradientTo = "transparent",
-  inactiveGradientFrom = "rgb(229 231 235 / 0.5)",
+  inactiveGradientFrom = "rgb(225, 235, 240, 0.5) 30%",
   inactiveGradientTo = "transparent"
 }: VerticalMenuProps) {
   const pathname = usePathname()
@@ -36,15 +36,15 @@ export default function VerticalMenu({
   const isActive = (href: string) => pathname === href
 
   return (
-    <div className="hidden md:flex w-38 bg-white/5 backdrop-blur-md flex-col fixed right-0 top-0 h-screen pt-16 shadow-lg z-40">
+    <div className="hidden md:flex w-38 flex-col fixed right-0 top-0 h-screen pt-16 shadow-lg z-40">
       {/* Menú de navegación */}
       <nav className="flex-1 p-4 pt-12">
-        <ul className="space-y-5 text-lg flex flex-col align-left">
+        <ul className="space-y-5 2xl:space-y-9 3xl:space-y-10 text-lg flex flex-col align-left">
           {menuItems.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`block px-2 backdrop-blur-sm rounded transition-all duration-200 ${
+                className={`block px-2 rounded transition-all duration-200 ${
                   isActive(item.href)
                     ? `${activeTextColor} font-bold scale-105`
                     : `${textColor} hover:scale-105`

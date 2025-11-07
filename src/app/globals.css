@@ -316,15 +316,60 @@ html[data-theme="dark"] select option,
 }
 
 /* Fidelización page - responsive background */
-.fidelizacion-bg {
-  background-image: url('/images/fidelizacion/fidelizacion-mobile.webp');
-  background-size: cover;
-  background-repeat: no-repeat;
+/* .fidelizacion-bg {
+  } */
+
+@media (max-width: 767px) {
+  /* .fidelizacion-parte-1 {
+    border: 2px solid yellow;
+    background-image: url('/images/fidelizacion/fidelizacion-parte-1.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 100%;
+  } */
+  
+  /* .fidelizacion-parte-2 {
+    border: 2px solid blue;
+    background-image: url('/images/fidelizacion/fidelizacion-parte-2.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+  } */
+}
+
+.fidelizacion-title {
+  top: 17%;
+  left: 6%;
+  font-size: 30px;
+}
+
+@media (min-width: 500px) {
+  .fidelizacion-title {
+    font-size: 40px;
+  }
+}
+
+@media (min-width: 700px) {
+  .fidelizacion-title {
+    top: 20%;
+    font-size: 60px;
+  }
 }
 
 @media (min-width: 768px) {
+  .fidelizacion-title {
+    position: relative;
+    left: 0;
+    top: 0;
+  }
   .fidelizacion-bg {
     background-size: cover;
     background-image: url('/images/fidelizacion/fidelizacion-background.webp') !important;
+    background-repeat: no-repeat;
+    background-position: top;
   }
 }
+
+/* Principal Nav */
+/* .principal-nav {
+  background-color: rgba(255, 255, 255, 0.2);
+} */

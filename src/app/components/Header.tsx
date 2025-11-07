@@ -34,7 +34,7 @@ export default function Header({
   return (
     <>
       {/* Header fijo - Mobile First */}
-      <div className="bg-transparent backdrop-blur-lg px-4 py-2 flex w-full fixed top-0 left-0 z-50 justify-between items-center">
+      <div className="bg-transparent px-4 py-2 flex w-full fixed top-0 left-0 z-50 justify-between items-center">
         {/* Logo UVA - izquierda */}
         <Link href="/" className="flex items-center md:ml-14">
           <Image

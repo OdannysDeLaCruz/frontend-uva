@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/app/core/contexts/auth-context"
 import { redirect } from "next/navigation"
-import VerticalMenu from "@/app/components/landing/VerticalMenu"
+import VerticalMenu from "@/app/components/VerticalMenu"
 import Image from "next/image"
 
 export default function Nosotros() {
@@ -62,14 +62,7 @@ export default function Nosotros() {
         </div>
 
         {/* Menú vertical derecho - Solo desktop */}
-        <VerticalMenu 
-          textColor="text-gray-700"
-          activeTextColor="text-white"
-          activeGradientFrom="#772783"
-          activeGradientTo="#772783"
-          inactiveGradientFrom="rgb(229 231 235 / 0.5)"
-          inactiveGradientTo="transparent"
-        />
+        <VerticalMenu />
       </div>
     </div>
   )

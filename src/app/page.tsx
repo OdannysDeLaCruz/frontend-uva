@@ -2,9 +2,9 @@
 
 import { useAuth } from "@/app/core/contexts/auth-context"
 import { redirect } from "next/navigation"
-import Header from "@/app/components/landing/Header"
-import VerticalMenu from "@/app/components/landing/VerticalMenu"
-import HeroSection from "@/app/components/landing/sections/HeroSection"
+import Header from "@/app/components/Header"
+import VerticalMenu from "@/app/components/VerticalMenu"
+import HeroSection from "@/app/components/sections/HeroSection"
 
 export default function Home() {
   const { user } = useAuth()
@@ -26,7 +26,9 @@ export default function Home() {
         </div>
 
         {/* Menú vertical derecho - Solo desktop */}
-        <VerticalMenu />
+        <VerticalMenu
+          textColor="text-white"
+        />
       </div>
     </div>
   )

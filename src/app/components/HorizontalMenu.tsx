@@ -27,7 +27,7 @@ export default function HorizontalMenu({
   const isActive = (href: string) => pathname === href
 
   return (
-    <nav className="hidden py-1 md:flex items-center justify-center bg-white/80 w-fit px-4">
+    <nav className="hidden py-1 md:flex items-center justify-center principal-nav w-fit px-4">
       {menuItems.map((item, index) => (
         <Link
           key={item.href}
