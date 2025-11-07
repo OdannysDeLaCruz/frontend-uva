@@ -35,7 +35,7 @@ export default function Header({
     <>
       {/* Header fijo - Mobile First */}
       <div 
-        className="px-4 py-2 flex w-full fixed top-0 left-0 z-50 justify-between items-center"
+        className={`px-4 py-2 flex w-full fixed top-0 left-0 z-50 justify-between items-center ${isMenuOpen ? "bg-white" : ""}`}
         style={{
           backgroundImage: "radial-gradient(circle at center, transparent, #ffffff 100%, #ffffff)"
         }}
@@ -43,7 +43,7 @@ export default function Header({
         {/* Logo UVA - izquierda */}
         <Link href="/" className="flex items-center md:ml-14">
           <Image
-            src="/images/logotipo.png"
+            src="/images/logo.png"
             alt="UVA Logo"
             width={80}
             height={80}
@@ -98,7 +98,7 @@ export default function Header({
               className="md:hidden p-2 text-white"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="size-8 text-gray-300" /> : <Menu className="size-9 text-gray-300" />}
+              {isMenuOpen ? <X className="size-8 text-gray-600" /> : <Menu className="size-9 text-gray-600" />}
             </button>
           )}
         </div>
