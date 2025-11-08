@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { RegisterData, AuthCredentials, AuthResponse, StandardResponse } from "@/app/core/types/user"
+import { RegisterData, AuthCredentials, StandardResponse } from "@/app/core/types/user"
 import apiClient from "@/app/core/services/api-client"
 import { getUser } from "@/app/core/services/user-service"
 import { handleAxiosError } from "@/app/core/utils/error-handler"
@@ -15,9 +15,12 @@ export async function requireAuth() {
   return user
 }
 
-export async function login(credentials: AuthCredentials): Promise<AuthResponse> {
+export async function login(credentials: AuthCredentials): Promise<{ user: any }> {
   try {
-    const response = await apiClient.post<AuthResponse>("/v1/auth/login", credentials)
+    // Con credentials: 'include', las cookies se envían/reciben automáticamente
+    const response = await apiClient.post<{ user: any }>("/v1/auth/login", credentials, {
+      withCredentials: true
+    })
     return response.data
   } catch (error) {
     throw await Promise.reject(handleAxiosError(error, "iniciar sesión"));
@@ -26,7 +29,9 @@ export async function login(credentials: AuthCredentials): Promise<AuthResponse>
 
 export async function register(data: RegisterData): Promise<StandardResponse> {
   try {
-    const response = await apiClient.post<StandardResponse>("/v1/mlm/register", data)
+    const response = await apiClient.post<StandardResponse>("/v1/mlm/register", data, {
+      withCredentials: true
+    })
     return response.data
   } catch (error) {
     throw await Promise.reject(handleAxiosError(error, "registrar al usuario"));
@@ -35,18 +40,21 @@ export async function register(data: RegisterData): Promise<StandardResponse> {
 
 export async function logout(): Promise<StandardResponse> {
   try {
-    const response = await apiClient.post<StandardResponse>("/v1/auth/logout")
+    const response = await apiClient.post<StandardResponse>("/v1/auth/logout", {}, {
+      withCredentials: true
+    })
     return response.data
   } catch (error) {
     throw await Promise.reject(handleAxiosError(error, "cerrar sesión"))
-  } finally {
-    localStorage.removeItem("access_token")
   }
+  // Las cookies se eliminan automáticamente por el backend
 }
 
-export async function refreshAccessToken(): Promise<AuthResponse> {
+export async function refreshAccessToken(): Promise<{ success: boolean }> {
   try {
-    const response = await apiClient.get<AuthResponse>("/v1/auth/refresh-token")
+    const response = await apiClient.get<{ success: boolean }>("/v1/auth/refresh-token", {
+      withCredentials: true
+    })
     return response.data
   } catch (error) {
     throw await Promise.reject(handleAxiosError(error, "refrescar el token"))
