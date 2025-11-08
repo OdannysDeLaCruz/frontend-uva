@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const cookieStore = await cookies()
     const accessToken = cookieStore.get('access_token')?.value
@@ -15,13 +15,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Hacer fetch al backend para obtener el perfil del usuario
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-    const response = await fetch(`${apiUrl}/api/v1/auth/me`, {
+    const apiUrl = process.env.NEXT_PUBLIC_API
+    const response = await fetch(`${apiUrl}/v1/auth/me`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-        'Cookie': `access_token=${accessToken}`
+        // Enviar token solo en la cookie, no en Authorization header
+        // El JWT Strategy del backend está configurado para leer desde cookies
+        Cookie: `access_token=${accessToken}`
       },
       credentials: 'include'
     })
