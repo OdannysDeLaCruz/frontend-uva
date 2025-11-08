@@ -53,21 +53,26 @@ export default function LoginForm() {
 
     try {
       // Llamar a la API para iniciar sesión
+      // Las cookies httpOnly se establecen automáticamente por el backend
       const response = await authServiceLogin({
         username: formData.email,
         password: formData.password,
       })
 
-      await login(response.access_token)
+      // No necesitamos guardar el token, está en cookies httpOnly
+      // Solo actualizar el estado de autenticación
+      await login(response.user)
+
+      // El middleware redirigirá automáticamente a /dashboard
     } catch (error: ApiError | unknown) {
       if (error && typeof error === 'object' && 'message' in error) {
         const errorObj = error as ApiError
-        
+
         if (Array.isArray(errorObj.message)) {
           setError(errorObj.message[0])
           return;
         }
-        
+
         if (typeof errorObj.message === 'string') {
           setError(errorObj.message)
           return;

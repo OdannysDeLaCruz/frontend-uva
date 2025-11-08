@@ -5,9 +5,9 @@ import LoginForm from "./components/login-form"
 export default async function Login() {
   // Verificar si el usuario ya está autenticado
   const cookieStore = await cookies()
-  const token = cookieStore.get("auth-token")
+  const accessToken = cookieStore.get("access_token")
 
-  if (token) {
+  if (accessToken) {
     redirect("/dashboard")
   }
 
