@@ -14,7 +14,7 @@ import { ApiError } from "@/app/core/utils/error-handler"
 
 export default function LoginForm() {
   const router = useRouter()
-  const { login, isAuthenticated, error: authError, clearError } = useAuth()
+  const { setUser, isAuthenticated } = useAuth()
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,13 +31,6 @@ export default function LoginForm() {
     }
   }, [isAuthenticated, router])
 
-  // Usar error del contexto de autenticación si existe
-  useEffect(() => {
-    if (authError) {
-      setError(authError)
-      clearError()
-    }
-  }, [authError, clearError])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -58,10 +51,9 @@ export default function LoginForm() {
         username: formData.email,
         password: formData.password,
       })
-
-      // No necesitamos guardar el token, está en cookies httpOnly
-      // Solo actualizar el estado de autenticación
-      await login(response.user)
+      
+      // Guardar el usuario en el contexto
+      setUser(response.user)
 
       // El middleware redirigirá automáticamente a /dashboard
     } catch (error: ApiError | unknown) {

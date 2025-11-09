@@ -127,13 +127,13 @@ const ProfileDropdown: React.FC = () => {
             ))}
 
              <button
-                onClick={() => {
-                  logout();
+                onClick={async () => {
+                  await logout();
                   setIsOpen(false);
                 }}
                 className={`w-full text-left px-4 pt-4 pb-2 flex items-center space-x-2 text-red-500 ${
-                  theme === 'dark' 
-                    ? 'hover:bg-gray-700 text-gray-300' 
+                  theme === 'dark'
+                    ? 'hover:bg-gray-700 text-gray-300'
                     : 'hover:bg-gray-100 text-gray-700'
                 }`}
               >

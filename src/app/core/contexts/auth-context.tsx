@@ -1,30 +1,14 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from "react"
-import { useRouter } from "next/navigation"
+import { createContext, useContext, type ReactNode, useCallback, useState } from "react"
 import type { User } from "@/app/core/types/user"
-import { getUser } from "@/app/core/services/user-service"
-import { logout as authServiceLogout, refreshAccessToken } from "@/app/core/services/auth-service"
+import { logoutAction } from "@/app/actions/auth"
 
-// Tipo para el estado de autenticación
-type AuthState = {
-  user: User | null
-  token: string | null
-  isLoading: boolean
-  error: string | null
-}
-
-// Tipo para el contexto de autenticación
+// Tipo simplificado para el contexto de autenticación
 type AuthContextType = {
   user: User | null
-  token: string | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  error: string | null
-  login: (token: string) => Promise<void>
+  setUser: (user: User | null) => void
   logout: () => Promise<void>
-  checkAuth: () => Promise<boolean>
-  clearError: () => void
 }
 
 // Crear el contexto
@@ -39,155 +23,29 @@ export function useAuth() {
   return context
 }
 
-// Proveedor de autenticación
+// Proveedor de autenticación simplificado
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const router = useRouter()
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    token: null,
-    isLoading: true, // Inicialmente cargando hasta verificar auth
-    error: null
-  })
-
-  const clearError = useCallback(() => {
-    setAuthState(prev => ({ ...prev, error: null }))
-  }, [])
-
-  // Verificar autenticación - devuelve un booleano que indica si el usuario está autenticado
-  const checkAuth = useCallback(async (): Promise<boolean> => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }))
-    
-    try {
-
-      // Si ya hay un token, quiere decir que el usuario está autenticado
-      // Por lo tanto, podemos verificarlo con los datos del usuario en el contexto
-
-      if (authState.user) {
-        return true
-      }
-
-      const storedToken = localStorage.getItem("access_token")
-      
-      if (!storedToken) {
-        setAuthState({ user: null, token: null, isLoading: false, error: null })
-        return false
-      }
-      
-      // Intentar obtener datos del usuario con el token actual
-      try {
-        const userData = await getUser()
-        setAuthState({
-          user: userData,
-          token: storedToken,
-          isLoading: false,
-          error: null
-        })
-        return true
-      } catch {
-        try {
-          const response = await refreshAccessToken()
-          localStorage.setItem("access_token", response.access_token)
-          
-          // Obtener usuario con el nuevo token
-          const userData = await getUser()
-          setAuthState({
-            user: userData,
-            token: response.access_token,
-            isLoading: false,
-            error: null
-          })
-          return true
-        } catch {
-          // Si falla el refresh, limpiar tokens
-          localStorage.removeItem("access_token")
-          setAuthState({
-            user: null,
-            token: null,
-            isLoading: false,
-            error: "La sesión ha expirado. Por favor inicia sesión nuevamente."
-          })
-          return false
-        }
-      }
-    } catch {
-      setAuthState({
-        user: null,
-        token: null,
-        isLoading: false,
-        error: "Error al verificar la autenticación"
-      })
-      return false
-    }
-  }, [authState.user])
-  
-  // Verificar autenticación al cargar el componente
-  useEffect(() => {
-    checkAuth()
-  }, [checkAuth])
-
-  // Función para iniciar sesión
-  const login = useCallback(async (token: string): Promise<void> => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }))
-    
-    try {
-      localStorage.setItem("access_token", token)
-      
-      const userData = await getUser()
-      setAuthState({
-        user: userData,
-        token,
-        isLoading: false,
-        error: null
-      })
-    } catch (error) {
-      localStorage.removeItem("access_token")
-      
-      setAuthState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: "Error al obtener información del usuario"
-      }))
-      
-      throw error
-    }
-  }, [])
+  const [user, setUser] = useState<User | null>(null)
 
   // Función para cerrar sesión
   const logout = useCallback(async (): Promise<void> => {
-    setAuthState(prev => ({ ...prev, isLoading: true }))
-    
     try {
-      // Cerrar sesión en la API
-      await authServiceLogout()
+      // Usar server action para logout
+      // Esto invalida la sesión en el backend y elimina las cookies
+      await logoutAction()
     } catch (error) {
-      console.error("Error al cerrar sesión en el servidor:", error)
-      // Continuamos con el cierre de sesión local aunque falle en el servidor
+      console.error("Error al cerrar sesión:", error)
+      // Continuamos con el cierre de sesión aunque falle
     } finally {
-      // Limpiar datos locales
-      localStorage.removeItem("access_token")
-      
-      setAuthState({
-        user: null,
-        token: null,
-        isLoading: false,
-        error: null
-      })
-      
-      // Redirigir al login
-      router.push("/auth/login")
+      // Limpiar estado local
+      setUser(null)
     }
-  }, [router])
+  }, [])
 
   const value = {
-    user: authState.user,
-    token: authState.token,
-    isAuthenticated: !!authState.user,
-    isLoading: authState.isLoading,
-    error: authState.error,
-    login,
-    logout,
-    checkAuth,
-    clearError
+    user,
+    setUser,
+    logout
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
