@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, type ReactNode, useCallback, useState } from "react"
+import { createContext, useContext, type ReactNode, useCallback, useState, useEffect } from "react"
 import type { User } from "@/app/core/types/user"
 import { logoutAction } from "@/app/actions/auth"
 
@@ -26,6 +26,28 @@ export function useAuth() {
 // Proveedor de autenticación simplificado
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+
+  // Al montar el proveedor, obtener usuario desde /api/user si hay sesión activa
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/user', {
+          method: 'GET',
+          credentials: 'include'
+        })
+
+        if (response.ok) {
+          const userData = await response.json()
+          setUser(userData)
+        }
+        // Si no es ok (401), no hay sesión activa, user permanece null
+      } catch (error) {
+        console.error('Error fetching user on mount:', error)
+      }
+    }
+
+    fetchUser()
+  }, [])
 
   // Función para cerrar sesión
   const logout = useCallback(async (): Promise<void> => {

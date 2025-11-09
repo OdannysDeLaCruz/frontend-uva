@@ -14,7 +14,7 @@ import { ApiError } from "@/app/core/utils/error-handler"
 
 export default function LoginForm() {
   const router = useRouter()
-  const { setUser, isAuthenticated } = useAuth()
+  const { user, setUser } = useAuth()
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -26,10 +26,10 @@ export default function LoginForm() {
 
   // Si ya está autenticado, redirigir al dashboard
   useEffect(() => {
-    if (isAuthenticated) {
+    if (user) {
       router.replace("/dashboard")
     }
-  }, [isAuthenticated, router])
+  }, [user, router])
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,13 +47,21 @@ export default function LoginForm() {
     try {
       // Llamar a la API para iniciar sesión
       // Las cookies httpOnly se establecen automáticamente por el backend
-      const response = await authServiceLogin({
+      await authServiceLogin({
         username: formData.email,
         password: formData.password,
       })
-      
-      // Guardar el usuario en el contexto
-      setUser(response.user)
+
+      // Obtener la info completa del usuario desde /api/user
+      const userResponse = await fetch('/api/user', {
+        method: 'GET',
+        credentials: 'include'
+      })
+
+      if (userResponse.ok) {
+        const fullUser = await userResponse.json()
+        setUser(fullUser)
+      }
 
       // El middleware redirigirá automáticamente a /dashboard
     } catch (error: ApiError | unknown) {
