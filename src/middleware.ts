@@ -57,7 +57,7 @@ const withAuth: MiddlewareFactory = (next) => {
         if (refreshToken) {
           try {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/api/v1/auth/refresh-token`,
+              `${process.env.NEXT_PUBLIC_API}/v1/auth/refresh-token`,
               {
                 method: "GET",
                 headers: {
@@ -91,7 +91,7 @@ const withAuth: MiddlewareFactory = (next) => {
       // Verificar si el access_token es válido
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/api/v1/auth/verify`,
+          `${process.env.NEXT_PUBLIC_API}/v1/auth/verify`,
           {
             method: "GET",
             headers: {
@@ -107,7 +107,7 @@ const withAuth: MiddlewareFactory = (next) => {
           if (refreshToken) {
             try {
               const refreshResponse = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/api/v1/auth/refresh-token`,
+                `${process.env.NEXT_PUBLIC_API}/v1/auth/refresh-token`,
                 {
                   method: "GET",
                   headers: {
