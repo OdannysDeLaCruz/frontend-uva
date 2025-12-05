@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { RegisterData, AuthCredentials, StandardResponse } from "@/app/core/types/user"
+import { RegisterData, AuthCredentials, StandardResponse, User } from "@/app/core/types/user"
 import apiClient from "@/app/core/services/api-client"
 import { getUser } from "@/app/core/services/user-service"
 import { handleAxiosError } from "@/app/core/utils/error-handler"
@@ -15,10 +15,10 @@ export async function requireAuth() {
   return user
 }
 
-export async function login(credentials: AuthCredentials): Promise<{ user: any }> {
+export async function login(credentials: AuthCredentials): Promise<{ user: User }> {
   try {
     // Con credentials: 'include', las cookies se envían/reciben automáticamente
-    const response = await apiClient.post<{ user: any }>("/v1/auth/login", credentials, {
+    const response = await apiClient.post<{ user: User }>("/v1/auth/login", credentials, {
       withCredentials: true
     })
     return response.data
