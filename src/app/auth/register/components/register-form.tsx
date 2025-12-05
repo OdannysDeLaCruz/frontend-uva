@@ -34,11 +34,13 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState(false)
+  const [documentType, setDocumentType] = useState<'natural' | 'juridica' | null>(null)
   const [formData, setFormData] = useState({
     mode: mode,
     referrerCode: referrerCode,
     name: "",
     lastname: "",
+    documentType: "natural" as 'natural' | 'juridica',
     doc_number: "",
     email: "",
     phone: "",
@@ -125,6 +127,16 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
   const validateForm = () => {
     const errors: Record<string, string> = {}
 
+    // Validar tipo de documento
+    if (!documentType) {
+      errors.documentType = "Debe seleccionar si es persona natural o jurídica"
+    }
+
+    // Validar número de documento
+    if (!formData.doc_number.trim()) {
+      errors.doc_number = "El número de documento es requerido"
+    }
+
     // Validar nombre
     if (!formData.name.trim()) {
       errors.name = "El nombre es requerido"
@@ -160,7 +172,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
     if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = "Las contraseñas no coinciden"
     }
-    
+
     // Validar términos
     if (!acceptTerms) {
       errors.terms = "Debe aceptar los términos y condiciones"
@@ -189,6 +201,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
       // Llamar a la API para registrar al usuario
       const payload = {
         ...formData,
+        documentType: documentType || 'natural',
         confirmPassword: undefined
       }
       const result = await authServiceRegister(payload)
@@ -256,7 +269,87 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                 )}
               </div>
             </div>
-            
+
+            {/* Tipo de documento */}
+            <div>
+              <Label className="block text-sm font-medium text-white/90 mb-4">
+                Tipo de documento:
+              </Label>
+              <div className="flex gap-6 mb-4">
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="natural"
+                    checked={documentType === 'natural'}
+                    onCheckedChange={() => {
+                      setDocumentType('natural');
+                      setFormData(prev => ({ ...prev, documentType: 'natural' }));
+                      setFieldErrors(prev => {
+                        const newErrors = { ...prev };
+                        delete newErrors.documentType;
+                        return newErrors;
+                      });
+                    }}
+                    className="h-5 w-5 text-purple-400 focus:ring-purple-400 border-white/30 rounded"
+                  />
+                  <Label htmlFor="natural" className="text-sm text-white/90 cursor-pointer">
+                    Persona Natural (CC)
+                  </Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="juridica"
+                    checked={documentType === 'juridica'}
+                    onCheckedChange={() => {
+                      setDocumentType('juridica');
+                      setFormData(prev => ({ ...prev, documentType: 'juridica' }));
+                      setFieldErrors(prev => {
+                        const newErrors = { ...prev };
+                        delete newErrors.documentType;
+                        return newErrors;
+                      });
+                    }}
+                    className="h-5 w-5 text-purple-400 focus:ring-purple-400 border-white/30 rounded"
+                  />
+                  <Label htmlFor="juridica" className="text-sm text-white/90 cursor-pointer">
+                    Persona Jurídica (NIT)
+                  </Label>
+                </div>
+              </div>
+              {fieldErrors.documentType && (
+                <p className="mt-2 text-sm text-red-300 flex items-center">
+                  <AlertCircle className="h-4 w-4 mr-2" />
+                  {fieldErrors.documentType}
+                </p>
+              )}
+            </div>
+
+            {/* Número de documento */}
+            <div>
+              <Label htmlFor="doc_number" className="block text-sm font-medium text-white/90 mb-2">
+                {documentType === 'natural' ? 'Cédula de Ciudadanía (CC)' : documentType === 'juridica' ? 'NIT' : 'Número de documento'}
+              </Label>
+              <div className="mt-1">
+                <Input
+                  id="doc_number"
+                  name="doc_number"
+                  type="text"
+                  placeholder={documentType === 'natural' ? 'Ej: 1234567890' : documentType === 'juridica' ? 'Ej: 9009876543' : 'Ingrese número de documento'}
+                  value={formData.doc_number}
+                  onChange={handleChange}
+                  disabled={!documentType}
+                  className={`appearance-none block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm ${
+                    !documentType ? 'opacity-50 cursor-not-allowed' : ''
+                  } ${fieldErrors.doc_number ? 'border-red-300 focus:ring-red-400' : ''}`}
+                />
+                {fieldErrors.doc_number && (
+                  <p className="mt-1 text-sm text-red-300 flex items-center">
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    {fieldErrors.doc_number}
+                  </p>
+                )}
+              </div>
+            </div>
+
             {/* Nombre y apellido */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
@@ -311,29 +404,6 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                     </p>
                   )}
                 </div>
-              </div>
-            </div>
-
-            {/* Número de cédula */}
-            <div>
-              <Label htmlFor="doc_number" className="block text-sm font-medium text-white/90">
-                Número de cédula
-              </Label>
-              <div className="mt-1">
-                <Input
-                  id="doc_number"
-                  name="doc_number"
-                  type="text"
-                  value={formData.doc_number}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
-                />
-                {fieldErrors.doc_number && (
-                  <p className="mt-1 text-sm text-red-300 flex items-center">
-                    <AlertCircle className="h-4 w-4 mr-2" />
-                    {fieldErrors.doc_number}
-                  </p>
-                )}
               </div>
             </div>
 

@@ -17,6 +17,7 @@ export interface RegisterData {
   referrerCode: string
   name: string
   lastname: string
+  documentType: 'natural' | 'juridica'
   doc_number: string
   email: string
   phone: string
