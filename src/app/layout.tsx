@@ -5,6 +5,7 @@ import ConditionalHeader from "@/app/core/components/conditional-header"
 // import ConditionalFooter from "@/app/core/components/conditional-footer"
 import { ThemeProvider } from "@/app/core/components/theme-provider"
 import { AuthProvider } from "@/app/core/contexts/auth-context"
+// import { WompiProvider } from "@/app/core/components/WompiProvider"
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -36,11 +37,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
-            <ConditionalHeader />
-            <main>{children}</main>
-            {/* <ConditionalFooter /> */}
-          </AuthProvider>
+          {/* <WompiProvider> */}
+            <AuthProvider>
+              <ConditionalHeader />
+              <main>{children}</main>
+              {/* <ConditionalFooter /> */}
+            </AuthProvider>
+          {/* </WompiProvider> */}
         </ThemeProvider>
       </body>
     </html>

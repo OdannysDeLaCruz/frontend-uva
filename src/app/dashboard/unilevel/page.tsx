@@ -2,14 +2,14 @@
 
 import React from 'react';
 import Layout from '../components/layout/Layout';
-import Unilevel from '../components/views/Unilevel';
+import TreeView from '../components/views/TreeView';
 
-const UnilevelPage: React.FC = () => {
+const TreeViewPage: React.FC = () => {
   return (
     <Layout>
-      <Unilevel />
+      <TreeView />
     </Layout>
   );
 };
 
-export default UnilevelPage;
+export default TreeViewPage;
