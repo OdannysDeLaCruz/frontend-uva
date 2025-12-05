@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { Home, Network, ChevronDown, ChevronUp, Trees as Tree, Settings, HelpCircle, Cylinder, User, Tally3, X } from 'lucide-react';
+import { Home, Network, ChevronDown, ChevronUp, Cylinder, User, X, CreditCard, Wallet, Bolt, ShieldCheck, GlobeLock, GraduationCap, Binary, ArrowBigRightDash, ListTree, LogOut } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/app/core/contexts/auth-context';
@@ -82,22 +82,83 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       children: []
     },
     {
-      id: 'views',
+      id: 'membership',
+      label: 'Membresía',
+      icon: <CreditCard size={20} />,
+      href: '/dashboard/membership',
+      isActive: false,
+      children: []
+    },
+    {
+      id: 'aprendizaje',
+      label: 'Aprendizaje',
+      icon: <GraduationCap size={20} />,
+      href: '/dashboard/aprendizaje',
+      isActive: false,
+      children: []
+    },
+    {
+      id: 'ahorro',
+      label: 'Ahorro',
+      icon: <Wallet size={20} />,
+      href: '/dashboard/ahorro',
+      isActive: false,
+      children: []
+    },
+    {
+      id: 'perfil',
+      label: 'Perfil',
+      icon: <User size={20} />,
+      isActive: false,
+      children: [
+        {
+          id: 'kyc',
+          label: 'KYC (verificación)',
+          icon: <ShieldCheck size={18} />,
+          href: '/dashboard/kyc',
+          isActive: false
+        },
+        {
+          id: 'ajustes',
+          label: 'Ajustes',
+          icon: <Bolt size={18} />,
+          href: '/dashboard/ajustes',
+          isActive: false
+        },
+        {
+          id: 'seguridad',
+          label: 'Seguridad',
+          icon: <GlobeLock size={18} />,
+          href: '/dashboard/seguridad',
+          isActive: false
+        },
+        {
+          id: 'sorteo',
+          label: 'Sorteo',
+          icon: <Binary size={18} />,
+          href: '/dashboard/sorteo',
+          isActive: false
+        },
+
+      ]
+    },
+    {
+      id: 'uvamigos',
       label: 'UVAmigos',
       icon: <Network size={20} />,
       isActive: false,
       children: [
         {
-          id: 'tree-view',
-          label: 'Unilevel',
-          icon: <Tree size={18} />,
-          href: '/dashboard/tree-view',
+          id: 'directos',
+          label: 'Directos',
+          icon: <ArrowBigRightDash size={20} />,
+          href: '/dashboard/directos',
           isActive: false
         },
         {
           id: 'unilevel',
-          label: 'Directos',
-          icon: <Tally3 size={20} />,
+          label: 'Unilevel',
+          icon: <ListTree size={18} />,
           href: '/dashboard/unilevel',
           isActive: false
         },
@@ -111,30 +172,45 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       ]
     },
     {
-      id: 'account',
-      label: 'Mi cuenta',
+      id: 'uvaliados',
+      label: 'UVAliados',
+      icon: <Wallet size={20} />,
+      href: '/dashboard/aliados',
+      isActive: false,
+      children: []
+    },
+    {
+      id: 'recompensas',
+      label: 'Recompensas',
+      icon: <Wallet size={20} />,
+      isActive: false,
+      children: []
+    },
+    {
+      id: 'uvasueno',
+      label: 'UVA Sueño',
       icon: <User size={20} />,
-      href: '/dashboard/account',
+      href: '/dashboard/uvasueno',
+      isActive: false,
+      children: []
+    },
+    {
+      id: 'soporte',
+      label: 'Soporte',
+      icon: <User size={20} />,
+      href: '/dashboard/soporte',
+      isActive: false,
+      children: []
+    },
+    {
+      id: '',
+      label: 'Cerrar sesión',
+      icon: <LogOut size={20} />,
+      href: '',
       isActive: false,
       children: []
     },
   ], []);
-
-  const bottomMenuItems: MenuItem[] = useMemo(() => [
-    {
-      id: 'settings',
-      label: 'Configuración',
-      icon: <Settings size={20} />,
-      href: '/dashboard/settings'
-    },
-    {
-      id: 'help',
-      label: 'Ayuda',
-      icon: <HelpCircle size={20} />,
-      href: '/dashboard/help'
-    }
-  ], []);
-
   
   useEffect(() => {
     // poner en activo un item si la ruta es la misma del path
@@ -189,7 +265,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         >
           <div className="flex items-center">
             <span className="mr-3 text-lg md:text-base">{item.icon}</span>
-            {showText && <span className="transition-opacity duration-300 text-base md:text-[15px] font-medium">{item.label}</span>}
+            {showText && <span className="transition-opacity duration-300 text-base md:text-[15px] font-medium leading-none">{item.label}</span>}
           </div>
           {hasChildren && showText && (
             <span>{isExpanded ? <ChevronUp size={isMobile ? 20 : 16} /> : <ChevronDown size={isMobile ? 20 : 16} />}</span>
@@ -222,7 +298,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             ? `fixed top-0 left-0 h-full w-80 transform transition-transform duration-300 ease-in-out z-50 ${
                 isOpen ? 'translate-x-0' : '-translate-x-full'
               }`
-            : `${isOpen ? 'w-64' : 'w-[47px]'} transition-all duration-300 ease-in-out hover:w-64`
+            : `${isOpen ? 'w-64' : 'w-[52px]'} transition-all duration-300 ease-in-out hover:w-64`
           }
           flex flex-col
           ${theme === 'dark' ? 'bg-purple-900' : 'bg-purple-500'}
@@ -258,28 +334,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {menuItems.map(item => renderMenuItem(item))}
           </nav>
         </div>
-
-        {/* Navegación inferior */}
-        <div className={`px-3 md:px-2 py-4 md:py-6 border-gray-700 ${(isMobile || isOpen || isHovered) ? 'border-t border-white/10' : 'border-none'}`}>
-          <nav>
-            {bottomMenuItems.map(item => renderMenuItem(item))}
-          </nav>
-        </div>
-
-        {/* Footer del sidebar para mobile */}
-        {isMobile && (
-          <div className="p-4 border-t border-white/10">
-            <button
-              onClick={() => {
-                router.push('/dashboard/profile');
-                onClose?.();
-              }}
-              className="w-full p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white text-sm font-medium"
-            >
-              Ver perfil completo
-            </button>
-          </div>
-        )}
       </aside>
     </>
   );
