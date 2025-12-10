@@ -10,6 +10,21 @@ const apiClient: AxiosInstance = axios.create({
   },
 })
 
+// Variable para evitar múltiples llamadas simultáneas al refresh
+let isRefreshing = false
+let refreshSubscribers: Array<(token: string) => void> = []
+
+// Función para agregar suscriptores que esperan el nuevo token
+function subscribeTokenRefresh(cb: (token: string) => void) {
+  refreshSubscribers.push(cb)
+}
+
+// Función para notificar a todos los suscriptores con el nuevo token
+function onRefreshed(token: string) {
+  refreshSubscribers.forEach((cb) => cb(token))
+  refreshSubscribers = []
+}
+
 // Axios response interceptors
 // Manejo de errores 401 (token expirado)
 apiClient.interceptors.response.use(
@@ -26,17 +41,39 @@ apiClient.interceptors.response.use(
     ) {
       originalRequest._retry = true
 
+      // Si ya hay un refresh en progreso, esperar a que termine
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          subscribeTokenRefresh(() => {
+            resolve(apiClient(originalRequest))
+          })
+        })
+      }
+
+      isRefreshing = true
+
       try {
-        // El refresh automático sucede en el middleware de Next.js
-        // Aquí solo intentamos re-ejecutar la petición original
-        // El backend renovará las cookies automáticamente
-        return apiClient(originalRequest)
-      } catch (err) {
-        // Si falla, redirigir al login
-        if (typeof window !== "undefined") {
+        // Llamar al endpoint de refresh-token
+        const refreshResponse = await apiClient.get('/v1/auth/refresh-token')
+
+        if (refreshResponse.status === 200) {
+          // Token refrescado exitosamente
+          isRefreshing = false
+          onRefreshed('refreshed')
+
+          // Reintentar la petición original
+          return apiClient(originalRequest)
+        }
+      } catch (refreshError) {
+        // Si el refresh falla, limpiar estado y redirigir
+        isRefreshing = false
+        refreshSubscribers = []
+
+        // Redirigir al login solo si no estamos ya en una ruta de autenticación
+        if (typeof window !== "undefined" && !window.location.pathname.startsWith('/auth/')) {
           window.location.href = "/auth/login"
         }
-        return Promise.reject(err)
+        return Promise.reject(refreshError)
       }
     }
 
