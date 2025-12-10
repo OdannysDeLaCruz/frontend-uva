@@ -49,4 +49,5 @@ export interface PublicUserDto {
   username: string;
   hasChildren: boolean;
   parentId?: number | null;
+  isActive: boolean;
 }
