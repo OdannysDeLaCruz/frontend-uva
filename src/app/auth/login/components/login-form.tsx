@@ -9,6 +9,7 @@ import { Button } from "@/app/core/ui/button"
 import { Input } from "@/app/core/ui/input"
 import { Label } from "@/app/core/ui/label"
 import { login as authServiceLogin } from "@/app/core/services/auth-service"
+import { getUser } from "@/app/core/services/user-service"
 import { useAuth } from "@/app/core/contexts/auth-context"
 import { ApiError } from "@/app/core/utils/error-handler"
 
@@ -52,16 +53,9 @@ export default function LoginForm() {
         password: formData.password,
       })
 
-      // Obtener la info completa del usuario desde /api/user
-      const userResponse = await fetch('/api/user', {
-        method: 'GET',
-        credentials: 'include'
-      })
-
-      if (userResponse.ok) {
-        const fullUser = await userResponse.json()
-        setUser(fullUser)
-      }
+      // Obtener la info completa del usuario
+      const fullUser = await getUser()
+      setUser(fullUser)
 
       // El middleware redirigirá automáticamente a /dashboard
     } catch (error: ApiError | unknown) {

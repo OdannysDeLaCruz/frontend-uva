@@ -3,6 +3,7 @@
 import { createContext, useContext, type ReactNode, useCallback, useState, useEffect } from "react"
 import type { User } from "@/app/core/types/user"
 import { logoutAction } from "@/app/actions/auth"
+import { getUser } from "@/app/core/services/user-service"
 
 // Tipo simplificado para el contexto de autenticación
 type AuthContextType = {
@@ -27,21 +28,20 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
 
-  // Al montar el proveedor, obtener usuario desde /api/user si hay sesión activa
+  // Al montar el proveedor, obtener usuario si hay sesión activa
+  // Solo en rutas protegidas, no en rutas de autenticación
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/user', {
-          method: 'GET',
-          credentials: 'include'
-        })
+      // No intentar obtener usuario en rutas de autenticación
+      if (typeof window !== 'undefined' && window.location.pathname.startsWith('/auth/')) {
+        return
+      }
 
-        if (response.ok) {
-          const userData = await response.json()
-          setUser(userData)
-        }
-        // Si no es ok (401), no hay sesión activa, user permanece null
+      try {
+        const userData = await getUser()
+        setUser(userData)
       } catch (error) {
+        // Si falla (401), no hay sesión activa, user permanece null
         console.error('Error fetching user on mount:', error)
       }
     }
