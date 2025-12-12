@@ -98,10 +98,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       children: []
     },
     {
-      id: 'ahorro',
+      id: 'ahorros',
       label: 'Ahorro',
       icon: <Wallet size={20} />,
-      href: '/dashboard/ahorro',
+      href: '/dashboard/ahorros',
       isActive: false,
       children: []
     },
@@ -183,14 +183,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       id: 'recompensas',
       label: 'Recompensas',
       icon: <Wallet size={20} />,
+      href: '/dashboard/recompensas',
       isActive: false,
       children: []
     },
     {
-      id: 'uvasueno',
+      id: 'uvasuenos',
       label: 'UVA Sueño',
       icon: <User size={20} />,
-      href: '/dashboard/uvasueno',
+      href: '/dashboard/uvasuenos',
       isActive: false,
       children: []
     },
