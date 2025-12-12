@@ -46,9 +46,16 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
           }}
           className={`
             w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer
-            ${level === 0 ? 'font-semibold text-gray-700 hover:bg-purple-400 hover:text-white' : 'text-gray-700 hover:bg-white'}
-            ${isSelected ? 'bg-purple-600 text-white' : ''}
-            ${level > 0 ? 'pl-' + (4 + level * 4) : ''}
+            ${level === 0
+              ? 'font-semibold hover:bg-purple-400 hover:text-white'
+              : 'pl-8 hover:bg-purple-100'
+            }
+            ${isSelected
+              ? 'bg-purple-600 text-white'
+              : level === 0
+                ? 'text-gray-700'
+                : 'text-gray-600 bg-gray-50'
+            }
           `}
         >
           <span className="uppercase text-sm">{category.name}</span>
@@ -60,7 +67,7 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
         </button>
 
         {hasSubcategories && isExpanded && (
-          <div className="bg-purple-800">
+          <div className="bg-white">
             {category.subcategories!.map((subcat) => renderCategory(subcat, level + 1))}
           </div>
         )}
@@ -78,9 +85,9 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
         {/* Back */}
         <button
           onClick={() => router.push('/dashboard/aliados')}
-          className="flex gap-2 p-0 py-3 text-left font-semibold uppercase transition-colors text-purple-700 hover:text-purple-900 cursor-pointer"
+          className="flex items-center gap-2 p-0 py-3 text-left font-semibold uppercase transition-colors text-purple-700 hover:text-purple-900 cursor-pointer"
         >
-          <ChevronLeft size={16} /> Volver
+          <ChevronLeft size={16} /> CATEGORIAS
         </button>
       </div>
 
