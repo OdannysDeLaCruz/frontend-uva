@@ -9,7 +9,10 @@ interface AlliesLayoutProps {
 
 const AlliesLayout: React.FC<AlliesLayoutProps> = ({ sidebar, children }) => {
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div
+      className="flex min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: 'url(/images/aliados/comercios.png)' }}
+    >
       {sidebar}
       <main className="flex-1">
         {children}
