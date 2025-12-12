@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/layout/Layout';
-import { AlertCircle, RefreshCw, User } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { AlertCircle, RefreshCw, X } from 'lucide-react';
 import { assignParentToUser, getTanqueAffiliates } from '@/app/core/services/user-service';
 import { useAuth } from '@/app/core/contexts/auth-context';
 import { PublicUserDto } from '@/app/core/types/user';
@@ -16,7 +15,6 @@ import toast, { Toaster } from 'react-hot-toast';
 
 
 const TanquePage: React.FC = () => {
-  const { theme } = useTheme();
   const { user } = useAuth();
 
   const [tanqueAffiliates, setTanqueAffiliates] = useState<PublicUserDto[]>([]);
@@ -89,35 +87,32 @@ const TanquePage: React.FC = () => {
     fetchTanqueUsers();
   }, [user]);
 
-  const tanqueAffiliatesItems = tanqueAffiliates.map((affiliate) => (
-    <li key={affiliate.id}>
-      <div
-        className={`
-          flex flex-col justify-between border border-l-3 p-2 mb-2
-          ${theme === 'dark' ? 'border-gray-700 hover:bg-gray-750' : 'border-gray-200 hover:bg-gray-50'}
-          cursor-pointer
-        `}
-      >
-        {/* Icono de usuario */}
-        <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
-            theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'
-          } mr-2 flex-shrink-0`}
+  const tanqueAffiliatesRows = tanqueAffiliates.map((affiliate, index) => (
+    <tr
+      key={affiliate.id}
+      className={`
+        ${index % 2 === 0 ? 'bg-purple-500' : 'transparent'}
+        hover:opacity-90 transition-opacity
+      `}
+    >
+      <td className="px-2 py-3 text-white font-bold text-center w-12">
+        {index + 1}
+      </td>
+      <td className="px-4 py-3 text-white">
+        <div className="flex flex-col">
+          <p className="font-medium text-xl">{affiliate.name} {affiliate.lastname}</p>
+          {/* <p className="text-xs opacity-80">{affiliate.username}</p> */}
+        </div>
+      </td>
+      <td className="px-4 py-3 text-right">
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg cursor-pointer uppercase text-sm"
+          onClick={() => handleToggleModal(affiliate)}
         >
-          <User size={15} />
-        </div>
-      
-        {/* Información del usuario */}
-        <div className="flex-1 flex items-center flex-wrap justify-between overflow-hidden pr-2">
-          <div className="flex flex-col mb-1">
-            <p className="font-medium text-sm truncate">{affiliate.name} {affiliate.lastname}</p>
-            <p className={`text-xs truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{affiliate.username}</p>
-          </div>
-          <div className="flex justify-end">
-            <button className="text-xs text-blue-500 bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded cursor-pointer" onClick={() => handleToggleModal(affiliate)}>Asignar un padre</button>
-          </div>
-        </div>
-      </div>
-    </li>
+          Colocación
+        </button>
+      </td>
+    </tr>
   ));
 
   if (loadingInitial) {
@@ -177,14 +172,26 @@ const TanquePage: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex flex-col mb-6">
-          <h2 className="text-2xl font-semibold">Mi tanque</h2>
-          <p className="text-sm text-gray-500">Pendientes por asignar: {tanqueAffiliates.length}</p>
+        <div className="flex items-center mb-6">
+          <h2 className="text-3xl text-blue-100 font-semibold text-nowrap mr-6">UVA AMIGOS</h2>
+          <div className='w-full h-[1px] bg-blue-200'></div>
+          {/* <p className="text-sm text-gray-500">Pendientes por asignar: {tanqueAffiliates.length}</p> */}
         </div>
         <div className="flex flex-col gap-6">
-          <ul>
-            {tanqueAffiliatesItems}
-          </ul>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="text-white">
+                  <th className="px-2 py-3 text-center font-semibold text-xl w-12">#</th>
+                  <th className="px-4 py-3 text-left font-semibold text-xl">TANK (Reserva)</th>
+                  <th className="px-4 py-3 text-right font-semibold text-xl">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tanqueAffiliatesRows}
+              </tbody>
+            </table>
+          </div>
         </div>
         {showModal && (
           // Modal backdrop
@@ -192,14 +199,16 @@ const TanquePage: React.FC = () => {
             <div className="flex flex-col p-4 bg-white rounded-lg z-50 w-[400px]" onClick={(e) => e.stopPropagation()}>
               <div className="flex flex-col items-start justify-between">
                 <div className="flex items-center justify-between w-full">
-                  <h2 className="text-lg font-semibold text-gray-900">Buscar un padre para:</h2>
-                  <button onClick={() => handleToggleModal(null)} className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-2 py-1 rounded cursor-pointer">Cerrar</button>
+                  <h2 className="text-lg font-semibold text-gray-900">Colocación en estructura de referidos</h2>
+                  <button onClick={() => handleToggleModal(null)} className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-1 rounded cursor-pointer">
+                    <X size={24} />
+                  </button>
                 </div>
                 <div className="mt-4 text-sm text-gray-500 border border-green-500 w-full p-2 mb-2 rounded bg-green-50">
-                  <div className="flex flex-col">
-                    <p><strong>Nombre:</strong> {affiliateToAssign.name}</p>
-                    <p><strong>Apellido:</strong> {affiliateToAssign.lastname}</p>
-                    <p><strong>Usuario:</strong> {affiliateToAssign.username}</p>
+                  <div className="text-center">
+                    <p><strong>Colocando a:</strong> <br /> {affiliateToAssign.name} {affiliateToAssign.lastname}</p>
+                    {/* <p><strong>Apellido:</strong> {affiliateToAssign.lastname}</p> */}
+                    {/* <p><strong>Usuario:</strong> {affiliateToAssign.username}</p> */}
                   </div>
                 </div>
 
@@ -207,23 +216,23 @@ const TanquePage: React.FC = () => {
               {/* Buscador de padreas por codigo de referido */}
 
               <form action="" onSubmit={searchParentByReferralCode}>
-                <Label htmlFor="parentId" className="block text-sm font-medium text-gray-700 my-4">
-                  Ingresa el codigo de referido
+                <Label htmlFor="parentId" className="block text-base font-medium text-gray-700 my-4 text-center">
+                  ¿A bajo de quien quieres colocarlo?
                 </Label>
                 <Input
                   required
                   id="parentId"
                   name="parentId"
                   type="text"
-                  placeholder="Por ejemplo: BL8IG0G9"
+                  placeholder="Ingresa el codigo de referido, ej: BL8IG0G9"
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value)}
-                  className={`block w-full px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:shadow-none mb-4`}
+                  className={`block w-full px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:shadow-none mb-6 bg-white outline-none text-center`}
                 />
                 <Button 
                   type="submit"
                   disabled={searchingParent}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 cursor-pointer"
                 >
                   {searchingParent ? (
                     <RefreshCw size={24} className="animate-spin mr-2" />
@@ -236,12 +245,12 @@ const TanquePage: React.FC = () => {
                 {parentToAssign && (
                   <div className="flex mt-4">
                     <div className="flex flex-col mb-2 w-full">
-                      <p className="text-sm font-medium text-gray-500">Padre encontrado:</p>
+                      <p className="text-sm font-medium text-gray-500">Resultados</p>
                       <div className="flex justify-between items-center mt-4 text-sm text-gray-500 border border-green-500 w-full p-2 mb-2 rounded bg-green-50">
                         <div className="flex flex-col">
                           <p><strong>Nombre:</strong> {parentToAssign.name}</p>
                           <p><strong>Apellido:</strong> {parentToAssign.lastname}</p>
-                          <p><strong>Usuario:</strong> {parentToAssign.username}</p>
+                          <p><strong>Codigo:</strong> {parentToAssign.referralCode}</p>
                         </div>
                         <Button 
                           onClick={() => assignParent()}
@@ -251,7 +260,7 @@ const TanquePage: React.FC = () => {
                           {assigningParent ? (
                             <RefreshCw size={24} className="animate-spin mr-2" />
                           ) : (
-                            "ASIGNAR"
+                            "COLOCAR"
                           )}
                         </Button>
                       </div>
