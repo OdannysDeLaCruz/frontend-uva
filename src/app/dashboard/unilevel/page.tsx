@@ -5,7 +5,8 @@ import {
   // ChevronDown,
   // ChevronRight,
   // User, 
-  RefreshCw, AlertCircle } from 'lucide-react';
+  RefreshCw, AlertCircle, 
+  Copy} from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Layout from '../components/layout/Layout';
@@ -85,6 +86,7 @@ const TreeViewPage: React.FC = () => {
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingChildren, setLoadingChildren] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const { user } = useAuth();
 
@@ -153,6 +155,14 @@ const TreeViewPage: React.FC = () => {
     }
   }, []);
 
+  const handleCopyReferralCode = useCallback((code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => {
+      setCopiedCode(null);
+    }, 5000);
+  }, []);
+
   // Lista aplanada de nodos visibles para el virtualizador
   const flatRows = React.useMemo(
     () => flattenTree(treeData, expandedNodes, loadingChildren),
@@ -175,27 +185,27 @@ const TreeViewPage: React.FC = () => {
 
   // "Expandir Todo" y "Colapsar Todo" ahora operan sobre los nodos YA CARGADOS.
   // Expandir todos los nodos no cargados recursivamente podría ser muy costoso en API calls.
-  const expandAllLoaded = () => {
-    const newExpanded: Record<string, boolean> = {};
+  // const expandAllLoaded = () => {
+  //   const newExpanded: Record<string, boolean> = {};
 
-    const recurse = (nodes: UserNode[]) => {
-      nodes.forEach(node => {
-        if (node.hasChildren && node._childrenLoaded && node.children && node.children.length > 0) {
-          newExpanded[node.id] = true;
-          recurse(node.children);
-        } else if (node.hasChildren && !node._childrenLoaded) {
-            // Opcional: podrías iniciar la carga de nodos de primer nivel no cargados
-            // handleToggleNode(node as FlatUserNode); // Cuidado con llamadas masivas
-        }
-      });
-    };
-    recurse(treeData);
-    setExpandedNodes(newExpanded);
-  };
+  //   const recurse = (nodes: UserNode[]) => {
+  //     nodes.forEach(node => {
+  //       if (node.hasChildren && node._childrenLoaded && node.children && node.children.length > 0) {
+  //         newExpanded[node.id] = true;
+  //         recurse(node.children);
+  //       } else if (node.hasChildren && !node._childrenLoaded) {
+  //           // Opcional: podrías iniciar la carga de nodos de primer nivel no cargados
+  //           // handleToggleNode(node as FlatUserNode); // Cuidado con llamadas masivas
+  //       }
+  //     });
+  //   };
+  //   recurse(treeData);
+  //   setExpandedNodes(newExpanded);
+  // };
 
-  const collapseAll = () => {
-    setExpandedNodes({});
-  };
+  // const collapseAll = () => {
+  //   setExpandedNodes({});
+  // };
 
   if (loadingInitial) {
     return (
@@ -220,38 +230,52 @@ const TreeViewPage: React.FC = () => {
     );
   }
 
-  if ( treeData.length === 0 ) {
-    return (
-      <div>Sin referidos</div>
-    )
-  }
+  // if ( treeData.length === 0 ) {
+  //   return (
+  //     <Layout>
+  //       <div className="p-4 flex items-center justify-center">
+  //         <AlertCircle size={32} className="mb-2" />
+  //         <p>Sin Extructura de referidos</p>
+  //       </div>
+  //     </Layout>
+  //   )
+  // }
 
   return (
     <Layout>
       <div className="space-y-6 p-1 md:p-4">
+        <div className="flex items-center mb-6">
+          <h2 className="text-3xl text-blue-100 font-semibold text-nowrap mr-6">UVA AMIGOS</h2>
+          <div className='w-full h-[1px] bg-blue-200'></div>
+        </div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold">Tus referidos</h2>
-          <div className="flex space-x-2">
+          <h2 className="text-xl font-semibold uppercase">Estructura de referidos / unilevel</h2>
+          {/* <div className="flex space-x-2">
             <button
-              onClick={expandAllLoaded}
-              className={`px-3 py-1 text-sm rounded-md ${
-                theme === 'dark' ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'
+            onClick={expandAllLoaded}
+            className={`px-3 py-1 text-sm rounded-md ${
+              theme === 'dark' ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'
               } transition-colors duration-200`}
-            >
+              >
               Expandir Cargados
-            </button>
-            <button
+              </button>
+              <button
               onClick={collapseAll}
               className={`px-3 py-1 text-sm rounded-md ${
                 theme === 'dark' ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'
-              } transition-colors duration-200`}
-            >
-              Colapsar Todo
-            </button>
-          </div>
+                } transition-colors duration-200`}
+                >
+                Colapsar Todo
+                </button>
+                </div> */}
         </div>
-
+        
         {error && <div className="p-2 mb-2 text-sm text-red-600 bg-red-100 border border-red-300 rounded-md">{error}</div>}
+        
+        {treeData.length === 0 && (
+          <p>Sin estructura de referidos áun.</p>
+        )}
+
         
         <div
           ref={parentRef} // Asignar ref al contenedor scrollable
@@ -326,14 +350,25 @@ const TreeViewPage: React.FC = () => {
                   {/* Información del usuario */}
                   <div className="flex-1 overflow-hidden pr-2">
                     <span className='flex items-center'>
-                      <p className="font-medium text-md truncate">{node.name}</p>
+                      <p className="font-medium text-md truncate">
+                        {node.name} {node.lastname}
+                      </p>
                       
                       {/* Tag estatus */}
                       <div className={`bg-${node.isActive ? "green" : "red"}-500 flex items-center justify-center text-white rounded p-1 uppercase ml-2 text-[10px] leading-none`}>
                         { node.isActive ? 'Activo': 'Inactivo' }
                       </div>
                     </span>
-                    <p className={`text-xs truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{node.username} ({node.email})</p>
+                    <p className="text-xs truncate text-gray-400">
+                      {node.username} , {node.email} , code: {node.referralCode}
+                      {copiedCode === node.referralCode ? (
+                        <span className='ml-2 text-green-500 font-semibold'>Copiado</span>
+                      ) : (
+                        <button className='ml-2' onClick={(e) => { e.stopPropagation(); handleCopyReferralCode(node.referralCode); }}>
+                          <Copy size={12} />
+                        </button>
+                      )}
+                    </p>
                   </div>
                 </div>
               );
