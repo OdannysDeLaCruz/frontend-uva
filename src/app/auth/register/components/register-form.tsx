@@ -19,7 +19,6 @@ import { MODES } from "@/app/core/constants"
 import { register as authServiceRegister } from "@/app/core/services/auth-service"
 
 import 'react-phone-number-input/style.css'
-import { useAuth } from "@/app/core/contexts/auth-context"
 
 type RegisterFormProps = {
   mode: 'automatic' | 'manual';
@@ -47,12 +46,6 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
     password: "",
     confirmPassword: "",
   })
-
-  const { token } = useAuth()
-
-  if (token) {
-    router.replace("/dashboard")
-  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -599,7 +592,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
       <ServerAlert
         open={!!error}
         onOpenChange={() => setError(null)}
-        title="Error de registro"
+        title="Atención"
         description={error || "Ha ocurrido un error al procesar tu solicitud. Por favor, inténtalo de nuevo."}
         variant="error"
         confirmText="Entendido"

@@ -4,7 +4,7 @@ interface WelcomeSectionProps {
   userName?: string;
 }
 
-const WelcomeSection: React.FC<WelcomeSectionProps> = ({ userName = 'Usuario' }) => {
+const WelcomeSection: React.FC<WelcomeSectionProps> = ({ userName }) => {
   return (
     <div className="bg-blue-600 p-3 rounded-xl border-2 border-blue-400">
       <div className="flex items-center justify-between">

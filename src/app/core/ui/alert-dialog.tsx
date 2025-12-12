@@ -222,10 +222,10 @@ const ServerAlert = ({
       <AlertDialogContent variant={variant} onClose={() => onOpenChange(false)}>
         <AlertDialogHeader className="flex items-center">
           {icon}
-          <AlertDialogTitle>
+          <AlertDialogTitle className={variant === "error" ? 'text-red-600' : 'text-gray-600' }>
             {title || (variant === "error" ? "Error" : variant === "warning" ? "Advertencia" : variant === "success" ? "Éxito" : "Información")}
           </AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogDescription className={variant === "error" ? 'text-red-600' : 'text-gray-600' }>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-4">
           {showCancel && (
