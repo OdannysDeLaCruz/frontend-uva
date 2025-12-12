@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { PartnerCategory } from '@/app/core/types/partner-category'
+import Image from 'next/image'
 
 interface AlliesSidebarProps {
   categories: PartnerCategory[]
@@ -15,6 +17,7 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
   selectedCategoryId,
   onCategorySelect,
 }) => {
+  const router = useRouter()
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set())
 
   const toggleCategory = (categoryId: number) => {
@@ -42,9 +45,9 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
             onCategorySelect(category.id)
           }}
           className={`
-            w-full flex items-center justify-between px-4 py-3 text-left transition-colors
-            ${level === 0 ? 'font-semibold text-white hover:bg-purple-600' : 'text-gray-300 hover:bg-purple-700'}
-            ${isSelected ? 'bg-purple-600' : ''}
+            w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer
+            ${level === 0 ? 'font-semibold text-gray-700 hover:bg-purple-400 hover:text-white' : 'text-gray-700 hover:bg-white'}
+            ${isSelected ? 'bg-purple-600 text-white' : ''}
             ${level > 0 ? 'pl-' + (4 + level * 4) : ''}
           `}
         >
@@ -66,9 +69,19 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
   }
 
   return (
-    <aside className="w-64 bg-purple-900 min-h-screen flex flex-col">
+    <aside className="w-64 bg-white min-h-screen flex flex-col">
+      {/* Logo de UVA */}
+      <div className='flex items-center justify-center p-4'>
+        <Image src="/images/logo.png" alt="Logo UVA" width={300} height={300} className='w-50' />
+      </div>
       <div className="p-4 border-b border-purple-700">
-        <h2 className="text-xl font-bold text-white uppercase">Categorías</h2>
+        {/* Back */}
+        <button
+          onClick={() => router.push('/dashboard/aliados')}
+          className="flex gap-2 p-0 py-3 text-left font-semibold uppercase transition-colors text-purple-700 hover:text-purple-900 cursor-pointer"
+        >
+          <ChevronLeft size={16} /> Volver
+        </button>
       </div>
 
       <button
