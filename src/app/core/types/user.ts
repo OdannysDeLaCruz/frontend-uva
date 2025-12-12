@@ -50,4 +50,16 @@ export interface PublicUserDto {
   hasChildren: boolean;
   parentId?: number | null;
   isActive: boolean;
+  referralCode: string;
+}
+
+export interface RewardsCount {
+  rewardsAvailable: number;
+  accumulatedRewards: number;
+  rewardsDelivered: number;
+}
+export interface ReferralMarketingCount {
+  direct: number;
+  structure: number;
+  tanque: number;
 }

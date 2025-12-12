@@ -1,15 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CircleMetric from './CircleMetric';
+import { useAuth } from '@/app/core/contexts/auth-context';
+import { getReferralMarketingCount } from '@/app/core/services/user-service';
 
 
 const ReferralMarketingSection: React.FC = () => {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(value);
-  };
+  const [directs, setDirects] = useState(0)
+  const [structure, setStructure] = useState(0)
+  const [tank, setTank] = useState(0)
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const init = async () => {
+      const referralMarketing = await getReferralMarketingCount(user?.id || 0)
+      console.log(referralMarketing)
+      setDirects(referralMarketing.direct)
+      setStructure(referralMarketing.structure)
+      setTank(referralMarketing.tanque)
+    }
+    init()
+  })
+
+  
 
   return (
     <div className="w-full">
@@ -21,15 +34,15 @@ const ReferralMarketingSection: React.FC = () => {
       <div className="flex gap-22 justify-center items-end">
         <CircleMetric
           label="DIRECTOS"
-          value={formatCurrency(17)}
+          value={directs}
         />
         <CircleMetric
           label="ESTRUCTURA"
-          value={formatCurrency(140)}
+          value={structure}
         />
         <CircleMetric
           label="TANQUE"
-          value={formatCurrency(3)}
+          value={tank}
         />
       </div>
     </div>

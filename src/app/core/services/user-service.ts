@@ -1,4 +1,4 @@
-import { User, PublicUserDto } from "@/app/core/types/user";
+import { User, PublicUserDto, RewardsCount, ReferralMarketingCount } from "@/app/core/types/user";
 import { handleAxiosError } from "@/app/core/utils/error-handler";
 import apiClient from "@/app/core/services/api-client";
 import { AssignParentDto } from "@/app/core/types/mlm";
@@ -46,6 +46,25 @@ export async function getTanqueAffiliates(parentId: number): Promise<PublicUserD
     return response.data
   } catch (error) {
     return Promise.reject(handleAxiosError(error, "obtener usuarios del tanque"))
+  }
+}
+
+export async function getRewardsCount(user_id: number): Promise<RewardsCount> {
+  try {
+    const response = await apiClient.get(`/v1/users/${user_id}/rewards/count`)
+    return response.data
+  } catch (error) {
+    return Promise.reject(handleAxiosError(error, "obtener datos de recompensas"))
+  }
+}
+
+export async function getReferralMarketingCount(user_id: number): Promise<ReferralMarketingCount> {
+  try {
+    const response = await apiClient.get(`/v1/users/${user_id}/referral-marketing/count`)
+    
+    return response.data
+  } catch (error) {
+    return Promise.reject(handleAxiosError(error, "obtener datos de marketing"))
   }
 }
 
