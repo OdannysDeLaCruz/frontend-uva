@@ -24,7 +24,7 @@ function App() {
           <MembershipSection
             monthlyContribution={60000}
             nextContributionDate="2025-11-27"
-            membershipStatus="Activa"
+            isActive={user?.isActive}
           />
 
           {/* Métricas principales */}
