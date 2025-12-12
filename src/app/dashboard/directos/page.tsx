@@ -16,13 +16,13 @@ const UnilevelPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
 
-  const fetchDirectos = useCallback(async () => {
+  const fetchDirectos = useCallback(async (showToast = false) => {
     try {
       setRefreshing(true)
       const response = await getDirectos()
       setData(response)
       setError(null)
-      if (refreshing) {
+      if (showToast) {
         toast.success('Directos actualizados')
       }
     } catch (err) {
@@ -33,11 +33,11 @@ const UnilevelPage: React.FC = () => {
       setLoading(false)
       setRefreshing(false)
     }
-  }, [refreshing])
+  }, [])
 
   useEffect(() => {
     fetchDirectos()
-  }, [fetchDirectos, refreshing])
+  }, [fetchDirectos])
 
   if (loading) {
     return (
@@ -76,7 +76,7 @@ const UnilevelPage: React.FC = () => {
             </p>
           </div>
           <button
-            onClick={fetchDirectos}
+            onClick={() => fetchDirectos(true)}
             className="text-purple-500 hover:text-purple-400 ml-4"
           >
             <RefreshCw className="h-4 w-4" />
@@ -187,7 +187,7 @@ const UnilevelPage: React.FC = () => {
               </p>
             </div>
             <button
-              onClick={fetchDirectos}
+              onClick={() => fetchDirectos(true)}
               disabled={refreshing}
               className="p-2 rounded-lg hover:bg-purple-500/20 transition-colors disabled:opacity-50"
             >
