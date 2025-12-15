@@ -10,7 +10,7 @@ export default function MembershipPaymentPage() {
   return (
     <Layout>
       <section className="mb-8">
-        <h1 className="text-4xl font-semibold text-sky-200 mb-6">MEMBRESÍA</h1>
+        <h1 className="text-4xl font-semibold text-sky-200 mb-6">ACTIVACIÓN</h1>
         <MembershipTabs />
       </section>
 
