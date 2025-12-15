@@ -245,7 +245,7 @@ const AllyDetailPage: React.FC = () => {
                     <li>UVA puede modificar o cancelar beneficios sin previo aviso.</li>
                   </ul>
                   <p className="mt-4">
-                    Al hacer clic en "Aceptar", confirma que ha leído y acepta estos términos y condiciones.
+                    Al hacer clic en Aceptar, confirma que ha leído y acepta estos términos y condiciones.
                   </p>
                 </div>
                 <div className="flex justify-end gap-4">

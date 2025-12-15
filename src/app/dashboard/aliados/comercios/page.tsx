@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
+import Image from 'next/image'
 import AlliesLayout from '../components/AlliesLayout'
 import AlliesSidebar from '../components/AlliesSidebar'
 import { getParentCategories } from '@/app/core/services/partner-categories-service'
 import { getAllies, getAlliesByCategory, searchAllies } from '@/app/core/services/allies-service'
 import { PartnerCategory } from '@/app/core/types/partner-category'
 import { Ally } from '@/app/core/types/ally'
-import Title from '@/app/dashboard/components/ui/Title'
 
 const ComerciosPage: React.FC = () => {
   const router = useRouter()
@@ -106,18 +106,16 @@ const ComerciosPage: React.FC = () => {
       }
     >
       <div className="p-6">
-        <Title title="UVA ALIADOS" />
-
         {/* Search Bar */}
-        <div className="mb-6 mt-6">
-          <div className="relative max-w-2xl">
+        <div className="flex items-center justify-center  mb-16 mt-6">
+          <div className="relative w-2xl">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
               placeholder="Buscar comercios..."
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -134,7 +132,7 @@ const ComerciosPage: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
             {allies.map((ally) => (
               <div
                 key={ally.id}
@@ -142,11 +140,15 @@ const ComerciosPage: React.FC = () => {
                 className="cursor-pointer group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
                 <div className="relative h-48 bg-gray-200">
-                  <img
-                    src={ally.photo}
-                    alt={ally.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  {ally.photo && ally.photo !== '' && (
+                    <Image
+                      src={ally.photo}
+                      alt={ally.name}
+                      width={500}
+                      height={500}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  )}
                 </div>
                 <div className="p-4 bg-white">
                   <h3 className="font-semibold text-lg text-gray-800 truncate">{ally.name}</h3>
