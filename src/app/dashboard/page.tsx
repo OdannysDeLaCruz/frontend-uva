@@ -22,7 +22,7 @@ function App() {
           </div>
 
           <MembershipSection
-            monthlyContribution={60000}
+            monthlyContribution={65900}
             nextContributionDate="2025-11-27"
             isActive={user?.isActive}
           />
