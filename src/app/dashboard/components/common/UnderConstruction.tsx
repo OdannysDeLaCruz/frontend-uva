@@ -31,7 +31,7 @@ const UnderConstruction: React.FC<UnderConstructionProps> = ({
       </h2>
 
       {/* Mensaje */}
-      <p className="text-lg text-gray-600 text-center max-w-2xl mb-8">
+      <p className="text-lg text-gray-400 text-center max-w-2xl mb-8">
         {message}
       </p>
 

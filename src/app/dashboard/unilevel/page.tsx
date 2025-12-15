@@ -14,6 +14,7 @@ import Layout from '../components/layout/Layout';
 import { getDirectUsers } from '@/app/core/services/user-service';
 import { PublicUserDto } from '@/app/core/types/user';
 import { useAuth } from '@/app/core/contexts/auth-context';
+import Title from '../components/ui/Title';
 
 // Interfaz para el nodo en nuestro estado, incluyendo el nivel y si los hijos ya fueron cargados
 export interface UserNode extends PublicUserDto {
@@ -244,10 +245,7 @@ const TreeViewPage: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-6 p-1 md:p-4">
-        <div className="flex items-center mb-6">
-          <h2 className="text-3xl text-blue-100 font-semibold text-nowrap mr-6">UVA AMIGOS</h2>
-          <div className='w-full h-[1px] bg-blue-200'></div>
-        </div>
+        <Title title="UVA AMIGOS" />
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold uppercase">Estructura de referidos / unilevel</h2>
           {/* <div className="flex space-x-2">

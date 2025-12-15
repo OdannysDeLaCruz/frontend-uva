@@ -188,7 +188,13 @@ const TanquePage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {tanqueAffiliatesRows}
+                { tanqueAffiliates.length == 0 && (
+                  <tr><td colSpan={3} className="text-center py-4">
+                    No hay usuarios en el tanque
+                    </td></tr>
+                )}
+
+                {tanqueAffiliates.length > 0 && tanqueAffiliatesRows}
               </tbody>
             </table>
           </div>

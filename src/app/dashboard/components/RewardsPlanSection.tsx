@@ -23,9 +23,9 @@ const RewardsPlanSection: React.FC = () => {
     const init = async () => {
       const rewards = await getRewardsCount(user?.id || 0)
       console.log(rewards)
-      setRewardsAvailable(rewards.rewardsAvailable)
-      setAccumulatedRewards(rewards.accumulatedRewards)
-      setRewardsDelivered(rewards.rewardsDelivered)
+      setRewardsAvailable(200000)
+      setAccumulatedRewards(250000)
+      setRewardsDelivered(320000)
     }
 
     init()
@@ -48,7 +48,7 @@ const RewardsPlanSection: React.FC = () => {
           value={formatCurrency(accumulatedRewards)}
         />
         <CircleMetric
-          label="ENTREGADO"
+          label="RETIRADO"
           value={formatCurrency(rewardsDelivered)}
         />
       </div>
