@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Settings, ChevronDown, Home, Trees as Tree, Cylinder, User } from 'lucide-react';
+import { LogOut, Settings, ChevronDown, Home, 
+  // Trees as Tree, 
+  // Cylinder, 
+  User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAuth } from '@/app/core/contexts/auth-context';
 import { useRouter } from 'next/navigation';
@@ -36,18 +39,18 @@ const ProfileDropdown: React.FC = () => {
       icon: <Home size={16} />,
       onClick: () => router.push('/dashboard')
     },
-    {
-      id: 'tree-view',
-      label: 'Vista de árbol',
-      icon: <Tree size={16} />,
-      onClick: () => router.push('/dashboard/tree-view')
-    },
-    {
-      id: 'tanque',
-      label: 'Mi tanque',
-      icon: <Cylinder size={16} />,
-      onClick: () => router.push('/dashboard/tanque')
-    },
+    // {
+    //   id: 'tree-view',
+    //   label: 'Vista de árbol',
+    //   icon: <Tree size={16} />,
+    //   onClick: () => router.push('/dashboard/tree-view')
+    // },
+    // {
+    //   id: 'tanque',
+    //   label: 'Mi tanque',
+    //   icon: <Cylinder size={16} />,
+    //   onClick: () => router.push('/dashboard/tanque')
+    // },
     {
       id: 'account',
       label: 'Cuenta',
