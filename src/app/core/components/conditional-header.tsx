@@ -22,7 +22,7 @@ export default function ConditionalHeader() {
   }
 
   // Páginas que deben mostrar el menú horizontal
-  const horizontalMenuPages = ['/ofrecemos', '/aprendizaje', '/ahorro', '/fidelizacion', '/programa']
+  const horizontalMenuPages = ['/ofrecemos', '/aprendizaje', '/incentivos', '/referidos']
   const shouldShowHorizontalMenu = horizontalMenuPages.includes(pathname)
 
   // Para páginas de auth (/auth/login, /auth/register): mostrar header sin navegación
