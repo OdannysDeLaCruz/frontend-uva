@@ -24,10 +24,10 @@ export default function Header({
   const menuItems = [
     { href: "/nosotros", label: "Nosotros" },
     { href: "/ofrecemos", label: "Ofrecemos" },
-    { href: "/membresia", label: "Membresía" },
+    { href: "/activacion-mensual", label: "Activación" },
     { href: "/aprendizaje", label: "Aprendizaje" },
-    { href: "/ahorro", label: "Ahorro" },
-    { href: "/fidelizacion", label: "Fidelización" },
+    { href: "/incentivos", label: "Incentivos" },
+    { href: "/referidos", label: "Referidos" },
     // { href: "/soporte", label: "Soporte" }
   ]
 

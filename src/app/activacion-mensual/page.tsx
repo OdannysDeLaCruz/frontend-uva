@@ -27,16 +27,16 @@ export default function Membresia() {
                 {/* Columna izquierda - Contenido */}
                 <article className="space-y-6">
                   <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-principal mb-4">
-                    Membresía
+                    Activación Mensual
                   </h1>
 
-                  <Image src="/images/membresia/aporte.webp" alt="Membresía" className="ml-auto" width={400} height={300} />
+                  <Image src="/images/membresia/aporte.webp" alt="Activacion mensual" className="ml-auto" width={400} height={300} />
 
                   <div className="text-gray-700 text-base">
 
-                    <p>El <strong className="text-principal md:text-lg italic">Aporte Mensual</strong>, es para el <strong className="text-principal md:text-lg italic">Sostenimiento de Membresía</strong>.</p> <br />
+                    <p>El <strong className="text-principal md:text-lg italic">Aporte Mensual</strong>, es para el <strong className="text-principal md:text-lg italic">Sostenimiento de la Activación Mensual</strong>.</p> <br />
 
-                    <p><strong className="italic">La Membresía</strong> te da derecho a <strong className="italic">Programas de Aprendizaje</strong> y a otros servicios inluidos como <strong className="italic">Valor Agregado.</strong></p>
+                    <p><strong className="italic">La Activación Mensual</strong> te da derecho a <strong className="italic">Programas de Aprendizaje</strong> y a otros servicios inluidos como <strong className="italic">Valor Agregado.</strong></p>
 
                     <p>Además, el Miembro de <strong className="italic">UVA</strong> podrá contar con otros <strong className="italic">Beneficios</strong> Adherentes a la misma Membresía, como: <strong className="italic">Ahorro Programado, Plan de Recompensas, Prestamos, Marketplace, etc..</strong></p>
                     

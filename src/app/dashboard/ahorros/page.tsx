@@ -9,7 +9,7 @@ const AhorrosPage: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-6 p-1 md:p-4">
-        <Title title="UVA AHORROS" />
+        <Title title="UVA INCENTIVOS POR LOGROS" />
 
         <UnderConstruction
           title="¡Tu futuro financiero comienza aquí!"

@@ -35,7 +35,7 @@ const items: OfrecemosItem[] = [
   {
     id: 4,
     image: "/images/ofrecemos/descuentos.webp",
-    description: "Una de los objetivos de UVA es lograr que sus miembros tengan opciones de compra dentro de una comunidad comercial que brinda Descuentos Especiales hasta del 50% de descuento real en productos y servicios de salud, entretenimiento, arte y educativos, entre muchos de los servicios entregados por los aliados de UVA. Estos descuentos son entregados al miembro con su Membresía Activa, ayudando a que nuestro miembro pueda ahorrar mucho dinero en sus compras cotidianas o en sus momentos de entretenimiento en familia o amistades."
+    description: "Una de los objetivos de UVA es lograr que sus miembros tengan opciones de compra dentro de una comunidad comercial que brinda Descuentos Especiales hasta del 50% de descuento real en productos y servicios de salud, entretenimiento, arte y educativos, entre muchos de los servicios entregados por los aliados de UVA. Estos descuentos son entregados al miembro con su Activación, ayudando a que nuestro miembro pueda ahorrar mucho dinero en sus compras cotidianas o en sus momentos de entretenimiento en familia o amistades."
   },
   {
     id: 5,

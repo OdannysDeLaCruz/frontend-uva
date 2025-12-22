@@ -37,7 +37,7 @@ export default function Nosotros() {
 
                     <p><strong className="font-bold text-principal">UVA</strong> dentro de sus objetivos, presenta un Programa de Aprendizaje y un Sistema de Ahorro impulsando la cultura de una educación financiera mediante Herramientas Fintech.</p>
 
-                    <p>Gracias a que el modelo de <strong>UVA</strong> es tipo Club, los miembros acceden a Beneficios Exclusivos, Descuentos Especiales y otros Servicios como Valor Agregado a su Membresía de Miembro Activo. Además, nuestro Sistema cuenta con un Programa de Fidelización, mediante un Marketing de Referidos con Recompensas Económicas por Referidos en un Plan de Recompensas a 10 Nivel.</p>
+                    <p>Gracias a que el modelo de <strong>UVA</strong> es tipo Club, los miembros acceden a Beneficios Exclusivos, Descuentos Especiales y otros Servicios como Valor Agregado a su Membresía de Miembro Activo. Además, nuestro Sistema cuenta con un Programa de Referidos, mediante un Marketing de Referidos con Recompensas Económicas por Referidos en un Plan de Recompensas a 10 Nivel.</p>
 
                     <p>Un tema bastante importante y ganador, es los sistemas de préstamo que vamos a tener, al igual, que la Compra y Venta de Propiedades entre los mismos <strong className="text-principal">Miembros Activos de UVA Club Fintech</strong>.</p>
                   </div>

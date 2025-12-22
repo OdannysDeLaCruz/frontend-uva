@@ -29,12 +29,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
 
   // Al montar el proveedor, obtener usuario si hay sesión activa
-  // Solo en rutas protegidas, no en rutas de autenticación
+  // Solo en rutas protegidas, no en rutas públicas
   useEffect(() => {
     const fetchUser = async () => {
-      // No intentar obtener usuario en rutas de autenticación
-      if (typeof window !== 'undefined' && window.location.pathname.startsWith('/auth/')) {
-        return
+      // Rutas públicas que no requieren autenticación
+      const publicRoutes = ['/', '/nosotros', '/ofrecemos', '/aprendizaje', '/incentivos', '/referidos', '/auth/']
+
+      // No intentar obtener usuario en rutas públicas
+      if (typeof window !== 'undefined') {
+        const currentPath = window.location.pathname
+        const isPublicRoute = publicRoutes.some(route =>
+          currentPath === route || currentPath.startsWith(route)
+        )
+
+        if (isPublicRoute) {
+          return
+        }
       }
 
       try {

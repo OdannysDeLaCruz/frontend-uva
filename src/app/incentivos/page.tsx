@@ -32,11 +32,11 @@ export default function Ahorro() {
                 {/* Columna izquierda - Contenido */}
                 <article className="space-y-6 mx-6 md:ml-20">
                   <h1 className="hidden md:block text-4xl md:text-5xl lg:text-7xl font-bold text-principal mb-6 mt-10">
-                    Ahorro
+                    Incentivos por Logros
                   </h1>
 
                   <div className="text-gray-700 text-base md:text-xl">
-                    <p>Para <strong className="text-principal">UVA</strong> es prioridad que sus Miembros logren sus objetivos de vida, y por eso es indispensable que cuenten con un <strong className="italic">Programa de Ahorros</strong> en donde los ahorradores puedan tener la posibilidad de ganar el 1% mensual sobre lo ahorrado en un tiempo de 6 a 12 meses o más tiempo, si así lo determina nuestro Miembro de <strong className="text-principal">UVA Club Fintech</strong>.</p> <br />
+                    <p>Para <strong className="text-principal">UVA</strong> es prioridad que sus Miembros logren sus objetivos de vida, y por eso es indispensable que cuenten con un <strong className="italic">Programa de Incentivos por Logros</strong> en donde los ahorradores puedan tener la posibilidad de ganar el 1% mensual sobre lo ahorrado en un tiempo de 6 a 12 meses o más tiempo, si así lo determina nuestro Miembro de <strong className="text-principal">UVA Club Fintech</strong>.</p> <br />
 
                     <p>El ahorro será mediante entidades en alianza con UVA y reguladas por la Superintendencia Financiera de Colombia (SFC) y regulaciones internacionales.</p>
                   </div>
@@ -47,7 +47,7 @@ export default function Ahorro() {
 
                   <Image
                     src="/images/ahorro/leyenda.webp"
-                    alt="Ahorro - UVA Club Fintech"
+                    alt="UVA Club Fintech"
                     width={600}
                     height={600}
                     className="w-full h-auto object-cover md:mt-10 mb-20"
@@ -56,7 +56,7 @@ export default function Ahorro() {
                 </article>
                 <div className="block md:hidden">
                   <h1 className="absolute top-8 right-8 text-4xl md:text-5xl lg:text-7xl font-bold text-principal mb-6 mt-10">
-                    Ahorro
+                    Incentivos por Logros
                   </h1>
                   <Image
                     src="/images/ahorro/ahorro-mobile.webp"
