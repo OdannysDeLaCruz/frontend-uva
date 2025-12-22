@@ -39,13 +39,13 @@ const items: OfrecemosItem[] = [
   },
   {
     id: 5,
-    image: "/images/ofrecemos/sorteo.webp",
-    description: "Una de las formas de premiar a nuestros miembros por su puntualidad en el aporte mensual del sostenimiento de membresía, es mediante la premiación mensual de 250 USD en Bonos de Compra, mediante un sorteo que se realizará por medio de una Lotería autorizada. El sorteo se realizará a finales de todos los meses, entre los días del 26 al 31, dependiendo del día del sorteo de la Lotería Cruz Roja en Colombia."
+    image: "/images/ofrecemos/incentivos-mensuales.png",
+    description: "UVA en agradecimiento a la Puntualidad del Aporte Mensual para Sostenimiento Administrativo y Logístico de UVA, premia a sus miembros con Bonos de Compra,  Productos o Servicios. Estos premios se entregan por medio de un Sorteo que se realizarán entre los días 25 al 31 de cada mes, mediante una Lotería propuesta por UVA, dar transparencia al sorteo."
   },
   {
     id: 6,
     image: "/images/ofrecemos/real-state.webp",
-    description: "Con UVA hay la posibilidad de hacer parte de compra y venta de propiedades sin que tengas mucho capital para comprar. Por eso, colocamos al alcance un sistema de colaboración mutua, en donde usted hace parte de la compra de una propiedad que adquiere UVA, y cuando la propiedad se vende, se reparten las ganancias de esa venta entre los amigos UVA que hicieron parte de esa compra. Además, dentro de nuestro Real Estate, se implementa una forma para comprar casa a un precio a su alcance. Cuando UVA alcance sus 20 mil miembros se abrirá la opción de los créditos para su vivienda propia, con un interés por debajo del 50% de las entidades de crédito."
+    description: "UVA da la posibilidad de que los UVA Amigos puedan participar en la Compra y Venta de Propiedades.  Por eso, UVA integra un Sistema Mutual Real State, donde UVA comunica a los UVA Amigos, para que participen en la compra y venta de una propiedad por medio de una Fiducia que se toma con el banco aliado a UVA.   Al venderse la propiedad, se reparten los dividendos de esa venta de manera proporcional a la participación económica que hizo cada UVA Amigo y todo mediante los términos establecidos en la Fiducia. Además, dentro de nuestro Real Estate Mutual, se implementa una forma para comprar casa a su alcance y hasta con el 5% de Descuento por ser un UVA AMIGO ACTIVO."
   },
   {
     id: 7,
@@ -59,13 +59,13 @@ const items: OfrecemosItem[] = [
   },
   {
     id: 9,
-    image: "/images/ofrecemos/fidelizacion.webp",
-    description: "Actualmente en el mundo existen muchas Startup de tienen servicios y productos que son útiles para el publico en general. Pero se puede decir que UVA es una de las primeras o bien sino, la “Primera Startup” que tiene como modelo de participación de Club y con funcionalidad de Fintech. Y es la primera Startup que tiene un Programa de Fidelización por medio de un Marketing de Referidos que entrega incentivos dentro un Plan de Recompensas a 10 Niveles. Además UVA, tiene el primer sistema de referidos a 10 niveles de Matriz Forzada y con sistema de colocación de referiods Manual y Automático, generando un derrame en una estructura unilevel de Marketing de Referidos. Esto significa, que usted con sólo hacer parte de nuestro sistema de UVA, va a generar ingresos por medio de nuestro bondadoso Plan de Recompensas sin tener que invitar a nadie."
+    image: "/images/ofrecemos/referidos.png",
+    description: "UVA Club Fintech es una Startup innovadora, por ofrece un Programa de Referidos con un Plan de Recompensas que premia a los UVA Amigos Activos en 10 niveles. Los UVA Amigos ganan Recompensas gracias a estar Activo con su Paquete UVA Mensual. Y como Plan de Recompensas es de una Matriz Forzada de 10x10, los UVA Amigos ganan recompensas por el “Derrame de Miembros Activos” que el Sistema genera ."
   },
   {
     id: 10,
-    image: "/images/ofrecemos/prestamos.webp",
-    description: "Hay muchas financieras en Colombia que se fundamentan en el recaudo y pestamo de dineros con uno intereses altos, que van hasta un 55% anual. Mientras que UVA busca reducir eso al 12% anual con su sistema disruptivo, que consiste en que el Amigo UVA por medio de su estructura de referidos pueda adquirir prestamos desde 500 mil pesos colombianos. Lo grandioso de este sistema de UVA, es que el Amigo UVA paga el préstamo con las mismas Recompensas ganas de su Marketing de Referidos. De está forma, todos los que estén en UVA podrán acceder a este beneficio necesario por muchas personas del diario vivir. Los prestamos son gestionados por medio de UVA como intermediadora con entidades financieras autorizadas y reguladas a nivel nacional e internacional."
+    image: "/images/ofrecemos/incentivos.png",
+    description: "UVA incentiva el Sentido de Pertenencia de los UVA Amigos, por medio de un premio, que es dar la posibilidad de que tengan un estudio de Crédito Personal y se le puedan aprobar Quinientos Mil Pesos Colombianos ($500.000) M/L.  El estudio y posible crédito, es realizado por la entidad Financiera aliada a UVA. Este incentivo, se gana por Lograr 30 Referidos Directos del Programa de Referidos de UVA."
   },
   {
     id: 11,
