@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { Home, Network, ChevronDown, ChevronUp, Cylinder, User, X, CreditCard, Wallet, Bolt, ShieldCheck, GlobeLock, GraduationCap, Binary, ArrowBigRightDash, ListTree, LogOut } from 'lucide-react';
+import { Home, Network, ChevronDown, ChevronUp, Cylinder, User, X, CreditCard, Wallet, Bolt, ShieldCheck, GlobeLock, GraduationCap, Binary, ArrowBigRightDash, ListTree } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/app/core/contexts/auth-context';
@@ -16,17 +16,20 @@ interface MenuItem {
   href?: string;
   children?: MenuItem[];
   isActive?: boolean;
+  show?: boolean
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const { theme } = useTheme();
-  const router = useRouter();
-  const pathname = usePathname();
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
     views: false
   });
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { theme } = useTheme();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user } = useAuth();
+  console.log("USER", user)
 
   // Detectar dispositivos móviles
   useEffect(() => {
@@ -62,9 +65,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     }
   }, [router, isMobile, onClose]);
 
-
-  const { user } = useAuth();
-
   const toggleSubmenu = (menuId: string) => {
     setExpandedMenus(prev => ({
       ...prev,
@@ -79,7 +79,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <Home size={20} />,
       href: '/dashboard',
       isActive: false,
-      children: []
+      children: [],
+      show: true
     },
     {
       id: 'membership',
@@ -87,7 +88,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <CreditCard size={20} />,
       href: '/dashboard/membership',
       isActive: false,
-      children: []
+      children: [],
+      show: true
     },
     {
       id: 'aprendizaje',
@@ -95,7 +97,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <GraduationCap size={20} />,
       href: '/dashboard/aprendizaje',
       isActive: false,
-      children: []
+      children: [],
+      show: user?.isActive
     },
     // {
     //   id: 'ahorros',
@@ -103,41 +106,47 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     //   icon: <Wallet size={20} />,
     //   href: '/dashboard/ahorros',
     //   isActive: false,
-    //   children: []
+    //   children: [],
+    // show: user?.isActive
     // },
     {
       id: 'perfil',
       label: 'Perfil',
       icon: <User size={20} />,
       isActive: false,
+      show: user?.isActive,
       children: [
         {
           id: 'kyc',
           label: 'KYC (verificación)',
           icon: <ShieldCheck size={18} />,
           href: '/dashboard/kyc',
-          isActive: false
+          isActive: false,
+          show: user?.isActive
         },
         {
           id: 'ajustes',
           label: 'Ajustes',
           icon: <Bolt size={18} />,
           href: '/dashboard/settings',
-          isActive: false
+          isActive: false,
+          show: user?.isActive
         },
         {
           id: 'seguridad',
           label: 'Seguridad',
           icon: <GlobeLock size={18} />,
           href: '/dashboard/seguridad',
-          isActive: false
+          isActive: false,
+          show: user?.isActive
         },
         {
           id: 'sorteo',
           label: 'Sorteo',
           icon: <Binary size={18} />,
           href: '/dashboard/sorteo',
-          isActive: false
+          isActive: false,
+          show: user?.isActive
         },
 
       ]
@@ -147,20 +156,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       label: 'UVAmigos',
       icon: <Network size={20} />,
       isActive: false,
+      show: user?.isActive,
       children: [
         {
           id: 'directos',
           label: 'Directos',
           icon: <ArrowBigRightDash size={20} />,
           href: '/dashboard/directos',
-          isActive: false
+          isActive: false,
+          show: user?.isActive
         },
         {
           id: 'unilevel',
           label: 'Unilevel',
           icon: <ListTree size={18} />,
           href: '/dashboard/unilevel',
-          isActive: false
+          isActive: false,
+          show: user?.isActive
         },
         {
           id: 'tanque',
@@ -168,6 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           icon: <Cylinder size={20} />,
           href: '/dashboard/tanque',
           isActive: false,
+          show: user?.isActive
         },
       ]
     },
@@ -177,7 +190,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <Wallet size={20} />,
       href: '/dashboard/aliados',
       isActive: false,
-      children: []
+      children: [],
+      show: user?.isActive
     },
     {
       id: 'recompensas',
@@ -185,7 +199,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <Wallet size={20} />,
       href: '/dashboard/recompensas',
       isActive: false,
-      children: []
+      children: [],
+      show: user?.isActive
     },
     {
       id: 'uvasuenos',
@@ -193,7 +208,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <User size={20} />,
       href: '/dashboard/uvasuenos',
       isActive: false,
-      children: []
+      children: [],
+      show: user?.isActive
     },
     {
       id: 'soporte',
@@ -201,17 +217,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <User size={20} />,
       href: '/dashboard/soporte',
       isActive: false,
-      children: []
-    },
-    {
-      id: '',
-      label: 'Cerrar sesión',
-      icon: <LogOut size={20} />,
-      href: '',
-      isActive: false,
-      children: []
-    },
-  ], []);
+      children: [],
+      show: user?.isActive
+    }
+  ], [user]);
   
   useEffect(() => {
     // poner en activo un item si la ruta es la misma del path
@@ -252,33 +261,37 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     const showText = isMobile ? true : (isOpen || isHovered);
 
     return (
-      <div key={item.id} className="mb-1">
-        <button
-          onClick={() => {
-            if (hasChildren) {
-              toggleSubmenu(item.id);
-            } else {
-              handleItemClick(item);
-            }
-          }}
-          className={`w-full flex items-center justify-between p-3 md:p-[8px] rounded-lg md:rounded-[5px] transition-all duration-200 ${activeClass} touch-manipulation`}
-          style={{ marginLeft: isMobile ? 0 : `${marginLeft}px` }}
-        >
-          <div className="flex items-center">
-            <span className="mr-3 text-lg md:text-base">{item.icon}</span>
-            {showText && <span className="transition-opacity duration-300 text-base md:text-[15px] font-medium leading-none">{item.label}</span>}
-          </div>
-          {hasChildren && showText && (
-            <span>{isExpanded ? <ChevronUp size={isMobile ? 20 : 16} /> : <ChevronDown size={isMobile ? 20 : 16} />}</span>
-          )}
-        </button>
+      <>
+       {item.show && (
+          <ul key={item.id} className="mb-1">
+            <button
+              onClick={() => {
+                if (hasChildren) {
+                  toggleSubmenu(item.id);
+                } else {
+                  handleItemClick(item);
+                }
+              }}
+              className={`w-full flex items-center justify-between p-3 md:p-[8px] rounded-lg md:rounded-[5px] transition-all duration-200 ${activeClass} touch-manipulation`}
+              style={{ marginLeft: isMobile ? 0 : `${marginLeft}px` }}
+            >
+              <div className="flex items-center">
+                <span className="mr-3 text-lg md:text-base">{item.icon}</span>
+                {showText && <span className="transition-opacity duration-300 text-base md:text-[15px] font-medium leading-none">{item.label}</span>}
+              </div>
+              {hasChildren && showText && (
+                <span>{isExpanded ? <ChevronUp size={isMobile ? 20 : 16} /> : <ChevronDown size={isMobile ? 20 : 16} />}</span>
+              )}
+            </button>
 
-        {hasChildren && isExpanded && showText && (
-          <div className="transition-all duration-300 ease-in-out mt-2 ml-4 md:ml-0">
-            {item.children?.map(child => renderMenuItem(child, depth + 1))}
-          </div>
-        )}
-      </div>
+            {hasChildren && isExpanded && showText && (
+              <div className="transition-all duration-300 ease-in-out mt-2 ml-4 md:ml-0">
+                {item.children?.map(child => renderMenuItem(child, depth + 1))}
+              </div>
+            )}
+          </ul>
+       )}
+      </>
     );
   };
 
