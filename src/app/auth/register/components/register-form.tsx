@@ -33,13 +33,13 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState(false)
-  const [documentType, setDocumentType] = useState<'natural' | 'juridica' | null>(null)
+  const [documentType] = useState<'natural' | 'juridica'>('natural')
   const [formData, setFormData] = useState({
     mode: mode,
     referrerCode: referrerCode,
     name: "",
     lastname: "",
-    documentType: "natural" as 'natural' | 'juridica',
+    documentType: documentType,
     doc_number: "",
     email: "",
     phone: "",
@@ -121,9 +121,9 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
     const errors: Record<string, string> = {}
 
     // Validar tipo de documento
-    if (!documentType) {
-      errors.documentType = "Debe seleccionar si es persona natural o jurídica"
-    }
+    // if (!documentType) {
+    //   errors.documentType = "Debe seleccionar si es persona natural o jurídica"
+    // }
 
     // Validar número de documento
     if (!formData.doc_number.trim()) {
@@ -194,9 +194,10 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
       // Llamar a la API para registrar al usuario
       const payload = {
         ...formData,
-        documentType: documentType || 'natural',
-        confirmPassword: undefined
+        // documentType: documentType || 'natural',
+        // confirmPassword: undefined
       }
+      console.log("Payload:", payload)
       const result = await authServiceRegister(payload)
 
       if (result.ok) {
@@ -264,7 +265,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
             </div>
 
             {/* Tipo de documento */}
-            <div>
+            {/* <div>
               <Label className="block text-sm font-medium text-white/90 mb-4">
                 Tipo de documento:
               </Label>
@@ -314,7 +315,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                   {fieldErrors.documentType}
                 </p>
               )}
-            </div>
+            </div> */}
 
             {/* Número de documento */}
             <div>
@@ -486,7 +487,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center hover:scale-110 transition-transform"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center hover:scale-110 transition-transform h-10"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -525,7 +526,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center hover:scale-110 transition-transform"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center hover:scale-110 transition-transform h-10"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
