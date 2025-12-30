@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 // import { WompiTransaction, WompiWidget } from '@/app/core/types/wompi';
 import { useWompiPayment } from '@/app/core/hooks/useWompiPayment';
+import Image from 'next/image';
 
 const ContributionsTab: React.FC = () => {
   const { 
@@ -65,31 +66,58 @@ const ContributionsTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Contribution Info */}
-      {/* <div className="glass p-6 rounded-xl border border-white/10">
-        <h3 className="text-lg font-semibold text-white mb-4">Información de Aportes</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white/5 p-4 rounded-lg">
-            <p className="text-gray-300 text-sm mb-2">Aporte Mensual</p>
-            <p className="text-2xl font-bold text-purple-400">$60.000 COP</p>
-          </div>
-          <div className="bg-white/5 p-4 rounded-lg">
-            <p className="text-gray-300 text-sm mb-2">Próximo Pago</p>
-            <p className="text-2xl font-bold text-purple-400">27 Nov 2025</p>
-          </div>
-          <div className="bg-white/5 p-4 rounded-lg">
-            <p className="text-gray-300 text-sm mb-2">Estado</p>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500/20 text-green-400">
-              Activa
-            </span>
-          </div>
-          <div className="bg-white/5 p-4 rounded-lg">
-            <p className="text-gray-300 text-sm mb-2">Total Aportado</p>
-            <p className="text-2xl font-bold text-purple-400">$900.000 COP</p>
+
+      <div className='grid grid-cols-3 gap-4'>
+        {/* Sección de Activación */}
+        <div className='col-span-1'>
+          <div className='flex flex-col'>
+            
+            <div className='grid grid-cols-5 border-2 border-sky-400 mb-4'>
+              <div className='col-span-2'>
+                <Image src="/images/cop.png" alt="Producto" width={100} height={100} />
+              </div>
+              <div className='col-span-3'>
+                <div className='flex flex-col p-2'>
+                  <h2 className='text-center text-xl text-sky-400 m-0 leading-none'>Activación</h2>
+                  <div className='border border-green-400 w-36 mx-auto mb-4'></div>
+                  <p className='text-center text-[14px] font-bold text-white mb-4'>Activación Mensual Primera Vez Se Recibe</p>
+                  <p className='text-center text-xs text-white'>
+                    Vinculación al Programa de Fidelización <br />
+                    Beneficios de Descuento Preferenciales <br />
+                    y Otros Servicios de Aliados UVA. <br />
+                    500gr de Cristal de Sábila
+                  </p>
+                  <div className='flex flex-col justify-start mx-auto w-36'>
+                    <p className='text-right text-4xl mt-4 text-white leading-none'>$ 82.900</p>
+                    <p className='text-right text-2xl text-white leading-none'>+IVA</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <p className='text-center text-2xl text-sky-400 font-semibold mb-2'>Aporte en COP</p>
+
+            <div className='flex flex-col justify-center border-2 border-sky-400 p-3'>
+              <p className='text-center text-xl'>Activación Mensual Primera Vez</p>
+              <div className='flex flex-col justify-start mx-auto w-48'>
+                <p className='text-right text-5xl mt-4 text-white leading-none'>$ 65.900</p>
+                <p className='text-right text-3xl text-white leading-none'>+IVA</p>
+              </div>
+              <button className="px-6 mt-4 text-xl bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors duration-200 border border-sky-500 mx-auto">
+                Pagar
+              </button>
+            </div>
+
           </div>
         </div>
-      </div> */}
+        {/* Sección de Crypto */}
+        <div className='col-span-2'>
+          <p className='text-center text-2xl text-sky-400 font-semibold mb-2'>Aporte en Crypto</p>
 
+        </div>
+      </div>
+      
       {/* Payment Button */}
       {/* <div className="flex justify-end">
         <button
