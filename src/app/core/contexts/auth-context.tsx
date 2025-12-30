@@ -33,13 +33,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchUser = async () => {
       // Rutas públicas que no requieren autenticación
-      const publicRoutes = ['/', '/nosotros', '/ofrecemos', '/aprendizaje', '/incentivos', '/referidos', '/auth/']
+      const publicRoutes = ['/nosotros', '/ofrecemos', '/aprendizaje', '/incentivos', '/referidos', '/auth/']
 
       // No intentar obtener usuario en rutas públicas
       if (typeof window !== 'undefined') {
         const currentPath = window.location.pathname
+
+        // Verificar si es la ruta raíz exactamente
+        if (currentPath === '/') {
+          return
+        }
+
+        // Verificar si es alguna otra ruta pública
         const isPublicRoute = publicRoutes.some(route =>
-          currentPath === route || currentPath.startsWith(route)
+          currentPath.startsWith(route)
         )
 
         if (isPublicRoute) {
