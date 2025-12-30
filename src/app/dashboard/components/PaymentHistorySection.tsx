@@ -12,11 +12,11 @@ interface Payment {
 
 const PaymentHistorySection = () => {
   const recentPayments: Payment[] = [
-    { id: 1, date: '2025-01-15', amount: 150000, status: 'Completado', type: 'Membresía Mensual' },
-    { id: 2, date: '2024-12-15', amount: 150000, status: 'Completado', type: 'Membresía Mensual' },
-    { id: 3, date: '2024-11-15', amount: 150000, status: 'Completado', type: 'Membresía Mensual' },
-    { id: 4, date: '2024-10-15', amount: 150000, status: 'Completado', type: 'Membresía Mensual' },
-    { id: 5, date: '2024-09-15', amount: 150000, status: 'Completado', type: 'Membresía Mensual' },
+    { id: 1, date: '2025-01-15', amount: 150000, status: 'Completado', type: 'Activación Mensual' },
+    { id: 2, date: '2024-12-15', amount: 150000, status: 'Completado', type: 'Activación Mensual' },
+    { id: 3, date: '2024-11-15', amount: 150000, status: 'Completado', type: 'Activación Mensual' },
+    { id: 4, date: '2024-10-15', amount: 150000, status: 'Completado', type: 'Activación Mensual' },
+    { id: 5, date: '2024-09-15', amount: 150000, status: 'Completado', type: 'Activación Mensual' },
   ];
   
   const formatCurrency = (amount: number) => {
