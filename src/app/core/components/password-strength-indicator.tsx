@@ -57,8 +57,8 @@ export default function PasswordStrengthIndicator({ password }: PasswordStrength
 
   return (
     <div className="mt-2">
-      <div className="flex items-center justify-between mb-1">
-        <div className="text-xs text-gray-500">Fortaleza de la contraseña:</div>
+      <div className="flex items-center mb-1">
+        <div className="text-xs text-gray-500 mr-1">Fortaleza de la contraseña:</div>
         <div
           className={`text-xs font-medium ${
             strength === 1 ? "text-red-500" : strength === 2 ? "text-yellow-500" : "text-green-500"
