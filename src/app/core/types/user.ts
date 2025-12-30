@@ -39,6 +39,7 @@ export interface User {
   membershipId: number
   parentId: number
   image: string
+  role: string
 }
 
 export interface PublicUserDto {

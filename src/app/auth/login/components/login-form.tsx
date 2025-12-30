@@ -25,10 +25,11 @@ export default function LoginForm() {
     password: "",
   })
 
-  // Si ya está autenticado, redirigir al dashboard
+  // Si ya está autenticado, redirigir según el rol
   useEffect(() => {
     if (user) {
-      router.replace("/dashboard")
+      const redirectPath = user.role === 'business' ? '/dashboard/comercios' : '/dashboard'
+      router.replace(redirectPath)
     }
   }, [user, router])
 
