@@ -41,6 +41,9 @@ const withAuth: MiddlewareFactory = (next) => {
     const accessToken = request.cookies.get("access_token")?.value
     const refreshToken = request.cookies.get("refresh_token")?.value
 
+    // Debug: ver todas las cookies
+    console.log("[Middleware] All cookies:", request.cookies.getAll())
+
     // Verificar si intenta acceder a una ruta protegida
     const isProtectedRoute = protectedRoutes.some((route) =>
       pathname.startsWith(route)
@@ -51,6 +54,9 @@ const withAuth: MiddlewareFactory = (next) => {
 
     // Si intenta acceder a una ruta protegida
     if (isProtectedRoute) {
+      console.log("[Middleware] Protected route accessed:", pathname)
+      console.log("[Middleware] Has access token:", !!accessToken)
+
       // Si no hay access_token
       if (!accessToken) {
         // Si hay refresh_token, intentar refrescar
@@ -88,8 +94,10 @@ const withAuth: MiddlewareFactory = (next) => {
         return NextResponse.redirect(loginUrl)
       }
 
-      // Verificar si el access_token es válido
+      // Verificar si el access_token es válido y obtener información del usuario
       try {
+        console.log("[Middleware] Verifying token...")
+        console.log("[Middleware] API URL:", process.env.NEXT_PUBLIC_API)
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API}/v1/auth/verify`,
           {
@@ -101,6 +109,8 @@ const withAuth: MiddlewareFactory = (next) => {
             credentials: "include"
           }
         )
+
+        console.log("[Middleware] Verify response status:", response.status)
 
         if (!response.ok) {
           // Token inválido, intentar refresh
@@ -135,6 +145,32 @@ const withAuth: MiddlewareFactory = (next) => {
           loginUrl.searchParams.set("redirect", pathname)
           return NextResponse.redirect(loginUrl)
         }
+
+        // Token válido, verificar restricciones de rol
+        const userResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API}/v1/auth/me`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Cookie: `access_token=${accessToken}`
+            },
+            credentials: "include"
+          }
+        )
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json()
+
+          // Si el usuario es de tipo "business"
+          if (userData.role === "business") {
+            // Y está intentando acceder a rutas del dashboard que NO sean /dashboard/comercios/*
+            if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/comercios")) {
+              // Redirigir a /dashboard/comercios
+              return NextResponse.redirect(new URL("/dashboard/comercios", request.url))
+            }
+          }
+        }
       } catch (error) {
         console.error("Error verifying token:", error)
         // En caso de error, permitir continuar (podría ser un problema de red temporal)
@@ -143,6 +179,33 @@ const withAuth: MiddlewareFactory = (next) => {
 
     // Si intenta acceder a login/register teniendo token, redirige a dashboard
     if (isAuthRoute && accessToken) {
+      // Verificar el rol del usuario para redirigir correctamente
+      try {
+        const userResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API}/v1/auth/me`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Cookie: `access_token=${accessToken}`
+            },
+            credentials: "include"
+          }
+        )
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json()
+          // Si es business, redirigir a su dashboard
+          const dashboardUrl = userData.role === "business"
+            ? "/dashboard/comercios"
+            : "/dashboard"
+          return NextResponse.redirect(new URL(dashboardUrl, request.url))
+        }
+      } catch (error) {
+        console.error("Error fetching user data for redirect:", error)
+      }
+
+      // Fallback: redirigir a dashboard general
       return NextResponse.redirect(new URL("/dashboard", request.url))
     }
 
