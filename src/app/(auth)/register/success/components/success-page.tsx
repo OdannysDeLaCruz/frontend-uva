@@ -90,7 +90,7 @@ export default function SuccessPageClient() {
                   <Link href="/">Ir al inicio</Link>
                 </Button>
                 <Button asChild className="gradient-bg hover:scale-105 transition-all duration-200 text-white font-semibold rounded-lg border border-white/20 shadow-lg hover:shadow-purple-500/25">
-                  <Link href="/auth/login">Iniciar sesión</Link>
+                  <Link href="/login">Iniciar sesión</Link>
                 </Button>
               </div>
             </CardFooter>

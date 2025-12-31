@@ -201,9 +201,9 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
       const result = await authServiceRegister(payload)
 
       if (result.ok) {
-        router.push("/auth/register/success")
+        router.push("/register/success")
         sessionStorage.setItem("cameFromRegister", "true");
-        router.replace("/auth/register/success")
+        router.replace("/register/success")
       }
     } catch (error: unknown) {
       console.error("Error de registro:", error)
@@ -582,7 +582,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
             <div className="text-center">
               <p className="text-sm text-white/70">
                 ¿Ya tienes cuenta?{" "} <br />
-                <Link href="/auth/login" className="font-medium text-purple-300 hover:text-purple-200 transition-colors underline underline-offset-2">
+                <Link href="/login" className="font-medium text-purple-300 hover:text-purple-200 transition-colors underline underline-offset-2">
                   Iniciar sesión aquí
                 </Link>
               </p>
