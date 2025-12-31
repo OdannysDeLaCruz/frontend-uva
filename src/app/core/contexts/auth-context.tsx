@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchUser = async () => {
       // Rutas públicas que no requieren autenticación
-      const publicRoutes = ['/nosotros', '/ofrecemos', '/aprendizaje', '/incentivos', '/referidos', '/auth/']
+      const publicRoutes = ['/nosotros', '/ofrecemos', '/aprendizaje', '/incentivos', '/referidos', '/login', '/register']
 
       // No intentar obtener usuario en rutas públicas
       if (typeof window !== 'undefined') {
