@@ -25,8 +25,8 @@ export default function ConditionalHeader() {
   const horizontalMenuPages = ['/ofrecemos', '/aprendizaje', '/incentivos', '/referidos']
   const shouldShowHorizontalMenu = horizontalMenuPages.includes(pathname)
 
-  // Para páginas de auth (/auth/login, /auth/register): mostrar header sin navegación
-  if (pathname.startsWith('/auth')) {
+  // Para páginas de auth (/login, /register): mostrar header sin navegación
+  if (pathname.startsWith('/login') || pathname.startsWith('/register')) {
     return <Header showNavigation={false} showAuthButtons={true} showHorizontalMenu={false} />
   }
 

@@ -7,8 +7,8 @@ import { useAuth } from '@/app/core/contexts/auth-context';
 const Profile: React.FC = () => {
   // const { theme } = useTheme();
   const { user } = useAuth();
-  // const automaticLink = `${process.env.NEXT_PUBLIC_HOST}/auth/register/automatic/${user?.referralCode}`;
-  // const manualLink = `${process.env.NEXT_PUBLIC_HOST}/auth/register/manual/${user?.referralCode}`;
+  // const automaticLink = `${process.env.NEXT_PUBLIC_HOST}/register/automatic/${user?.referralCode}`;
+  // const manualLink = `${process.env.NEXT_PUBLIC_HOST}/register/manual/${user?.referralCode}`;
 
   // const copyToClipboard = (text: string, message: string) => {
   //   navigator.clipboard.writeText(text);

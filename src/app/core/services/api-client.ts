@@ -71,7 +71,7 @@ apiClient.interceptors.response.use(
 
         // Redirigir al login solo si no estamos ya en una ruta de autenticación
         if (typeof window !== "undefined" && !window.location.pathname.startsWith('/auth/')) {
-          window.location.href = "/auth/login"
+          window.location.href = "/login"
         }
         return Promise.reject(refreshError)
       }

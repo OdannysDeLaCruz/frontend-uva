@@ -14,7 +14,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ 
   children,
   // fallback = <div className="flex items-center justify-center h-screen"><LoadingSpinner size="large" /></div>,
-  // redirectTo = "/auth/login"
+  // redirectTo = "/login"
 }: ProtectedRouteProps) => {
   // const { isAuthenticated, isLoading, checkAuth } = useAuth()
   // const router = useRouter()

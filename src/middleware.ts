@@ -35,7 +35,7 @@ const withAuth: MiddlewareFactory = (next) => {
     const protectedRoutes = ["/dashboard"]
 
     // Rutas públicas que redirigen a dashboard si está autenticado
-    const authRoutes = ["/auth/login", "/auth/register"]
+    const authRoutes = ["/login", "/register"]
 
     // Obtener tokens de las cookies
     const accessToken = request.cookies.get("access_token")?.value
@@ -89,7 +89,7 @@ const withAuth: MiddlewareFactory = (next) => {
         }
 
         // Si no hay tokens o refresh falló, redirigir a login
-        const loginUrl = new URL("/auth/login", request.url)
+        const loginUrl = new URL("/login", request.url)
         loginUrl.searchParams.set("redirect", pathname)
         return NextResponse.redirect(loginUrl)
       }
@@ -141,7 +141,7 @@ const withAuth: MiddlewareFactory = (next) => {
           }
 
           // Refresh falló, redirigir a login
-          const loginUrl = new URL("/auth/login", request.url)
+          const loginUrl = new URL("/login", request.url)
           loginUrl.searchParams.set("redirect", pathname)
           return NextResponse.redirect(loginUrl)
         }

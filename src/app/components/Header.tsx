@@ -71,7 +71,7 @@ export default function Header({
             </Button>
 
             {/* Botón acceder */}
-            <Link href="/auth/login">
+            <Link href="/login">
               <Button
                 size="lg"
                 className="bg-green-600 hover:bg-green-700 text-white px-4 lg:px-6 text-base"
@@ -81,7 +81,7 @@ export default function Header({
             </Link>
 
             {/* Botón registrarse */}
-            <Link href="/auth/register">
+            <Link href="/register">
               <Button
                 size="lg"
                 className="bg-principal hover:bg-principal/90 text-white px-4 lg:px-6 text-base"
@@ -135,12 +135,12 @@ export default function Header({
               <Globe className="h-4 w-4" />
               {currentLanguage}
             </Button>
-            <Link href="/auth/login" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/login" onClick={() => setIsMenuOpen(false)}>
               <Button className="bg-green-600 hover:bg-green-700 text-white w-full">
                 Entrar
               </Button>
             </Link>
-            <Link href="/auth/register" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/register" onClick={() => setIsMenuOpen(false)}>
               <Button className="bg-principal hover:bg-principal/90 text-white w-full">
                 Registrarse
               </Button>

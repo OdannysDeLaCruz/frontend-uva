@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function UvaButton() {
   return (
     <div className="flex justify-center">
-      <Link href="/auth/login">    
+      <Link href="/login">    
         <div className="relative group cursor-pointer">
           <div className="flex items-center justify-center relative">
             {/* Texto "Entrar" arriba */}

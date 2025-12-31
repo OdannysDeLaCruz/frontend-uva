@@ -23,7 +23,7 @@ export const RoleProtectedRoute = ({
   useEffect(() => {
     if (!user) {
       // Si no hay usuario, redirigir al login
-      router.replace("/auth/login")
+      router.replace("/login")
       return
     }
 
