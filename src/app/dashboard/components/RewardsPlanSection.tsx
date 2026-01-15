@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CircleMetric from './CircleMetric';
 import { getRewardsCount } from '@/app/core/services/user-service'
 import { useAuth } from '@/app/core/contexts/auth-context';
+import { RewardsCount } from '@/app/core/types/user';
 
 const RewardsPlanSection: React.FC = () => {
   const [rewardsAvailable, setRewardsAvailable] = useState(0)
@@ -21,11 +22,11 @@ const RewardsPlanSection: React.FC = () => {
   
   useEffect(() => {
     const init = async () => {
-      const rewards = await getRewardsCount(user?.id || 0)
+      const rewards: RewardsCount = await getRewardsCount(user?.id || 0)
       console.log(rewards)
-      setRewardsAvailable(200000)
-      setAccumulatedRewards(250000)
-      setRewardsDelivered(320000)
+      setRewardsAvailable(rewards.rewardsAvailable)
+      setAccumulatedRewards(rewards.accumulatedRewards)
+      setRewardsDelivered(rewards.rewardsDelivered)
     }
 
     init()
