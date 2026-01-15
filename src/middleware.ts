@@ -42,7 +42,7 @@ const withAuth: MiddlewareFactory = (next) => {
     const refreshToken = request.cookies.get("refresh_token")?.value
 
     // Debug: ver todas las cookies
-    console.log("[Middleware] All cookies:", request.cookies.getAll())
+    // console.log("[Middleware] All cookies:", request.cookies.getAll())
 
     // Verificar si intenta acceder a una ruta protegida
     const isProtectedRoute = protectedRoutes.some((route) =>
