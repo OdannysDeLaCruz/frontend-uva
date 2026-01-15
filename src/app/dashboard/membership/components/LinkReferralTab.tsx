@@ -6,7 +6,7 @@ import { useAuth } from '@/app/core/contexts/auth-context';
 const MembershipContributionsTab: React.FC = () => {
   const { user } = useAuth();
 
-  const automaticLink = `${process.env.NEXT_PUBLIC_HOST}/register/automatic/${user?.referralCode}`;
+  // const automaticLink = `${process.env.NEXT_PUBLIC_HOST}/register/automatic/${user?.referralCode}`;
   const manualLink = `${process.env.NEXT_PUBLIC_HOST}/register/manual/${user?.referralCode}`;
 
   const copyToClipboard = (text: string, message: string) => {
@@ -34,7 +34,7 @@ const MembershipContributionsTab: React.FC = () => {
       </div>
 
       {/* AUTOMATICO */}
-      <div>
+      {/* <div>
         <p className='uppercase font-bold'>Enlace de registro automatico</p>
         <div className="flex items-center space-x-4">
           <Link size={16} />
@@ -45,7 +45,7 @@ const MembershipContributionsTab: React.FC = () => {
               Copiar
           </button>
         </div>
-      </div>
+      </div> */}
      </div>
 
      <Toaster />

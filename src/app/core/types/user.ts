@@ -36,6 +36,7 @@ export interface User {
   referralCode: string
   raffleNumber: string
   isActive: boolean
+  earlyAccess: boolean
   membershipId: number
   parentId: number
   image: string
