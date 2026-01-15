@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Pacifico, Roboto } from "next/font/google";
 import "./globals.css";
 import ConditionalHeader from "@/app/core/components/conditional-header"
-// import ConditionalFooter from "@/app/core/components/conditional-footer"
 import { ThemeProvider } from "@/app/core/components/theme-provider"
 import { AuthProvider } from "@/app/core/contexts/auth-context"
 // import { WompiProvider } from "@/app/core/components/WompiProvider"
