@@ -261,9 +261,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     const showText = isMobile ? true : (isOpen || isHovered);
 
     return (
-      <>
+      <React.Fragment key={item.id}>
        {item.show && (
-          <ul key={item.id} className="mb-1">
+          <ul className="mb-1">
             <button
               onClick={() => {
                 if (hasChildren) {
@@ -291,7 +291,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             )}
           </ul>
        )}
-      </>
+      </React.Fragment>
     );
   };
 
