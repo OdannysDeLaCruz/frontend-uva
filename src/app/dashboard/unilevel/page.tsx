@@ -88,19 +88,30 @@ const TreeViewPage: React.FC = () => {
   const [loadingChildren, setLoadingChildren] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   const { user } = useAuth();
 
   const parentRef = useRef<HTMLDivElement>(null); // Ref para el contenedor scrollable
 
+  // Evitar problemas de hidratación - esperar a que el componente esté montado
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Cargar datos iniciales (nodos raíz)
   useEffect(() => {
+    // No ejecutar si el usuario aún no está cargado
+    if (!user?.id) {
+      return;
+    }
+
     const fetchRootUsers = async () => {
       setLoadingInitial(true);
       setError(null);
 
       try {
-        const apiRootNodes = await getDirectUsers(user?.id || 0);
+        const apiRootNodes = await getDirectUsers(user.id);
         const rootNodes: UserNode[] = apiRootNodes.map(node => ({
           ...node,
           level: 0, // Nodos raíz están en el nivel 0
@@ -117,7 +128,7 @@ const TreeViewPage: React.FC = () => {
     };
 
     fetchRootUsers();
-  }, [user]);
+  }, [user?.id]);
 
   const handleToggleNode = useCallback(async (node: FlatUserNode) => {
     const nodeId = node.id;
@@ -208,26 +219,31 @@ const TreeViewPage: React.FC = () => {
   //   setExpandedNodes({});
   // };
 
-  if (loadingInitial) {
+  // Mostrar loading mientras no esté montado, no haya usuario, o esté cargando datos
+  if (!mounted || !user?.id || loadingInitial) {
     return (
-      <div className="p-4 flex items-center justify-center">
-        <RefreshCw size={24} className="animate-spin mr-2" /> Cargando estructura...
-      </div>
+      <Layout>
+        <div className="p-4 flex items-center justify-center h-64">
+          <RefreshCw size={24} className="animate-spin mr-2" /> Cargando estructura...
+        </div>
+      </Layout>
     );
   }
 
   if (error && treeData.length === 0) { // Error crítico si no hay datos raíz
     return (
-      <div className="p-4 flex flex-col items-center justify-center text-red-500">
-        <AlertCircle size={32} className="mb-2" />
-        <p>{error}</p>
-        <button 
-          onClick={() => window.location.reload()} // O una función de reintento más específica
-          className="mt-4 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Reintentar
-        </button>
-      </div>
+      <Layout>
+        <div className="p-4 flex flex-col items-center justify-center text-red-500 h-64">
+          <AlertCircle size={32} className="mb-2" />
+          <p>{error}</p>
+          <button
+            onClick={() => window.location.reload()} // O una función de reintento más específica
+            className="mt-4 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Reintentar
+          </button>
+        </div>
+      </Layout>
     );
   }
 
