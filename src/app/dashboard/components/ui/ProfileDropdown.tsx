@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Settings, ChevronDown, Home, 
+import { LogOut, 
+  // Settings, 
+  ChevronDown, Home, 
   // Trees as Tree, 
   // Cylinder, 
   User } from 'lucide-react';
@@ -57,12 +59,12 @@ const ProfileDropdown: React.FC = () => {
       icon: <User size={16} />,
       onClick: () => router.push('/dashboard/account')
     },
-    {
-      id: 'settings',
-      label: 'Configuración',
-      icon: <Settings size={16} />,
-      onClick: () => router.push('/dashboard/settings')
-    }
+    // {
+    //   id: 'settings',
+    //   label: 'Configuración',
+    //   icon: <Settings size={16} />,
+    //   onClick: () => router.push('/dashboard/settings')
+    // }
   ];
 
   return (

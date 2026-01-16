@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { Home, Network, ChevronDown, ChevronUp, Cylinder, User, X, CreditCard, Wallet, Bolt, ShieldCheck, GlobeLock, GraduationCap, Binary, ArrowBigRightDash, ListTree } from 'lucide-react';
+import { Home, Network, ChevronDown, ChevronUp, Cylinder, User, X, CreditCard, Wallet, ShieldCheck, GlobeLock, GraduationCap, Binary, ArrowBigRightDash, ListTree } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/app/core/contexts/auth-context';
@@ -127,14 +127,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           isActive: false,
           show: hasFullAccess
         },
-        {
-          id: 'ajustes',
-          label: 'Ajustes',
-          icon: <Bolt size={18} />,
-          href: '/dashboard/settings',
-          isActive: false,
-          show: hasFullAccess
-        },
+        // {
+        //   id: 'ajustes',
+        //   label: 'Ajustes',
+        //   icon: <Bolt size={18} />,
+        //   href: '/dashboard/settings',
+        //   isActive: false,
+        //   show: hasFullAccess
+        // },
         {
           id: 'seguridad',
           label: 'Seguridad',
@@ -205,15 +205,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       children: [],
       show: hasFullAccess
     },
-    {
-      id: 'uvasuenos',
-      label: 'UVA Sueño',
-      icon: <User size={20} />,
-      href: '/dashboard/uvasuenos',
-      isActive: false,
-      children: [],
-      show: hasFullAccess
-    },
+    // {
+    //   id: 'uvasuenos',
+    //   label: 'UVA Sueño',
+    //   icon: <User size={20} />,
+    //   href: '/dashboard/uvasuenos',
+    //   isActive: false,
+    //   children: [],
+    //   show: hasFullAccess
+    // },
     {
       id: 'soporte',
       label: 'Soporte',
