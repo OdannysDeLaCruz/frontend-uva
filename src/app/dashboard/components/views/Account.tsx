@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes';
 const Account = () => {
   const { user } = useAuth();
   const { theme } = useTheme();
-  const [allowDerrame, setAllowDerrame] = useState(false);
+  const [allowDerrame, setAllowDerrame] = useState(true);
 
   return (
     <div className="space-y-6">
@@ -31,9 +31,6 @@ const Account = () => {
                 <p className={`font-semibold ${theme === 'dark' ? 'text-green-400' : 'text-green-700'}`}>
                   Cuenta Activa
                 </p>
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Tu cuenta está activada y funcionando normalmente
-                </p>
               </div>
             </>
           ) : (
@@ -42,9 +39,6 @@ const Account = () => {
               <div>
                 <p className={`font-semibold ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>
                   Cuenta Inactiva
-                </p>
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Tu cuenta no está activa aún
                 </p>
               </div>
             </>
@@ -68,7 +62,7 @@ const Account = () => {
                 </h2>
               </div>
               <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Autoriza a tus patrocinadores a asignarte referidos directamente sin preguntar
+                Permite que se te asignen referidos desde arriba sin preguntar. Ten en cuenta que esto ocupará espacio de tu primer nivel.
               </p>
             </div>
 
@@ -109,38 +103,15 @@ const Account = () => {
               theme === 'dark' ? 'text-blue-300' : 'text-blue-700'
             }`}>
               {allowDerrame
-                ? 'El derrame está habilitado. Tus patrocinadores pueden asignarte referidos directamente.'
-                : 'El derrame está deshabilitado. Solo recibirás referidos que directamente asignen para ti.'}
-            </p>
-          </div>
-
-          {/* Estado actual */}
-          <div className={`p-3 rounded-lg text-center ${
-            allowDerrame
-              ? theme === 'dark'
-                ? 'bg-blue-900/50'
-                : 'bg-blue-100'
-              : theme === 'dark'
-              ? 'bg-gray-700/50'
-              : 'bg-gray-100'
-          }`}>
-            <p className={`text-sm font-medium ${
-              allowDerrame
-                ? theme === 'dark'
-                  ? 'text-blue-300'
-                  : 'text-blue-700'
-                : theme === 'dark'
-                ? 'text-gray-300'
-                : 'text-gray-700'
-            }`}>
-              {allowDerrame ? '✓ Derrame Activado' : '✗ Derrame Desactivado'}
+                ? 'El derrame está habilitado.'
+                : 'El derrame está deshabilitado.'}
             </p>
           </div>
         </div>
       </div>
 
       {/* Opciones peligrosas */}
-      <div className={`rounded-lg shadow-md p-6 border ${
+      {/* <div className={`rounded-lg shadow-md p-6 border ${
         theme === 'dark'
           ? 'bg-gray-800 border-red-900/30'
           : 'bg-red-50 border-red-200'
@@ -164,7 +135,7 @@ const Account = () => {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
