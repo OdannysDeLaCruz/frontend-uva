@@ -94,7 +94,7 @@ export default function LoginForm() {
           {error && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm">
               <p className="text-sm text-red-300 flex items-center">
-                <AlertCircle className="h-4 w-4 mr-2" />
+                <AlertCircle className="min-h-4 min-w-4 w-4 mr-3" />
                 {error}
               </p>
             </div>
