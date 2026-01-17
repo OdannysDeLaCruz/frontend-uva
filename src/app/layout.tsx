@@ -19,7 +19,7 @@ const pacifico = Pacifico({
 
 export const metadata: Metadata = {
   title: "UVA",
-  description: "Unidad de Valor de Ahorro",
+  description: "Unidad de Valor con Ahorro",
 };
 
 export default function RootLayout({

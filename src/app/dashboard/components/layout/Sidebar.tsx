@@ -29,7 +29,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuth();
-  console.log("USER", user)
 
   // Usuario con acceso completo: activo o con earlyAccess (prelanzamiento)
   const hasFullAccess = user?.isActive || user?.earlyAccess;

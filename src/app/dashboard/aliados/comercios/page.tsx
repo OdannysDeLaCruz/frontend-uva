@@ -57,7 +57,7 @@ const ComerciosPage: React.FC = () => {
     }
 
     loadAllies()
-  }, [selectedCategoryId])
+  }, [selectedCategoryId, searchQuery])
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query)
