@@ -22,6 +22,7 @@ const UnilevelPage: React.FC = () => {
     try {
       // setRefreshing(true)
       const response = await getDirectos()
+      console.log('Directos', response)
       setData(response)
       setError(null)
       if (showToast) {
@@ -179,40 +180,20 @@ const UnilevelPage: React.FC = () => {
         <Toaster position="bottom-right" />
         <div className="space-y-8">
           <Title title='UVA AMIGOS' />
-          {/* Encabezado */}
-          {/* <div className="flex justify-between items-center"> */}
-            {/* <div> */}
-              {/* <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                Mis Directos
-              </h1> */}
-              {/* <p className={`mt-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Total de directos: <span className="font-semibold text-blue-500">{data.totalDirectos}</span>
-              </p> */}
-            {/* </div> */}
-            {/* <button
-              onClick={() => fetchDirectos(true)}
-              disabled={refreshing}
-              className="p-2 rounded-lg hover:bg-purple-500/20 transition-colors disabled:opacity-50"
-            >
-              <RefreshCw className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''} text-purple-400`} />
-            </button> */}
-          {/* </div> */}
-  
-          {/* Tarjeta del usuario actual */}
-          {/* <div>
-            <h2 className={`text-xl font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              Tú
-            </h2>
-            <UserCard user={data.usuario} type="primary" />
-          </div> */}
-  
+
           {/* Directos Primarios (Azul) */}
           {data.primarios.length > 0 && (
             <div>
-              <h2 className={`text-xl font-semibold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                <div className="w-3 h-3 rounded-full bg-blue-500" />
-                Primarios ({data.totalPrimarios}/10)
-              </h2>
+              <div className='flex items-center justify-between mb-4'>
+                <h2 className={`text-xl font-semibold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  <div className="w-3 h-3 rounded-full bg-blue-500" />
+                  Primarios ({data.primarios.length}/10)
+                </h2>
+                <div className='ml-auto'>
+                  Directos totales: {data.primarios.length + data.secundarios.length}
+                </div>
+
+              </div>
               <div className="space-y-4">
                 {data.primarios.map((direct, index) => (
                   <div key={direct.id} className={`p-4 rounded-lg border flex items-start justify-between ${
@@ -267,7 +248,7 @@ const UnilevelPage: React.FC = () => {
             <div>
               <h2 className={`text-xl font-semibold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 <div className="w-3 h-3 rounded-full bg-orange-500" />
-                Secundarios ({data.totalSecundarios})
+                Secundarios ({data.secundarios.length})
               </h2>
               <div className="space-y-4">
                 {data.secundarios.map((direct, index) => (
@@ -285,7 +266,7 @@ const UnilevelPage: React.FC = () => {
                         {index + 11}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <h4 className={`font-semibold capitalize ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {direct.name} {direct.lastname}
                         </h4>
                         <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -322,7 +303,7 @@ const UnilevelPage: React.FC = () => {
           )}
   
           {/* Mensaje vacío */}
-          {data.totalDirectos === 0 && (
+          {data.primarios.length === 0 && (
             <div className={`p-8 rounded-lg border text-center ${
               theme === 'dark'
                 ? 'bg-gray-900/50 border-gray-700'
@@ -330,10 +311,10 @@ const UnilevelPage: React.FC = () => {
             }`}>
               <UserIcon className={`h-12 w-12 mx-auto mb-3 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
               <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                Sin directos aún
+                Sin estructura aún
               </h3>
               <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                Cuando consigas tus primeros afiliados directos, aparecerán aquí.
+                Cuando consigas tus primeros afiliados directos y secundarios, aparecerán aquí.
               </p>
             </div>
           )}
