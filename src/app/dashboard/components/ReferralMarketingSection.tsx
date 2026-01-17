@@ -14,7 +14,7 @@ const ReferralMarketingSection: React.FC = () => {
   useEffect(() => {
     const init = async () => {
       const referralMarketing = await getReferralMarketingCount(user?.id || 0)
-      console.log(referralMarketing)
+
       setDirects(referralMarketing.direct)
       setStructure(referralMarketing.structure)
       setTank(referralMarketing.tanque)
@@ -22,16 +22,14 @@ const ReferralMarketingSection: React.FC = () => {
     init()
   })
 
-  
-
   return (
     <div className="w-full">
-      <h3 className="text-3xl text-white mb-6 flex items-center">
-        <span className='mr-8 flex text-nowrap'>MARKETING DE REFERIDOS</span>
+      <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white mb-4 sm:mb-6 flex items-center">
+        <span className='mr-3 sm:mr-6 md:mr-8 flex text-nowrap'>MARKETING DE REFERIDOS</span>
         <div className='w-full h-[1px] bg-blue-200'></div>
       </h3>
 
-      <div className="flex gap-22 justify-center items-end">
+      <div className="flex flex-wrap gap-4 sm:gap-8 md:gap-12 lg:gap-16 justify-center items-end">
         <CircleMetric
           label="DIRECTOS"
           value={directs}

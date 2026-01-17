@@ -16,8 +16,8 @@ function App() {
   return (
     <ThemeProvider>
       <Layout>
-        <div className="">
-          <div className='mb-16'>
+        <div className="px-2 sm:px-0">
+          <div className='mb-8 sm:mb-12 md:mb-16'>
             <WelcomeSection userName={user?.name} />
           </div>
 
@@ -28,16 +28,16 @@ function App() {
           /> */}
 
           {/* Métricas principales */}
-          <div className="mb-10 mt-5">
-            <h2 className="text-4xl font-semibold text-sky-200 b-6 flex items-center mb-4">
+          <div className="mb-6 sm:mb-8 md:mb-10 mt-3 sm:mt-4 md:mt-5">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-sky-200 flex items-center mb-3 sm:mb-4">
               TABLERO
             </h2>
 
-            <div className='mb-10'>
+            <div className='mb-6 sm:mb-8 md:mb-10'>
               <RewardsPlanSection />
             </div>
 
-            <div className='mb-10'>
+            <div className='mb-6 sm:mb-8 md:mb-10'>
               <ReferralMarketingSection />
             </div>
           </div>
