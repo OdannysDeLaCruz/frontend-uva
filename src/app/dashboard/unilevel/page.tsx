@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -27,6 +28,11 @@ export interface UserNode extends PublicUserDto {
 interface FlatUserNode extends UserNode {
   isExpanded: boolean;
   isLoadingChildren: boolean;
+  // Array de booleanos indicando si hay línea vertical continua en cada nivel
+  // guides[0] = true significa que hay línea vertical en el nivel 0
+  guides: boolean[];
+  isFirstChild: boolean; // Si es el primer hijo de su padre
+  isLastChild: boolean; // Si es el último hijo de su padre
 }
 
 // --- Funciones Auxiliares ---
@@ -63,20 +69,33 @@ const flattenTree = (
   loadingChildrenState: Record<string, boolean>
 ): FlatUserNode[] => {
   const flatList: FlatUserNode[] = [];
-  const recurse = (currentNodes: UserNode[], currentLevel: number) => {
-    currentNodes.forEach(node => {
+
+  // parentGuides: array que indica en qué niveles hay líneas verticales continuas
+  const recurse = (currentNodes: UserNode[], currentLevel: number, parentGuides: boolean[]) => {
+    currentNodes.forEach((node, index) => {
+      const isFirstChild = index === 0;
+      const isLastChild = index === currentNodes.length - 1;
+      const currentGuides = [...parentGuides];
+
       flatList.push({
         ...node,
-        level: currentLevel, // Aseguramos el nivel aquí
+        level: currentLevel,
         isExpanded: !!expandedNodes[node.id],
         isLoadingChildren: !!loadingChildrenState[node.id],
+        guides: currentGuides,
+        isFirstChild,
+        isLastChild,
       });
+
       if (expandedNodes[node.id] && node.children) {
-        recurse(node.children, currentLevel + 1);
+        // Para los hijos: añadir guía indicando si este nodo tiene más hermanos después
+        const childGuides = [...currentGuides, !isLastChild];
+        recurse(node.children, currentLevel + 1, childGuides);
       }
     });
   };
-  recurse(nodes, 0); // Asumimos que los nodos raíz están en el nivel 0
+
+  recurse(nodes, 0, []);
   return flatList;
 };
 
@@ -293,8 +312,8 @@ const TreeViewPage: React.FC = () => {
         
         <div
           ref={parentRef} // Asignar ref al contenedor scrollable
-          className={`rounded-lg p-2 shadow-md overflow-auto relative`}
-          style={{ height: '600px' }} // Debes darle una altura fija al contenedor para la virtualización
+          className={`rounded-lg p-2 pl-5 shadow-md overflow-auto relative`}
+          style={{ height: '700px' }} // Debes darle una altura fija al contenedor para la virtualización
         >
           <div
             style={{
@@ -314,10 +333,11 @@ const TreeViewPage: React.FC = () => {
                     position: 'absolute',
                     top: 0,
                     left: 0,
-                    width: '100%',
+                    minWidth: '100%',
+                    width: 'max-content',
                     height: `${virtualRow.size}px`,
                     transform: `translateY(${virtualRow.start}px)`, // Posicionar el item
-                    marginLeft: `${node.level * 24}px`, // Indentación basada en el nivel
+                    paddingLeft: `${node.level * 24}px`, // Indentación basada en el nivel
                   }}
                   className={`
                     flex relative
@@ -327,12 +347,74 @@ const TreeViewPage: React.FC = () => {
                   `}
                   onClick={() => handleToggleNode(node)}
                 >
-                  {node.hasChildren && node.isExpanded && (
-                    <div>
-                      <div className='w-[2px] h-[53px] bg-white absolute bottom-0 top-2 left-[11px] z-0'></div>
-                      <div className='w-[15px] h-[2px] bg-white absolute -bottom-[13px] left-[12px] z-0'></div>
-                    </div>
+                  {/* Líneas de guía verticales para ancestros lejanos */}
+                  {node.guides.map((hasLine, guideLevel) => (
+                    hasLine && (
+                      <div
+                        key={`guide-${guideLevel}`}
+                        className="absolute w-[2px] bg-white"
+                        style={{
+                          // guideLevel 0 = columna -1 (conexión entre raíces), guideLevel > 0 = columna guideLevel - 1
+                          left: guideLevel === 0 ? '-13px' : `${(guideLevel - 1) * 24 + 11}px`,
+                          top: '-28px',
+                          height: 'calc(100% + 28px)',
+                        }}
+                      />
+                    )
+                  ))}
+
+                  {/* Líneas de conexión entre nodos raíz (level 0) */}
+                  {node.level === 0 && !(node.isFirstChild && node.isLastChild) && (
+                    <>
+                      {/* Línea horizontal hacia el icono */}
+                      <div
+                        className="absolute h-[2px] bg-white"
+                        style={{
+                          left: '-13px',
+                          top: '12px',
+                          width: '13px',
+                        }}
+                      />
+                      {/* Línea vertical conectando nodos raíz */}
+                      <div
+                        className="absolute w-[2px] bg-white"
+                        style={{
+                          left: '-13px',
+                          top: node.isFirstChild ? '12px' : '-28px',
+                          height: node.isFirstChild
+                            ? 'calc(100% - 12px)'
+                            : node.isLastChild
+                              ? '40px'
+                              : 'calc(100% + 28px)',
+                        }}
+                      />
+                    </>
                   )}
+
+                  {/* Línea L de conexión con el padre (solo para nodos hijos) */}
+                  {node.level > 0 && (
+                    <>
+                      {/* Línea vertical - sube hasta el icono del padre */}
+                      <div
+                        className="absolute w-[2px] bg-white"
+                        style={{
+                          left: `${(node.level - 1) * 24 + 11}px`,
+                          top: '-28px',
+                          height: node.isLastChild ? '42px' : 'calc(100% + 28px)',
+                        }}
+                      />
+                      {/* Línea horizontal hacia el icono */}
+                      <div
+                        className="absolute h-[2px] bg-white"
+                        style={{
+                          left: `${(node.level - 1) * 24 + 11}px`,
+                          top: '12px',
+                          width: '13px',
+                        }}
+                      />
+                    </>
+                  )}
+
                   {/* Icono de expandir/collapsar */}
                   <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center mr-1 z-1">
                     {
@@ -362,18 +444,18 @@ const TreeViewPage: React.FC = () => {
                   </div> */}
                   
                   {/* Información del usuario */}
-                  <div className="flex-1 overflow-hidden pr-2">
-                    <span className='flex items-center'>
-                      <p className="font-medium text-md truncate">
+                  <div className="flex-1 pr-2">
+                    <span className='flex items-center whitespace-nowrap'>
+                      <p className="font-medium text-md">
                         {node.name} {node.lastname}
                       </p>
-                      
+
                       {/* Tag estatus */}
                       <div className={`bg-${node.isActive ? "green" : "red"}-500 flex items-center justify-center text-white rounded p-1 uppercase ml-2 text-[10px] leading-none`}>
                         { node.isActive ? 'Activo': 'Inactivo' }
                       </div>
                     </span>
-                    <p className="text-xs truncate text-gray-400">
+                    <p className="text-xs text-gray-400 whitespace-nowrap">
                       {node.username} , {node.email} , code: {node.referralCode}
                       {copiedCode === node.referralCode ? (
                         <span className='ml-2 text-green-500 font-semibold'>Copiado</span>
