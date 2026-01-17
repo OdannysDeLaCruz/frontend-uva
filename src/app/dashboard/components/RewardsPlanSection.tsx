@@ -34,12 +34,12 @@ const RewardsPlanSection: React.FC = () => {
 
   return (
     <div className="w-full">
-      <h3 className="text-3xl text-white mb-6 flex items-center">
-        <span className='mr-8 flex text-nowrap'>PLAN DE RECOMPENSAS</span>
+      <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white mb-4 sm:mb-6 flex items-center">
+        <span className='mr-3 sm:mr-6 md:mr-8 flex text-nowrap'>PLAN DE RECOMPENSAS</span>
         <div className='w-full h-[1px] bg-blue-200'></div>
       </h3>
 
-      <div className="flex gap-22 justify-center items-end">
+      <div className="flex flex-wrap gap-4 sm:gap-8 md:gap-12 lg:gap-16 justify-center items-end">
         <CircleMetric
           label="Recompensas DISPONIBLES"
           value={formatCurrency(rewardsAvailable)}
