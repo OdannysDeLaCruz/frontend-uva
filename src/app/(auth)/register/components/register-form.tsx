@@ -226,7 +226,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md slide-in-up" style={{ animationDelay: '0.2s' }}>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl slide-in-up" style={{ animationDelay: '0.2s' }}>
         <div className="glass py-8 px-4 border border-white/10 sm:rounded-2xl sm:px-10">
           <form className="space-y-6 relative" onSubmit={handleSubmit}>
             {isLoading && (
@@ -327,7 +327,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                   id="doc_number"
                   name="doc_number"
                   type="text"
-                  placeholder={documentType === 'natural' ? 'Ej: 1234567890' : documentType === 'juridica' ? 'Ej: 9009876543' : 'Ingrese número de documento'}
+                  placeholder={documentType === 'natural' ? 'Ej: 960510523' : documentType === 'juridica' ? 'Ej: 9009876543' : 'Ingrese número de documento'}
                   value={formData.doc_number}
                   onChange={handleChange}
                   disabled={!documentType}
@@ -348,7 +348,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <Label htmlFor="name" className="block text-sm font-medium text-white/90 mb-2">
-                  Nombre
+                  Nombres <br /> (Como aparece en la cédula)
                 </Label>
                 <div className="mt-1">
                   <Input
@@ -356,6 +356,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                     name="name"
                     type="text"
                     required
+                    placeholder="Ej: Carlos Eduardo"
                     value={formData.name}
                     onChange={handleChange}
                     className={`appearance-none block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm ${
@@ -374,8 +375,9 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
               </div>
 
               <div>
-                <Label htmlFor="lastname" className="block text-sm font-medium text-white/90">
-                  Apellidos
+                <Label htmlFor="lastname" className="block text-sm font-medium text-white/90 mb-2">
+                  Apellidos <br />
+                  (Como aparece en la cédula)
                 </Label>
                 <div className="mt-1">
                   <Input
@@ -383,6 +385,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                     name="lastname"
                     type="text"
                     required
+                    placeholder="Ej: De La Cruz Lidueña"
                     value={formData.lastname}
                     onChange={handleChange}
                     className={`appearance-none block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm ${
@@ -413,6 +416,7 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
                   type="email"
                   autoComplete="email"
                   required
+                  placeholder="Ej: tucorreo@hotmail.com"
                   value={formData.email}
                   onChange={handleChange}
                   className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
