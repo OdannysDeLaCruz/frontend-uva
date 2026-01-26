@@ -62,7 +62,7 @@ const ContributionsTab: React.FC = () => {
     };
 
     initialize();
-  }, []);
+  }, [initPayment]);
 
   return (
     <div className="space-y-6">
