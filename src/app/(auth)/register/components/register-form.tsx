@@ -437,8 +437,9 @@ export default function RegisterForm({ mode, referrerCode }: RegisterFormProps) 
               </Label>
               <div className="phone-input-container">
                 <PhoneInput
+                  locale="co"
                   international
-                  countryCallingCodeEditable={false}
+                  //countryCallingCodeEditable={true}
                   defaultCountry="CO"
                   value={formData.phone}
                   onChange={phoneOnChange}
