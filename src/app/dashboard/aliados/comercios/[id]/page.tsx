@@ -6,6 +6,10 @@ import { ArrowLeft, Calendar, X } from 'lucide-react'
 import { getAllyById } from '@/app/core/services/allies-service'
 import { Ally } from '@/app/core/types/ally'
 import Image from 'next/image'
+import { GenerateQrBenefitResponse } from '@/app/core/types/benefit'
+import { generateBenefitQr } from '@/app/core/services/benefits-service'
+import { getTimeRemaining } from '@/app/dashboard/util/util'
+import { QRCodeCanvas } from 'qrcode.react'
 
 const AllyDetailPage: React.FC = () => {
   const params = useParams()
@@ -16,6 +20,8 @@ const AllyDetailPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [showQR, setShowQR] = useState(false)
+  const [qrData, setQrData] = useState<GenerateQrBenefitResponse | null>(null)
+  const [qrLoading, setQrLoading] = useState(false)
 
   useEffect(() => {
     const loadAlly = async () => {
@@ -45,17 +51,29 @@ const AllyDetailPage: React.FC = () => {
     }
   }, [])
 
-  const handleClaimBenefit = () => {
-    if (termsAccepted) {
-      // Si ya aceptó los términos, mostrar directamente el QR
+  const handleClaimBenefit = async (benefitId: number) => {
+    try {
+      if (!termsAccepted) {
+        setShowQR(false)
+        setShowModal(true)
+        return
+      }
+
+      setQrLoading(true)
+
+      const qr = await generateBenefitQr(benefitId)
+
+      setQrData(qr)
       setShowQR(true)
       setShowModal(true)
-    } else {
-      // Si no ha aceptado, mostrar términos primero
-      setShowQR(false)
-      setShowModal(true)
+    } catch (error) {
+      console.error(error)
+      alert('No fue posible generar el QR')
+    } finally {
+      setQrLoading(false)
     }
   }
+
 
   const handleAcceptTerms = () => {
     setTermsAccepted(true)
@@ -195,7 +213,7 @@ const AllyDetailPage: React.FC = () => {
 
                     {/* Boton para reclamar descuento */}
                     <button
-                      onClick={handleClaimBenefit}
+                      onClick={() => handleClaimBenefit(benefit.id)}
                       className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                     >
                       Reclamar tu beneficio
@@ -270,15 +288,43 @@ const AllyDetailPage: React.FC = () => {
                 <p className="text-gray-600 mb-6">
                   Presenta este código en el comercio aliado para reclamar tu beneficio
                 </p>
-                <div className="flex justify-center mb-6">
-                  <Image
-                    src="/images/aliados/qr.png"
-                    alt="Código QR"
-                    width={300}
-                    height={300}
-                    className="rounded-lg shadow-lg"
-                  />
+                <div className="flex justify-center mb-4">
+                  {qrLoading ? (
+                    <div className="flex justify-center">
+                      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600" />
+                    </div>
+                  ) : (
+                    qrData && (
+                      <>
+                        <QRCodeCanvas
+                          value={qrData.qr ?? qrData.code}
+                          size={300}
+                        />
+                      </>
+                    )
+                  )}
                 </div>
+                {/* Código */}
+                  {qrData && !qrLoading && (
+                    <div className="flex flex-col items-center mb-4">
+                      <span className="text-sm text-gray-500 tracking-wide">
+                        Código
+                      </span>
+
+                      <span className="text-3xl font-bold text-gray-900 tracking-widest mt-1">
+                        {qrData.code}
+                      </span>
+                    </div>
+                  )}
+              {/* Expiración */}
+                {qrData?.expiresAt && (
+                  <p className="text-sm text-gray-500">
+                    ⏳ Expira en{' '}
+                    <span className="font-medium text-gray-700">
+                      {getTimeRemaining(qrData.expiresAt)}
+                    </span>
+                  </p>
+                )}
                 <p className="text-sm text-gray-500">
                   Este código es válido para un solo uso
                 </p>

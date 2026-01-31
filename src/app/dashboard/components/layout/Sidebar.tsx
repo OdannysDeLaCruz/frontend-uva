@@ -31,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
 
   // Usuario con acceso completo: activo o con earlyAccess (prelanzamiento)
+  const isActiveUser = user?.isActive;
   const hasFullAccess = user?.isActive || user?.earlyAccess;
 
   // Detectar dispositivos móviles
@@ -192,7 +193,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <Wallet size={20} />,
       href: '/dashboard/aliados',
       isActive: false,
-      children: [],
+      children: [
+          {
+                id: 'uvaliados',
+                label: 'Aliados',
+                icon: <Wallet size={20} />,
+                href: '/dashboard/aliados',
+                isActive: false,
+                show: isActiveUser
+              },
+          {
+                id: 'misbeneficios',
+                label: 'Historial de beneficios',
+                icon: <Wallet size={20} />,
+                href: '/dashboard/mis-beneficios',
+                isActive: false,
+                show: isActiveUser
+              }
+              ],
       show: hasFullAccess
     },
     {
@@ -222,8 +240,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       children: [],
       show: hasFullAccess
     }
-  ], [hasFullAccess]);
-  
+  ], [hasFullAccess, isActiveUser]);
+
   useEffect(() => {
     // poner en activo un item si la ruta es la misma del path
     const activeMenuItem = menuItems.find(item => item.href === pathname || item.children?.some(child => child.href === pathname));

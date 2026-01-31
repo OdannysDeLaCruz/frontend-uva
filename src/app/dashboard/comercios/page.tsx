@@ -20,12 +20,12 @@ export default function ComerciosPage() {
 
   const options: OptionCard[] = [
     {
-      id: 'verificar-miembro',
-      title: 'Verificar miembro UVA',
-      description: 'Verifica si un cliente es miembro activo de UVA y accede a sus beneficios',
+      id: 'historico-beneficios',
+      title: 'Historico de Beneficios',
+      description: 'Podrás ver el histórico de beneficios aprobados en el último mes.',
       icon: <UserCheck className="h-5 w-5" />,
       color: 'from-green-400 to-green-600',
-      href: '/dashboard/comercios/verificar-miembro'
+      href: '/dashboard/comercios/historico-beneficios-comercio'
     },
     {
       id: 'verificar-beneficios',
