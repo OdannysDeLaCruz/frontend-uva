@@ -256,7 +256,7 @@ const TanquePage: React.FC = () => {
 
               <form action="" onSubmit={searchParentByReferralCode}>
                 <Label htmlFor="parentId" className="block text-base font-medium text-gray-700 my-4 text-center">
-                  ¿Bajo de quien quieres colocarlo?
+                  Busca a alguien de tu red para colocarlo bajo su estructura
                 </Label>
                 <Input
                   required
@@ -266,20 +266,10 @@ const TanquePage: React.FC = () => {
                   placeholder="Ingresa el codigo de referido, ej: BL8IG0G9"
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value)}
-                  className={`block w-full px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:shadow-none mb-6 bg-white outline-none text-center`}
+                  className={`block w-full px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:shadow-none mb-4 bg-white outline-none text-center`}
                 />
 
-                {/* Boton para autoasignarlo */}
                 <Button
-                  type="button"
-                  onClick={() => setShowAutoAssignConfirm(true)}
-                  disabled={searchingParent}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 cursor-pointer"
-                >
-                  Autoasignar
-                </Button>
-
-                <Button 
                   type="submit"
                   disabled={searchingParent}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 cursor-pointer"
@@ -289,6 +279,23 @@ const TanquePage: React.FC = () => {
                   ) : (
                     "Buscar"
                   )}
+                </Button>
+
+                {/* Separador */}
+                <div className="flex items-center my-4">
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <span className="px-3 text-sm text-gray-500 font-medium">o colócalo como tu directo</span>
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                </div>
+
+                {/* Boton para autoasignarlo */}
+                <Button
+                  type="button"
+                  onClick={() => setShowAutoAssignConfirm(true)}
+                  disabled={searchingParent}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 cursor-pointer"
+                >
+                  Autoasignar
                 </Button>
 
                 {/* Result */}
