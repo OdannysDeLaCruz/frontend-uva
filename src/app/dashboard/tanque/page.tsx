@@ -12,6 +12,8 @@ import { Label } from '@/app/core/ui/label';
 import { getUserByReferralCode } from '@/app/core/services/user-service';
 import { ApiError } from 'next/dist/server/api-utils';
 import toast, { Toaster } from 'react-hot-toast';
+import { AssignParentDto } from '@/app/core/types/mlm';
+import { ServerAlert } from '@/app/core/ui/alert-dialog';
 
 
 const TanquePage: React.FC = () => {
@@ -27,6 +29,8 @@ const TanquePage: React.FC = () => {
   const [affiliateToAssign, setAffiliateToAssign] = useState<PublicUserDto>({} as PublicUserDto);
   const [parentToAssign, setParentToAssign] = useState<PublicUserDto>(null as unknown as PublicUserDto);
   const [assigningParent, setAssigningParent] = useState(false);
+  const [showAutoAssignConfirm, setShowAutoAssignConfirm] = useState(false);
+  const [showAssignConfirm, setShowAssignConfirm] = useState(false);
 
   const handleToggleModal = (affiliate: PublicUserDto | null) => {
     setErrorInModal('');
@@ -43,13 +47,7 @@ const TanquePage: React.FC = () => {
     }
   };
 
-  const searchParentByReferralCode = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorInModal('');
-    setSearchingParent(true);
-    setParentToAssign(null as unknown as PublicUserDto);
-    setError(null);
-
+  const getParentByReferralCode = async (referralCode: string) => {
     try {
       const parent = await getUserByReferralCode(referralCode);
       setParentToAssign(parent)
@@ -66,6 +64,16 @@ const TanquePage: React.FC = () => {
     } finally {
       setSearchingParent(false);
     }
+  }
+
+  const searchParentByReferralCode = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrorInModal('');
+    setSearchingParent(true);
+    setParentToAssign(null as unknown as PublicUserDto);
+    setError(null);
+
+    getParentByReferralCode(referralCode);
   };
 
   useEffect(() => {
@@ -123,9 +131,44 @@ const TanquePage: React.FC = () => {
     );
   }
 
-  const assignParent = async () => {
-    setAssigningParent(true);
+  const assignParent = async (assignParentPayload: AssignParentDto) => {
     try {
+      await assignParentToUser(assignParentPayload);
+      handleToggleModal(null);
+
+      // Remove affiliate from array
+      setTanqueAffiliates(tanqueAffiliates.filter((affiliate) => affiliate.id !== affiliateToAssign.id));
+
+    } catch (err: ApiError | unknown) {
+      if (err && typeof err === 'object' && 'message' in err) {
+        const errorObj = err as ApiError
+        console.error("Error assigning parent:", err);
+        setErrorInModal(errorObj.message);
+      }
+    }
+  };
+
+  const autoAssignParent = async () => {
+    if (user) {
+      const assignParentPayload = {
+        affiliateId: affiliateToAssign.id,
+        parentId: user.id,
+        tanqueOwnerId: user.id
+      }
+
+      await assignParent(assignParentPayload);
+
+      toast.success("Autoasignación exitosa", {
+        duration: 5000,
+        position: "bottom-right",
+      });
+    }
+  }
+  
+  const handleAssignParent = async () => {
+    try {
+      setAssigningParent(true);
+
       if (!user) {
         throw new Error("User not found");
       }
@@ -140,22 +183,12 @@ const TanquePage: React.FC = () => {
         tanqueOwnerId: user.id
       }
 
-      await assignParentToUser(assignParentPayload);
-      handleToggleModal(null);
-
-      // Remove affiliate from array
-      setTanqueAffiliates(tanqueAffiliates.filter((affiliate) => affiliate.id !== affiliateToAssign.id));
+      await assignParent(assignParentPayload);
 
       toast.success("Padre asignado exitosamente", {
         duration: 5000,
         position: "bottom-right",
       });
-    } catch (err: ApiError | unknown) {
-      if (err && typeof err === 'object' && 'message' in err) {
-        const errorObj = err as ApiError
-        console.error("Error assigning parent:", err);
-        setErrorInModal(errorObj.message);
-      }
     } finally {
       setAssigningParent(false);
     }
@@ -223,7 +256,7 @@ const TanquePage: React.FC = () => {
 
               <form action="" onSubmit={searchParentByReferralCode}>
                 <Label htmlFor="parentId" className="block text-base font-medium text-gray-700 my-4 text-center">
-                  ¿A bajo de quien quieres colocarlo?
+                  Busca a alguien de tu red para colocarlo bajo su estructura
                 </Label>
                 <Input
                   required
@@ -233,9 +266,10 @@ const TanquePage: React.FC = () => {
                   placeholder="Ingresa el codigo de referido, ej: BL8IG0G9"
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value)}
-                  className={`block w-full px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:shadow-none mb-6 bg-white outline-none text-center`}
+                  className={`block w-full px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:shadow-none mb-4 bg-white outline-none text-center`}
                 />
-                <Button 
+
+                <Button
                   type="submit"
                   disabled={searchingParent}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 cursor-pointer"
@@ -245,6 +279,23 @@ const TanquePage: React.FC = () => {
                   ) : (
                     "Buscar"
                   )}
+                </Button>
+
+                {/* Separador */}
+                <div className="flex items-center my-4">
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <span className="px-3 text-sm text-gray-500 font-medium">o colócalo como tu directo</span>
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                </div>
+
+                {/* Boton para autoasignarlo */}
+                <Button
+                  type="button"
+                  onClick={() => setShowAutoAssignConfirm(true)}
+                  disabled={searchingParent}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 cursor-pointer"
+                >
+                  Autoasignar
                 </Button>
 
                 {/* Result */}
@@ -258,8 +309,9 @@ const TanquePage: React.FC = () => {
                           <p><strong>Apellido:</strong> {parentToAssign.lastname}</p>
                           <p><strong>Codigo:</strong> {parentToAssign.referralCode}</p>
                         </div>
-                        <Button 
-                          onClick={() => assignParent()}
+                        <Button
+                          type="button"
+                          onClick={() => setShowAssignConfirm(true)}
                           disabled={assigningParent}
                           className="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-xs font-medium text-green-700 border border-green-700 bg-green-200 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 cursor-pointer"
                         >
@@ -283,6 +335,32 @@ const TanquePage: React.FC = () => {
             </div>
           </div>
         )}
+
+        <ServerAlert
+          open={showAutoAssignConfirm}
+          onOpenChange={setShowAutoAssignConfirm}
+          variant="warning"
+          title="Confirmar autoasignación"
+          description={`¿Estás seguro de que deseas colocar a ${affiliateToAssign.name} ${affiliateToAssign.lastname} directamente bajo tu estructura?`}
+          showCancel={true}
+          cancelText="Cancelar"
+          confirmText="Sí, autoasignar"
+          onConfirm={autoAssignParent}
+          onCancel={() => setShowAutoAssignConfirm(false)}
+        />
+
+        <ServerAlert
+          open={showAssignConfirm}
+          onOpenChange={setShowAssignConfirm}
+          variant="warning"
+          title="Confirmar colocación"
+          description={`¿Estás seguro de que deseas colocar a ${affiliateToAssign.name} ${affiliateToAssign.lastname} bajo ${parentToAssign?.name} ${parentToAssign?.lastname}?`}
+          showCancel={true}
+          cancelText="Cancelar"
+          confirmText="Sí, colocar"
+          onConfirm={handleAssignParent}
+          onCancel={() => setShowAssignConfirm(false)}
+        />
 
         <Toaster />
       </div>

@@ -23,6 +23,7 @@ export default function Home() {
         <div className="flex-1 w-full">
           {/* Sección Hero */}
           <HeroSection />
+          <h1>Home</h1>
         </div>
 
         {/* Menú vertical derecho - Solo desktop */}

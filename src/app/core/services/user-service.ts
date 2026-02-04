@@ -24,7 +24,6 @@ export async function getDirectUsers(parentId: number): Promise<PublicUserDto[]>
 export async function getUserByReferralCode(referralCode: string): Promise<PublicUserDto> {
   try {
     const response = await apiClient.get<PublicUserDto>(`/v1/users/referral-code/${referralCode}`)
-    console.log(response.data)
     return response.data
   } catch (error) {
     return Promise.reject(handleAxiosError(error, "obtener datos del usuario"))
