@@ -22,6 +22,7 @@ const AllyDetailPage: React.FC = () => {
   const [showQR, setShowQR] = useState(false)
   const [qrData, setQrData] = useState<GenerateQrBenefitResponse | null>(null)
   const [qrLoading, setQrLoading] = useState(false)
+  const [pendingBenefitId, setPendingBenefitId] = useState<number | null>(null)
 
   useEffect(() => {
     const loadAlly = async () => {
@@ -54,6 +55,7 @@ const AllyDetailPage: React.FC = () => {
   const handleClaimBenefit = async (benefitId: number) => {
     try {
       if (!termsAccepted) {
+        setPendingBenefitId(benefitId)
         setShowQR(false)
         setShowModal(true)
         return
@@ -66,19 +68,42 @@ const AllyDetailPage: React.FC = () => {
       setQrData(qr)
       setShowQR(true)
       setShowModal(true)
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error)
-      alert('No fue posible generar el QR')
+      if (error instanceof Error) {
+          alert(error.message)
+      } else {
+          alert('Ocurrió un error inesperado')
+      }
     } finally {
       setQrLoading(false)
     }
   }
 
 
-  const handleAcceptTerms = () => {
+  const handleAcceptTerms = async () => {
     setTermsAccepted(true)
     localStorage.setItem('benefit-terms-accepted', 'true')
-    setShowQR(true)
+    if (pendingBenefitId) {
+        try {
+          setQrLoading(true)
+
+          const qr = await generateBenefitQr(pendingBenefitId)
+
+          setQrData(qr)
+          setShowQR(true)
+        } catch (error: unknown) {
+            console.error(error)
+            if (error instanceof Error) {
+                alert(error.message)
+              } else {
+                alert('Ocurrió un error inesperado')
+              }
+        } finally {
+          setQrLoading(false)
+          setPendingBenefitId(null)
+        }
+      }
   }
 
   const handleCloseModal = () => {
