@@ -194,23 +194,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       href: '/dashboard/aliados',
       isActive: false,
       children: [
-          {
-                id: 'uvaliados',
-                label: 'Aliados',
-                icon: <Wallet size={20} />,
-                href: '/dashboard/aliados',
-                isActive: false,
-                show: isActiveUser
-              },
-          {
-                id: 'misbeneficios',
-                label: 'Historial de beneficios',
-                icon: <Wallet size={20} />,
-                href: '/dashboard/mis-beneficios',
-                isActive: false,
-                show: isActiveUser
-              }
-              ],
+        {
+          id: 'uvaliados',
+          label: 'Aliados',
+          icon: <Wallet size={20} />,
+          href: '/dashboard/aliados',
+          isActive: false,
+          show: hasFullAccess
+        },
+        {
+          id: 'misbeneficios',
+          label: 'Historial de beneficios',
+          icon: <Wallet size={20} />,
+          href: '/dashboard/mis-beneficios',
+          isActive: false,
+          show: hasFullAccess
+        }
+      ],
       show: hasFullAccess
     },
     {
