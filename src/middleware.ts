@@ -54,126 +54,45 @@ const withAuth: MiddlewareFactory = (next) => {
 
     // Si intenta acceder a una ruta protegida
     if (isProtectedRoute) {
-      console.log("[Middleware] Protected route accessed:", pathname)
-      console.log("[Middleware] Has access token:", !!accessToken)
-
-      // Si no hay access_token
-      if (!accessToken) {
-        // Si hay refresh_token, intentar refrescar
-        if (refreshToken) {
-          try {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API}/v1/auth/refresh-token`,
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  Cookie: `refresh_token=${refreshToken}`
-                },
-                credentials: "include"
-              }
-            )
-
-            if (response.ok) {
-              // El backend estableció las cookies automáticamente
-              const nextResponse = NextResponse.next()
-              // Copiar las nuevas cookies de la respuesta del backend
-              response.headers.getSetCookie().forEach((cookie) => {
-                nextResponse.headers.append("set-cookie", cookie)
-              })
-              return nextResponse
-            }
-          } catch (error) {
-            console.error("Error refreshing token:", error)
-          }
-        }
-
-        // Si no hay tokens o refresh falló, redirigir a login
+      // Sin ningún token → redirigir a login
+      if (!accessToken && !refreshToken) {
         const loginUrl = new URL("/login", request.url)
         loginUrl.searchParams.set("redirect", pathname)
         return NextResponse.redirect(loginUrl)
       }
 
-      // Verificar si el access_token es válido y obtener información del usuario
-      try {
-        console.log("[Middleware] Verifying token...")
-        console.log("[Middleware] API URL:", process.env.NEXT_PUBLIC_API)
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API}/v1/auth/verify`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Cookie: `access_token=${accessToken}`
-            },
-            credentials: "include"
-          }
-        )
+      // Si hay access_token, verificar restricciones de rol
+      // (Si no hay access_token pero sí refresh_token, dejar pasar;
+      // el axios interceptor del cliente se encargará del refresh)
+      if (accessToken) {
+        try {
+          const userResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_API}/v1/auth/me`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Cookie: `access_token=${accessToken}`
+              },
+              credentials: "include"
+            }
+          )
 
-        console.log("[Middleware] Verify response status:", response.status)
+          if (userResponse.ok) {
+            const userData = await userResponse.json()
 
-        if (!response.ok) {
-          // Token inválido, intentar refresh
-          if (refreshToken) {
-            try {
-              const refreshResponse = await fetch(
-                `${process.env.NEXT_PUBLIC_API}/v1/auth/refresh-token`,
-                {
-                  method: "GET",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Cookie: `refresh_token=${refreshToken}`
-                  },
-                  credentials: "include"
-                }
-              )
-
-              if (refreshResponse.ok) {
-                const nextResponse = NextResponse.next()
-                refreshResponse.headers.getSetCookie().forEach((cookie) => {
-                  nextResponse.headers.append("set-cookie", cookie)
-                })
-                return nextResponse
+            // Si el usuario es de tipo "business"
+            if (userData.role === "business") {
+              // Y está intentando acceder a rutas del dashboard que NO sean /dashboard/comercios/*
+              if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/comercios")) {
+                // Redirigir a /dashboard/comercios
+                return NextResponse.redirect(new URL("/dashboard/comercios", request.url))
               }
-            } catch (error) {
-              console.error("Error refreshing token:", error)
             }
           }
-
-          // Refresh falló, redirigir a login
-          const loginUrl = new URL("/login", request.url)
-          loginUrl.searchParams.set("redirect", pathname)
-          return NextResponse.redirect(loginUrl)
+        } catch (error) {
+          console.error("Error verifying token:", error)
         }
-
-        // Token válido, verificar restricciones de rol
-        const userResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API}/v1/auth/me`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Cookie: `access_token=${accessToken}`
-            },
-            credentials: "include"
-          }
-        )
-
-        if (userResponse.ok) {
-          const userData = await userResponse.json()
-
-          // Si el usuario es de tipo "business"
-          if (userData.role === "business") {
-            // Y está intentando acceder a rutas del dashboard que NO sean /dashboard/comercios/*
-            if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/comercios")) {
-              // Redirigir a /dashboard/comercios
-              return NextResponse.redirect(new URL("/dashboard/comercios", request.url))
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error verifying token:", error)
-        // En caso de error, permitir continuar (podría ser un problema de red temporal)
       }
     }
 
