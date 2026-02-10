@@ -1,18 +1,10 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { logout as authServiceLogout } from '@/app/core/services/auth-service'
 
 export async function logoutAction() {
-  try {
-    // Llamar al backend para invalidar el token
-    await authServiceLogout()
-  } catch (error) {
-    console.error('Error during logout:', error)
-    // Continuar incluso si hay error, eliminamos las cookies de todas formas
-  }
-
-  // Eliminar las cookies de autenticación
+  // Solo eliminar las cookies del lado del servidor Next.js
+  // La llamada al backend se hace desde el cliente (donde las cookies sí se envían)
   const cookieStore = await cookies()
   cookieStore.delete('access_token')
   cookieStore.delete('refresh_token')
