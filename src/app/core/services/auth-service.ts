@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { RegisterData, AuthCredentials, StandardResponse, User } from "@/app/core/types/user"
+import { RegisterData, RegisterPartnerData, AuthCredentials, StandardResponse, User } from "@/app/core/types/user"
 import apiClient from "@/app/core/services/api-client"
 import { getUser } from "@/app/core/services/user-service"
 import { handleAxiosError } from "@/app/core/utils/error-handler"
@@ -35,6 +35,17 @@ export async function register(data: RegisterData): Promise<StandardResponse> {
     return response.data
   } catch (error) {
     throw await Promise.reject(handleAxiosError(error, "registrar al usuario"));
+  }
+}
+
+export async function registerPartner(data: RegisterPartnerData): Promise<StandardResponse> {
+  try {
+    const response = await apiClient.post<StandardResponse>("/v1/allies/register", data, {
+      withCredentials: true
+    })
+    return response.data
+  } catch (error) {
+    throw await Promise.reject(handleAxiosError(error, "registrar el comercio"));
   }
 }
 

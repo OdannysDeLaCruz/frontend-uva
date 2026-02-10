@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/app/core/ui/button"
-import { Globe, Menu, X } from "lucide-react"
+import { Globe, Menu, X, ChevronDown } from "lucide-react"
 import HorizontalMenu from "./HorizontalMenu"
 
 type HeaderProps = {
@@ -20,6 +20,18 @@ export default function Header({
 }: HeaderProps) {
   const [currentLanguage, setCurrentLanguage] = useState("Es")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isRegisterDropdownOpen, setIsRegisterDropdownOpen] = useState(false)
+  const registerDropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (registerDropdownRef.current && !registerDropdownRef.current.contains(event.target as Node)) {
+        setIsRegisterDropdownOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const menuItems = [
     { href: "/nosotros", label: "Nosotros" },
@@ -80,15 +92,37 @@ export default function Header({
               </Button>
             </Link>
 
-            {/* Botón registrarse */}
-            <Link href="/register">
+            {/* Botón registrarse con dropdown */}
+            <div className="relative" ref={registerDropdownRef}>
               <Button
                 size="lg"
-                className="bg-principal hover:bg-principal/90 text-white px-4 lg:px-6 text-base"
+                className="bg-principal hover:bg-principal/90 text-white px-4 lg:px-6 text-base flex items-center gap-1"
+                onClick={() => setIsRegisterDropdownOpen(!isRegisterDropdownOpen)}
               >
                 ¡Regístrate ya!
+                <ChevronDown className={`h-4 w-4 transition-transform ${isRegisterDropdownOpen ? 'rotate-180' : ''}`} />
               </Button>
-            </Link>
+              {isRegisterDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                  <Link
+                    href="/register"
+                    className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                    onClick={() => setIsRegisterDropdownOpen(false)}
+                  >
+                    <span className="font-medium">Nuevo miembro</span>
+                    <span className="block text-xs text-gray-500 mt-0.5">Únete a la comunidad UVA</span>
+                  </Link>
+                  <Link
+                    href="/register/comercio"
+                    className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                    onClick={() => setIsRegisterDropdownOpen(false)}
+                  >
+                    <span className="font-medium">Comercio</span>
+                    <span className="block text-xs text-gray-500 mt-0.5">Registra tu negocio como aliado</span>
+                  </Link>
+                </div>
+              )}
+            </div>
             </div>
           )}
 
@@ -142,7 +176,12 @@ export default function Header({
             </Link>
             <Link href="/register" onClick={() => setIsMenuOpen(false)}>
               <Button className="bg-principal hover:bg-principal/90 text-white w-full">
-                Registrarse
+                Registrarse como miembro
+              </Button>
+            </Link>
+            <Link href="/register/comercio" onClick={() => setIsMenuOpen(false)}>
+              <Button variant="outline" className="border-principal text-principal hover:bg-principal/10 w-full">
+                Registrar comercio
               </Button>
             </Link>
           </div>

@@ -20,6 +20,7 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+  const [loginType, setLoginType] = useState<'user' | 'partner'>('user')
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -52,6 +53,7 @@ export default function LoginForm() {
       await authServiceLogin({
         username: formData.email,
         password: formData.password,
+        type: loginType,
       })
 
       // Obtener la info completa del usuario
@@ -85,12 +87,38 @@ export default function LoginForm() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md slide-in-up">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Inicia sesión en tu cuenta</h2>
         <p className="mt-2 text-center text-sm text-white/80">
-          Accede a tu backoffice (UVA Oficina Virtual)
+          {loginType === 'user' ? 'Accede a tu backoffice (UVA Oficina Virtual)' : 'Accede al panel de tu comercio'}
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md slide-in-up p-4" style={{ animationDelay: '0.2s' }}>
         <div className="glass py-8 px-4 border border-white/10 sm:rounded-2xl sm:px-10">
+          {/* Toggle tipo de login */}
+          <div className="flex mb-6 bg-white/10 rounded-lg p-1">
+            <button
+              type="button"
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
+                loginType === 'user'
+                  ? 'bg-purple-600 text-white shadow-md'
+                  : 'text-white/70 hover:text-white'
+              }`}
+              onClick={() => { setLoginType('user'); setError(null) }}
+            >
+              Miembro
+            </button>
+            <button
+              type="button"
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
+                loginType === 'partner'
+                  ? 'bg-purple-600 text-white shadow-md'
+                  : 'text-white/70 hover:text-white'
+              }`}
+              onClick={() => { setLoginType('partner'); setError(null) }}
+            >
+              Comercio
+            </button>
+          </div>
+
           {error && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm">
               <p className="text-sm text-red-300 flex items-center">
@@ -103,7 +131,7 @@ export default function LoginForm() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <Label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                Correo electrónico
+                {loginType === 'user' ? 'Correo electrónico o usuario' : 'Correo electrónico del comercio'}
               </Label>
               <div className="mt-1">
                 <Input
@@ -169,9 +197,12 @@ export default function LoginForm() {
           <div className="mt-6">
             <div className="text-center">
               <p className="text-sm text-white/70">
-                ¿No tienes cuenta?{" "} <br />
-                <Link href="/register" className="font-medium text-purple-300 hover:text-purple-200 transition-colors underline underline-offset-2">
-                  Registrarse aquí
+                {loginType === 'user' ? '¿No tienes cuenta?' : '¿Tu comercio no está registrado?'}{" "} <br />
+                <Link
+                  href={loginType === 'user' ? '/register' : '/register/comercio'}
+                  className="font-medium text-purple-300 hover:text-purple-200 transition-colors underline underline-offset-2"
+                >
+                  {loginType === 'user' ? 'Registrarse aquí' : 'Registra tu comercio'}
                 </Link>
               </p>
             </div>
