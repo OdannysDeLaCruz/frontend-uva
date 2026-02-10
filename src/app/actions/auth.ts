@@ -1,7 +1,6 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { logout as authServiceLogout } from '@/app/core/services/auth-service'
 
 export async function logoutAction() {
@@ -17,7 +16,4 @@ export async function logoutAction() {
   const cookieStore = await cookies()
   cookieStore.delete('access_token')
   cookieStore.delete('refresh_token')
-
-  // Redirigir a la página de login
-  redirect('/login')
 }

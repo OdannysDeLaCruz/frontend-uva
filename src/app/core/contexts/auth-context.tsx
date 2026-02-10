@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, type ReactNode, useCallback, useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import type { User } from "@/app/core/types/user"
 import { logoutAction } from "@/app/actions/auth"
 import { getUser } from "@/app/core/services/user-service"
@@ -27,6 +28,7 @@ export function useAuth() {
 // Proveedor de autenticación simplificado
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const router = useRouter()
 
   // Al montar el proveedor, obtener usuario si hay sesión activa
   // Solo en rutas protegidas, no en rutas públicas
@@ -76,10 +78,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Error al cerrar sesión:", error)
       // Continuamos con el cierre de sesión aunque falle
     } finally {
-      // Limpiar estado local
+      // Limpiar estado local y redirigir
       setUser(null)
+      router.push('/login')
     }
-  }, [])
+  }, [router])
 
   const value = {
     user,
