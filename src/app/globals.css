@@ -281,6 +281,65 @@ html[data-theme="dark"] select option,
   }
 }
 
+/* Phone Input Light Theme Styles (Comercio register) */
+.phone-input-container-light {
+  color-scheme: light !important;
+}
+
+.phone-input-container-light .PhoneInputCountrySelect {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+  color: #111827 !important;
+  color-scheme: light !important;
+}
+
+.phone-input-container-light .PhoneInputCountrySelectArrow {
+  color: #374151 !important;
+  opacity: 0.8 !important;
+}
+
+.phone-input-container-light .PhoneInputCountryIcon {
+  border: none !important;
+}
+
+.phone-input-container-light .PhoneInput {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  color: #111827 !important;
+  transition: all 0.2s ease !important;
+}
+
+.phone-input-container-light .PhoneInput:focus-within {
+  border-color: rgb(147, 51, 234) !important;
+  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2) !important;
+}
+
+.phone-input-container-light .PhoneInputInput {
+  background: transparent !important;
+  border: none !important;
+  color: #111827 !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.phone-input-container-light .PhoneInputInput::placeholder {
+  color: #9ca3af !important;
+}
+
+.phone-input-container-light .PhoneInputCountrySelect:focus {
+  border-color: rgb(147, 51, 234) !important;
+  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2) !important;
+  outline: none !important;
+}
+
+.phone-input-container-light select,
+.phone-input-container-light .PhoneInputCountrySelect {
+  color-scheme: light !important;
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
 /* Brand Colors - Landing Page */
 .text-principal {
   color: #772783;
