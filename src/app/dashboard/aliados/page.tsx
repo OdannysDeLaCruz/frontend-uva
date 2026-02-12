@@ -17,7 +17,7 @@ const AliadosPage: React.FC = () => {
       <div
         className="space-y-6 p-1 md:p-4 bg-contain bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'url(/images/aliados/aliados-fondo.png)',
+          backgroundImage: 'url(/images/aliados/aliados-fondo.webp)',
           height: '87vh',
         }}
       >
