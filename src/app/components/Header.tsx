@@ -112,14 +112,14 @@ export default function Header({
                     <span className="font-medium">Nuevo miembro</span>
                     <span className="block text-xs text-gray-500 mt-0.5">Únete a la comunidad UVA</span>
                   </Link>
-                  <Link
+                  {/* <Link
                     href="/register/comercio"
                     className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
                     onClick={() => setIsRegisterDropdownOpen(false)}
                   >
                     <span className="font-medium">Comercio</span>
                     <span className="block text-xs text-gray-500 mt-0.5">Registra tu negocio como aliado</span>
-                  </Link>
+                  </Link> */}
                 </div>
               )}
             </div>
