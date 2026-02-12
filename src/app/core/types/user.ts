@@ -1,6 +1,7 @@
 export interface AuthCredentials {
   username: string
   password: string
+  type?: 'user' | 'partner'
 }
 
 export interface AuthResponse {
@@ -41,6 +42,7 @@ export interface User {
   parentId: number
   image: string
   role: string
+  type?: 'user' | 'partner'
 }
 
 export interface PublicUserDto {
@@ -64,4 +66,16 @@ export interface ReferralMarketingCount {
   direct: number;
   structure: number;
   tanque: number;
+}
+
+export interface RegisterPartnerData {
+  name: string
+  representativeName: string
+  legalName?: string
+  docNumber: string
+  address?: string
+  email: string
+  phone: string
+  password: string
+  confirmPassword: string
 }

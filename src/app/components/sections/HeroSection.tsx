@@ -35,11 +35,19 @@ export default function HeroSection() {
             <strong>Tecnología y Oportunidad</strong>... <br />
             Generando grandes <strong>Beneficios de Aprendizaje, Economicos y de Bienestar.</strong>
           </p>
-          <Link href="/register" className="w-full md:w-auto flex justify-center">
-            <Button className="bg-green-600/60 hover:bg-green-700 cursor-pointer text-white px-4 py-2 md:px-6 md:py-5 2xl:py-6 2xl:px-8 rounded-lg text-lg md:text-2xl lg:text-3xl font-normal whitespace-nowrap">
-              ¡Regístrate ya!
-            </Button>
-          </Link>
+          <div className="flex flex-col items-center gap-3">
+            <Link href="/register" className="w-full md:w-auto flex justify-center">
+              <Button className="bg-green-600/60 hover:bg-green-700 cursor-pointer text-white px-4 py-2 md:px-6 md:py-5 2xl:py-6 2xl:px-8 rounded-lg text-lg md:text-2xl lg:text-3xl font-normal whitespace-nowrap">
+                ¡Regístrate ya!
+              </Button>
+            </Link>
+            <Link
+              href="/register/comercio"
+              className="text-white/80 hover:text-white text-sm md:text-base underline underline-offset-4 transition-colors"
+            >
+              ¿Eres comercio? Regístrate aquí
+            </Link>
+          </div>
         </div>
       </div>
     </section>
