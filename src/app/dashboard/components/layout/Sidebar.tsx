@@ -31,7 +31,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
 
   // Usuario con acceso completo: activo o con earlyAccess (prelanzamiento)
-  const isActiveUser = user?.isActive;
   const hasFullAccess = user?.isActive || user?.earlyAccess;
 
   // Detectar dispositivos móviles
@@ -240,7 +239,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       children: [],
       show: hasFullAccess
     }
-  ], [hasFullAccess, isActiveUser]);
+  ], [hasFullAccess]);
 
   useEffect(() => {
     // poner en activo un item si la ruta es la misma del path

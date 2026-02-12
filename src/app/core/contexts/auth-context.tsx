@@ -1,7 +1,9 @@
 "use client"
 
 import { createContext, useContext, type ReactNode, useCallback, useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import type { User } from "@/app/core/types/user"
+import { logout as authServiceLogout } from "@/app/core/services/auth-service"
 import { logoutAction } from "@/app/actions/auth"
 import { getUser } from "@/app/core/services/user-service"
 
@@ -27,6 +29,7 @@ export function useAuth() {
 // Proveedor de autenticación simplificado
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const router = useRouter()
 
   // Al montar el proveedor, obtener usuario si hay sesión activa
   // Solo en rutas protegidas, no en rutas públicas
@@ -69,17 +72,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Función para cerrar sesión
   const logout = useCallback(async (): Promise<void> => {
     try {
-      // Usar server action para logout
-      // Esto invalida la sesión en el backend y elimina las cookies
+      // 1. Llamar al backend desde el cliente (donde las cookies sí se envían)
+      await authServiceLogout()
+    } catch (error) {
+      console.error("Error al cerrar sesión en backend:", error)
+    }
+
+    try {
+      // 2. Eliminar cookies del lado del servidor Next.js via server action
       await logoutAction()
     } catch (error) {
-      console.error("Error al cerrar sesión:", error)
-      // Continuamos con el cierre de sesión aunque falle
-    } finally {
-      // Limpiar estado local
-      setUser(null)
+      console.error("Error al eliminar cookies:", error)
     }
-  }, [])
+
+    // 3. Limpiar estado local y redirigir
+    setUser(null)
+    router.push('/login')
+  }, [router])
 
   const value = {
     user,

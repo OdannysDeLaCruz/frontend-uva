@@ -3,15 +3,12 @@
 import React from 'react'
 import { useAuth } from '@/app/core/contexts/auth-context'
 import { Store, LogOut } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 
 const ComerciosHeader: React.FC = () => {
   const { user, logout } = useAuth()
-  const router = useRouter()
 
   const handleLogout = async () => {
     await logout()
-    router.push('/login')
   }
 
   return (
