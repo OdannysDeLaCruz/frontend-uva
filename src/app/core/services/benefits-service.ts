@@ -4,11 +4,12 @@ import { handleAxiosError } from '../utils/error-handler';
 
 
 export const generateBenefitQr = async (
-  partnerBusinessBenefitId: number
+  benefitId: number,
+  partnerBusinessId: number
 ): Promise<GenerateQrBenefitResponse> => {
     try {
         const { data } = await apiClient.post('/v1/benefits/generate_qr',
-            { partnerBusinessBenefitId },
+            { benefitId, partnerBusinessId},
           )
           return data
       } catch (error) {

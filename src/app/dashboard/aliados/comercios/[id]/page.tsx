@@ -53,6 +53,7 @@ const AllyDetailPage: React.FC = () => {
   }, [])
 
   const handleClaimBenefit = async (benefitId: number) => {
+    if (!ally) return;
     try {
       if (!termsAccepted) {
         setPendingBenefitId(benefitId)
@@ -63,7 +64,7 @@ const AllyDetailPage: React.FC = () => {
 
       setQrLoading(true)
 
-      const qr = await generateBenefitQr(benefitId)
+      const qr = await generateBenefitQr(benefitId,ally.id)
 
       setQrData(qr)
       setShowQR(true)
@@ -82,13 +83,14 @@ const AllyDetailPage: React.FC = () => {
 
 
   const handleAcceptTerms = async () => {
+    if (!ally) return;
     setTermsAccepted(true)
     localStorage.setItem('benefit-terms-accepted', 'true')
     if (pendingBenefitId) {
         try {
           setQrLoading(true)
 
-          const qr = await generateBenefitQr(pendingBenefitId)
+          const qr = await generateBenefitQr(pendingBenefitId,ally.id)
 
           setQrData(qr)
           setShowQR(true)
