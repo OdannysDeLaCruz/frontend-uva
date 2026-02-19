@@ -7,14 +7,25 @@
 
 import apiClient from './api-client';
 
-export interface WompiInitResponse {
+export interface MembershipInfoResponse {
+  membershipId: number;
+  membershipName: string;
+  price: number;
+  amountInCents: number;
+  currency: string;
+  publicKey: string;
+  hasActiveSubscription: boolean;
+  durationDays: number;
+}
+
+export interface WompiTransactionResponse {
   transactionId: number;
   reference: string;
   integritySignature: string;
   publicKey: string;
   amountInCents: number;
   currency: string;
-  expiresAt: string;
+  redirectUrl?: string;
 }
 
 export interface PaymentStatusResponse {
@@ -27,26 +38,59 @@ export interface PaymentStatusResponse {
   message: string;
 }
 
-export interface WompiPaymentRequest {
+export interface WompiTransactionStatusResponse {
+  id: string;
+  status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'VOIDED' | 'ERROR';
+  reference: string;
+  amountInCents: number;
+  currency: string;
+  paymentMethod: string;
+  createdAt: string;
+  finalizedAt?: string;
+  statusMessage?: string;
+}
+
+export interface CreateTransactionRequest {
   membershipId?: number;
+  redirectUrl?: string;
 }
 
 /**
- * Inicializar pago con Wompi
- * Retorna los parámetros necesarios para mostrar el widget de Wompi
+ * Obtener información de membresía para mostrar en UI
+ * NO crea transacción - solo retorna datos para display
  */
-export async function initWompiPayment(
-  request: WompiPaymentRequest
-): Promise<WompiInitResponse> {
+export async function getMembershipInfo(
+  membershipId?: number
+): Promise<MembershipInfoResponse> {
   try {
-    const response = await apiClient.post<WompiInitResponse>(
-      '/v1/payments/wompi/init',
+    const response = await apiClient.get<MembershipInfoResponse>(
+      '/v1/payments/wompi/membership-info',
+      { params: membershipId ? { membershipId } : {} }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `Failed to get membership info: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+}
+
+/**
+ * Crear transacción de pago con Wompi
+ * Se llama cuando el usuario hace clic en "Pagar"
+ */
+export async function createWompiTransaction(
+  request: CreateTransactionRequest
+): Promise<WompiTransactionResponse> {
+  try {
+    const response = await apiClient.post<WompiTransactionResponse>(
+      '/v1/payments/wompi/create-transaction',
       request
     );
     return response.data;
   } catch (error) {
     throw new Error(
-      `Failed to initialize Wompi payment: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to create payment transaction: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 }
@@ -66,6 +110,25 @@ export async function getPaymentStatus(
   } catch (error) {
     throw new Error(
       `Failed to get payment status: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+}
+
+/**
+ * Obtener estado de transacción de Wompi por ID externo
+ * Útil para callbacks donde solo tenemos el ID de Wompi
+ */
+export async function getWompiTransactionStatus(
+  wompiTransactionId: string
+): Promise<WompiTransactionStatusResponse> {
+  try {
+    const response = await apiClient.get<WompiTransactionStatusResponse>(
+      `/v1/payments/wompi/status/${wompiTransactionId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `Failed to get Wompi transaction status: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 }
