@@ -11,11 +11,25 @@ export interface MembershipInfoResponse {
   membershipId: number;
   membershipName: string;
   price: number;
+  taxRate: number;
+  taxAmount: number;
+  taxAmountInCents: number;
+  totalAmountInCents: number;
   amountInCents: number;
   currency: string;
   publicKey: string;
   hasActiveSubscription: boolean;
+  isExpired: boolean;
+  isWithinGracePeriod: boolean;
+  canRenew: boolean;
+  gracePeriodDays: number;
   durationDays: number;
+  subscription: {
+    startDate: string;
+    endDate: string;
+    nextRenewalDate: string | null;
+    status: string;
+  } | null;
 }
 
 export interface WompiTransactionResponse {
@@ -24,6 +38,8 @@ export interface WompiTransactionResponse {
   integritySignature: string;
   publicKey: string;
   amountInCents: number;
+  baseAmountInCents: number;
+  taxAmountInCents: number;
   currency: string;
   redirectUrl?: string;
 }

@@ -33,6 +33,10 @@ const ContributionsTab: React.FC = () => {
     const checkout: WompiWidget | null = window.WidgetCheckout ? (new window.WidgetCheckout({
       currency: transactionData.currency,
       amountInCents: transactionData.amountInCents,
+      taxInCents: {
+        vat: transactionData.taxAmountInCents,
+        consumption: 0,
+      },
       reference: transactionData.reference,
       publicKey: transactionData.publicKey,
       signature: {
@@ -63,6 +67,13 @@ const ContributionsTab: React.FC = () => {
     loadMembershipInfo(1);
   }, [loadMembershipInfo]);
 
+  // Recargar info de membresía tras pago exitoso
+  useEffect(() => {
+    if (status === 'success') {
+      loadMembershipInfo(1);
+    }
+  }, [status, loadMembershipInfo]);
+
   // Formatear precio para mostrar
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -71,6 +82,30 @@ const ContributionsTab: React.FC = () => {
       minimumFractionDigits: 0
     }).format(price);
   };
+
+  const getRegularity = (days: number) => {
+    if (days <= 7) return 'Semanal';
+    if (days <= 31) return 'Mensual';
+    if (days <= 366) return 'Anual';
+    return `Cada ${days} días`;
+  };
+
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('es-CO', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+  const getButtonLabel = () => {
+    if (status === 'loading') return 'Cargando...';
+    if (status === 'creating') return 'Procesando...';
+    if (status === 'polling') return 'Verificando...';
+    if (!membershipInfo?.subscription) return 'Activar';
+    if (membershipInfo.isWithinGracePeriod) return 'Renovar';
+    return 'Reactivar';
+  };
+
+  const isActive = membershipInfo?.hasActiveSubscription && !membershipInfo?.isWithinGracePeriod;
+  const showPaymentPanel = !membershipInfo?.hasActiveSubscription || membershipInfo?.isWithinGracePeriod;
 
   return (
     <div className="space-y-6">
@@ -84,31 +119,60 @@ const ContributionsTab: React.FC = () => {
               <p className='text-center text-xl'>
                 {membershipInfo?.membershipName || 'Membresía'}
               </p>
-              <div className='flex flex-col justify-start mx-auto w-48'>
-                <p className='text-right text-5xl mt-4 text-white leading-none'>
-                  {membershipInfo ? formatPrice(membershipInfo.price) : '$ --'}
-                </p>
-                <p className='text-right text-3xl text-white leading-none'>+IVA</p>
-              </div>
 
-              <button
-                onClick={onPayClick}
-                disabled={status === 'loading' || status === 'creating' || !membershipInfo}
-                className="px-6 mt-4 text-xl bg-sky-600 hover:bg-sky-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded-lg transition-colors duration-200 border border-sky-500 mx-auto"
-              >
-                {status === 'loading' && 'Cargando...'}
-                {status === 'creating' && 'Procesando...'}
-                {status === 'polling' && 'Verificando...'}
-                {(status === 'idle' || status === 'error' || status === 'success') && 'Pagar'}
-              </button>
+              {/* Card activa — sin botón de pago */}
+              {isActive && membershipInfo?.subscription && (
+                <div className='mt-3 flex flex-col gap-1 text-center'>
+                  <span className='text-green-400 font-semibold text-base'>● Activa</span>
+                  <span className='text-gray-300 text-sm'>
+                    {getRegularity(membershipInfo.durationDays)}
+                  </span>
+                  <span className='text-gray-400 text-sm'>
+                    Vence el {formatDate(membershipInfo.subscription.endDate)}
+                  </span>
+                </div>
+              )}
 
-              {error && <p className="text-red-400 text-center mt-2">{error}</p>}
-              {status === 'success' && <p className="text-green-400 text-center mt-2">¡Pago exitoso!</p>}
+              {/* Panel de pago — solo cuando no activa o en grace period */}
+              {showPaymentPanel && (
+                <>
+                  {/* Banner período de gracia */}
+                  {membershipInfo?.isWithinGracePeriod && membershipInfo.subscription && (
+                    <div className='mt-3 bg-yellow-900/40 border border-yellow-500 rounded px-3 py-2 text-yellow-300 text-sm text-center'>
+                      ⚠ Tu membresía venció el {formatDate(membershipInfo.subscription.endDate)}
+                    </div>
+                  )}
 
-              {membershipInfo?.hasActiveSubscription && (
-                <p className="text-yellow-400 text-center mt-2 text-sm">
-                  Ya tienes una membresía activa
-                </p>
+                  {/* Banner expirada (fuera de grace period) */}
+                  {membershipInfo?.isExpired && !membershipInfo?.isWithinGracePeriod && membershipInfo?.subscription && (
+                    <div className='mt-3 bg-red-900/40 border border-red-500 rounded px-3 py-2 text-red-300 text-sm text-center'>
+                      Membresía expirada desde {formatDate(membershipInfo.subscription.endDate)}
+                    </div>
+                  )}
+
+                  <div className='flex flex-col justify-start mx-auto w-48'>
+                    <p className='text-right text-5xl mt-4 text-white leading-none'>
+                      {membershipInfo ? formatPrice(membershipInfo.price) : '$ --'}
+                    </p>
+                    <p className='text-right text-xl text-sky-300 leading-none'>
+                      +IVA {membershipInfo ? formatPrice(membershipInfo.taxAmount) : ''}
+                    </p>
+                    <p className='text-right text-2xl text-white font-semibold leading-none'>
+                      Total: {membershipInfo ? formatPrice(membershipInfo.price + membershipInfo.taxAmount) : '$ --'}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={onPayClick}
+                    disabled={status === 'loading' || status === 'creating' || !membershipInfo}
+                    className="px-6 mt-4 text-xl bg-sky-600 hover:bg-sky-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded-lg transition-colors duration-200 border border-sky-500 mx-auto"
+                  >
+                    {getButtonLabel()}
+                  </button>
+
+                  {error && <p className="text-red-400 text-center mt-2">{error}</p>}
+                  {status === 'success' && <p className="text-green-400 text-center mt-2">¡Pago exitoso!</p>}
+                </>
               )}
             </div>
           </div>
