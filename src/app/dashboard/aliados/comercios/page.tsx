@@ -133,7 +133,7 @@ const ComerciosPage: React.FC = () => {
           <>
             {/* Search Bar */}
             <div className="flex items-center justify-center mb-16">
-              <div className="relative w-2xl">
+              <div className="relative w-full max-w-2xl">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
