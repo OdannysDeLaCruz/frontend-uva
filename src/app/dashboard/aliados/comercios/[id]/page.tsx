@@ -193,9 +193,10 @@ const AllyDetailPage: React.FC = () => {
                 </div>
               )}
 
-              <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed">{ally.description}</p>
-              </div>
+              <div
+                className="prose max-w-none text-gray-700"
+                dangerouslySetInnerHTML={{ __html: ally.description }}
+              />
             </div>
           </div>
         </div>
