@@ -157,15 +157,15 @@ const ComerciosPage: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="w-full flex flex-col gap-4 md:grid md:grid-cols-3 2xl:grid-cols-4 md:gap-6">
+              <div className="w-full flex flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 sm:gap-6">
                 {allies.map((ally) => (
                   <div
                     key={ally.id}
                     onClick={() => handleAllyClick(ally.id)}
-                    className="cursor-pointer group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex md:flex-col bg-white w-full"
+                    className="cursor-pointer group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex sm:flex-col bg-white w-full"
                   >
-                    {/* Imagen: izquierda en mobile, arriba en desktop */}
-                    <div className="relative w-28 h-24 shrink-0 bg-gray-200 md:w-full md:h-48">
+                    {/* Imagen: izquierda en mobile, arriba en tablet/desktop */}
+                    <div className="relative w-28 h-24 shrink-0 bg-gray-200 sm:w-full sm:h-48">
                       {ally.photo && ally.photo !== '' && (
                         <Image
                           src={ally.photo}
