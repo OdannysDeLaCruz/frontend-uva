@@ -109,7 +109,7 @@ const ComerciosPage: React.FC = () => {
         />
       }
     >
-      <div className="p-6 mt-6">
+      <div className="p-6 pt-16 md:pt-6">
         {view === 'categories' ? (
           <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
             {categories.map((category, index) => (
