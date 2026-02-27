@@ -3,6 +3,7 @@ export interface PartnerCategory {
   name: string;
   description?: string;
   parentId?: number;
+  order: number;
   isActive: boolean;
   subcategories?: PartnerCategory[];
   createdAt: Date;
