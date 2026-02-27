@@ -157,14 +157,15 @@ const ComerciosPage: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
+              <div className="flex flex-col gap-4 md:grid md:grid-cols-3 2xl:grid-cols-4 md:gap-6">
                 {allies.map((ally) => (
                   <div
                     key={ally.id}
                     onClick={() => handleAllyClick(ally.id)}
-                    className="cursor-pointer group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+                    className="cursor-pointer group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex md:flex-col"
                   >
-                    <div className="relative h-48 bg-gray-200">
+                    {/* Imagen: izquierda en mobile, arriba en desktop */}
+                    <div className="relative w-28 shrink-0 bg-gray-200 md:w-full md:h-48">
                       {ally.photo && ally.photo !== '' && (
                         <Image
                           src={ally.photo}
@@ -175,10 +176,11 @@ const ComerciosPage: React.FC = () => {
                         />
                       )}
                     </div>
-                    <div className="p-4 bg-white">
-                      <h3 className="font-semibold text-lg text-gray-800 truncate">{ally.name}</h3>
+                    {/* Texto: derecha en mobile, abajo en desktop */}
+                    <div className="p-4 bg-white flex flex-col justify-center min-w-0">
+                      <h3 className="font-semibold text-base md:text-lg text-gray-800 truncate">{ally.name}</h3>
                       {ally.categories && ally.categories.length > 0 && (
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-gray-500 mt-1 truncate">
                           {ally.categories.map((cat) => cat.name).join(', ')}
                         </p>
                       )}
