@@ -87,7 +87,7 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
           onClick={() => router.push('/dashboard/aliados')}
           className="flex items-center gap-2 p-0 py-3 text-left font-semibold uppercase transition-colors text-purple-700 hover:text-purple-900 cursor-pointer"
         >
-          <ChevronLeft size={16} /> CATEGORIAS
+          <ChevronLeft size={16} /> Volver
         </button>
       </div>
 
@@ -98,7 +98,7 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
           ${selectedCategoryId === null ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-purple-600'}
         `}
       >
-        Todos los aliados
+        Todas
       </button>
 
       <div className="flex-1 overflow-y-auto">
