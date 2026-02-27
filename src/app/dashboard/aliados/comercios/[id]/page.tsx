@@ -164,9 +164,9 @@ const AllyDetailPage: React.FC = () => {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Ally Info */}
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
-          <div className="md:flex">
-            <div>
+        <div className="rounded-lg shadow-lg overflow-hidden mb-8">
+          <div className="md:grid md:grid-cols-3">
+            <div className="md:col-span-1">
               <Image
                 src={ally.photo}
                 alt={ally.name}
@@ -175,26 +175,11 @@ const AllyDetailPage: React.FC = () => {
                 className="w-full object-content"
               />
             </div>
-            <div className="md:w-1/2 p-8">
+            <div className="md:col-span-2 p-8 py-6">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">{ally.name}</h1>
 
-              {ally.categories && ally.categories.length > 0 && (
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-2">
-                    {ally.categories.map((cat) => (
-                      <span
-                        key={cat.id}
-                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
-                      >
-                        {cat.name}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               <div
-                className="prose max-w-none text-gray-700"
+                className="prose max-w-none text-gray-700 text-xl font-semibold"
                 dangerouslySetInnerHTML={{ __html: ally.description }}
               />
             </div>
