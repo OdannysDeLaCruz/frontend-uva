@@ -58,7 +58,7 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
             }
           `}
         >
-          <span className="uppercase text-sm">{category.name}</span>
+          <span className="text-sm">{category.name}</span>
           {hasSubcategories && (
             <span>
               {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
