@@ -26,6 +26,32 @@ function chainMiddleware(
   }
 }
 
+// Middleware de autenticación para el admin panel
+const withAdminAuth: MiddlewareFactory = (next) => {
+  return async (request, event) => {
+    const { pathname } = request.nextUrl
+
+    // Proteger rutas del dashboard admin
+    if (pathname.startsWith('/admin/dashboard')) {
+      const adminToken = request.cookies.get('admin_access_token')?.value
+
+      if (!adminToken) {
+        return NextResponse.redirect(new URL('/admin', request.url))
+      }
+    }
+
+    // Si ya está en /admin (login) con token válido, redirigir al dashboard
+    if (pathname === '/admin') {
+      const adminToken = request.cookies.get('admin_access_token')?.value
+      if (adminToken) {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+      }
+    }
+
+    return next(request, event)
+  }
+}
+
 // Middleware de autenticación
 const withAuth: MiddlewareFactory = (next) => {
   return async (request, event) => {
@@ -133,7 +159,7 @@ const withAuth: MiddlewareFactory = (next) => {
 }
 
 // Exportar la cadena de middlewares
-export default chainMiddleware([withAuth])
+export default chainMiddleware([withAdminAuth, withAuth])
 
 // Configurar qué rutas usan el middleware
 export const config = {

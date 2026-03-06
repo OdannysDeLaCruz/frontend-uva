@@ -13,6 +13,11 @@ export default function ConditionalHeader() {
     return null
   }
 
+  // El panel admin maneja su propio layout
+  if (pathname.startsWith('/admin')) {
+    return null
+  }
+
   // Páginas de landing que manejan su propio header localmente
   const landingPages = ['/']
   const shouldHideHeader = landingPages.includes(pathname)
