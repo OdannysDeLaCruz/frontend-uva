@@ -62,7 +62,7 @@ const ComerciosPage: React.FC = () => {
     }
 
     loadAllies()
-  }, [selectedCategoryId, view])
+  }, [selectedCategoryId, view, searchQuery])
 
   const handleCategorySelect = (categoryId: number | null) => {
     setSelectedCategoryId(categoryId)

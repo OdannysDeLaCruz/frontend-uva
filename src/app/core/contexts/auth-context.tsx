@@ -47,6 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return
         }
 
+        // El panel admin usa su propio sistema de auth
+        if (currentPath.startsWith('/admin')) {
+          return
+        }
+
         // Verificar si es alguna otra ruta pública
         const isPublicRoute = publicRoutes.some(route =>
           currentPath.startsWith(route)
