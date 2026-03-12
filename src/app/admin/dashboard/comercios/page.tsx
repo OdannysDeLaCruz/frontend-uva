@@ -10,11 +10,7 @@ import {
   Gift,
   X,
   Check,
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  Filter,
-  Eye
+  AlertCircle
 } from 'lucide-react'
 import {
   adminGetComercios,

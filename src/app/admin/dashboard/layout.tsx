@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   Store,
   Gift,
-  Users,
   LogOut,
   Menu,
   X,
