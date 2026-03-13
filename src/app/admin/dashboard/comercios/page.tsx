@@ -10,7 +10,8 @@ import {
   Gift,
   X,
   Check,
-  AlertCircle
+  AlertCircle,
+  UploadCloud
 } from 'lucide-react'
 import {
   adminGetComercios,
@@ -37,7 +38,7 @@ function ComercioFormModal({
 }: {
   comercio: AdminComercio | null
   onClose: () => void
-  onSave: (data: CreateComercioData) => Promise<void>
+  onSave: (data: CreateComercioData, file?: File) => Promise<void>
 }) {
   const isEdit = !!comercio
   const [form, setForm] = useState<CreateComercioData>({
@@ -53,7 +54,17 @@ function ComercioFormModal({
     password: ''
   })
   const [saving, setSaving] = useState(false)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [localPreview, setLocalPreview] = useState<string | null>(comercio?.photo || null)
   const [error, setError] = useState<string | null>(null)
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPendingFile(file)
+    setLocalPreview(URL.createObjectURL(file))
+    setError(null)
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -73,7 +84,7 @@ function ComercioFormModal({
       if (isEdit && !dataToSend.password) {
         delete dataToSend.password
       }
-      await onSave(dataToSend)
+      await onSave(dataToSend, pendingFile || undefined)
     } catch (err: ApiError | unknown) {
       const msg = err && typeof err === 'object' && 'message' in err
         ? (err as ApiError).message
@@ -218,6 +229,30 @@ function ComercioFormModal({
                 className="w-full px-4 py-2.5 rounded-lg text-sm text-white placeholder-white/30 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}
               />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-white/70 mb-1.5">Foto</label>
+              <label
+                className="flex flex-col items-center justify-center w-full h-28 rounded-xl border-2 border-dashed cursor-pointer transition-all hover:border-purple-500/50 hover:bg-white/3"
+                style={{ borderColor: 'var(--border)' }}
+              >
+                <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+                {localPreview ? (
+                  <div className="relative w-full h-full rounded-xl overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={localPreview} alt="preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                      <p className="text-white text-xs font-medium">Cambiar foto</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-1.5">
+                    <UploadCloud className="h-6 w-6 text-purple-400/50" />
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Haz clic para subir una foto</p>
+                  </div>
+                )}
+              </label>
             </div>
 
             <div className="sm:col-span-2">
@@ -541,13 +576,13 @@ export default function AdminComerciosPage() {
     }
   }
 
-  const handleSaveComercio = async (data: CreateComercioData) => {
+  const handleSaveComercio = async (data: CreateComercioData, file?: File) => {
     if (editingComercio) {
-      const updated = await adminUpdateComercio(editingComercio.id, data)
+      const updated = await adminUpdateComercio(editingComercio.id, data, file)
       setComercios(prev => prev.map(c => c.id === editingComercio.id ? { ...c, ...updated } : c))
       showToast('Comercio actualizado', 'ok')
     } else {
-      const created = await adminCreateComercio(data)
+      const created = await adminCreateComercio(data, file)
       setComercios(prev => [created, ...prev])
       showToast('Comercio creado exitosamente', 'ok')
     }

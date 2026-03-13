@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Search, Gift, Power, Pencil, X, Check, AlertCircle, Store } from 'lucide-react'
+import { Plus, Search, Gift, Power, Pencil, X, Check, AlertCircle, Store, UploadCloud } from 'lucide-react'
 import {
   adminGetBenefits,
   adminCreateBenefit,
@@ -31,7 +31,7 @@ function BenefitFormModal({
   allComercios: AdminComercio[]
   assignedComercioIds: number[]
   onClose: () => void
-  onSave: (data: CreateBenefitData, comercioIds: number[]) => Promise<void>
+  onSave: (data: CreateBenefitData, comercioIds: number[], file?: File) => Promise<void>
 }) {
   const isEdit = !!benefit
   const [form, setForm] = useState<CreateBenefitData>({
@@ -45,7 +45,17 @@ function BenefitFormModal({
   const [selectedComercioIds, setSelectedComercioIds] = useState<number[]>(assignedComercioIds)
   const [comercioSearch, setComercioSearch] = useState('')
   const [saving, setSaving] = useState(false)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [localPreview, setLocalPreview] = useState<string | null>(benefit?.image || null)
   const [error, setError] = useState<string | null>(null)
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPendingFile(file)
+    setLocalPreview(URL.createObjectURL(file))
+    setError(null)
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target
@@ -76,10 +86,10 @@ function BenefitFormModal({
         {
           ...form,
           dateStart: form.dateStart || undefined,
-          dateEnd: form.dateEnd || undefined,
-          image: form.image || undefined
+          dateEnd: form.dateEnd || undefined
         },
-        selectedComercioIds
+        selectedComercioIds,
+        pendingFile || undefined
       )
     } catch (err: ApiError | unknown) {
       const msg = err && typeof err === 'object' && 'message' in err
@@ -160,16 +170,27 @@ function BenefitFormModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white/70 mb-1.5">URL de imagen</label>
-            <input
-              name="image"
-              type="url"
-              value={form.image}
-              onChange={handleChange}
-              placeholder="https://..."
-              className="w-full px-4 py-2.5 rounded-lg text-sm text-white placeholder-white/30 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-              style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}
-            />
+            <label className="block text-sm font-medium text-white/70 mb-1.5">Imagen</label>
+            <label
+              className="flex flex-col items-center justify-center w-full h-28 rounded-xl border-2 border-dashed cursor-pointer transition-all hover:border-purple-500/50 hover:bg-white/3"
+              style={{ borderColor: 'var(--border)' }}
+            >
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+              {localPreview ? (
+                <div className="relative w-full h-full rounded-xl overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={localPreview} alt="preview" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                    <p className="text-white text-xs font-medium">Cambiar imagen</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-1.5">
+                  <UploadCloud className="h-6 w-6 text-purple-400/50" />
+                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Haz clic para subir una imagen</p>
+                </div>
+              )}
+            </label>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -387,10 +408,10 @@ export default function AdminBeneficiosPage() {
     }
   }
 
-  const handleSave = async (data: CreateBenefitData, newComercioIds: number[]) => {
+  const handleSave = async (data: CreateBenefitData, newComercioIds: number[], file?: File) => {
     if (editingBenefit) {
       // Actualizar datos del beneficio
-      const updated = await adminUpdateBenefit(editingBenefit.id, data)
+      const updated = await adminUpdateBenefit(editingBenefit.id, data, file)
       setBenefits(prev => prev.map(b => b.id === editingBenefit.id ? { ...b, ...updated } : b))
 
       // Sincronizar asignaciones: quitar los que ya no están, agregar los nuevos
@@ -406,7 +427,7 @@ export default function AdminBeneficiosPage() {
       showToast('Beneficio actualizado', 'ok')
     } else {
       // Crear beneficio y luego asignar comercios
-      const created = await adminCreateBenefit(data)
+      const created = await adminCreateBenefit(data, file)
       setBenefits(prev => [created, ...prev])
 
       await Promise.all(newComercioIds.map(cId => adminAssignBenefit(cId, created.id)))
