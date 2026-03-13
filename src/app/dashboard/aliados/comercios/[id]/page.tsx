@@ -170,8 +170,8 @@ const AllyDetailPage: React.FC = () => {
               <Image
                 src={ally.photo}
                 alt={ally.name}
-                width={200}
-                height={200}
+                width={400}
+                height={400}
                 className="w-full object-content"
               />
             </div>
