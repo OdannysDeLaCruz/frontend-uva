@@ -6,20 +6,13 @@ import { Search } from 'lucide-react'
 import Image from 'next/image'
 import AlliesLayout from '../components/AlliesLayout'
 import AlliesSidebar from '../components/AlliesSidebar'
+import CategoryCard from '../components/CategoryCard'
 import { getParentCategories } from '@/app/core/services/partner-categories-service'
 import { getAllies, getAlliesByCategory, searchAllies } from '@/app/core/services/allies-service'
 import { PartnerCategory } from '@/app/core/types/partner-category'
 import { Ally } from '@/app/core/types/ally'
 
 type View = 'categories' | 'allies'
-
-const CARD_GRADIENTS = [
-  'from-purple-500 to-purple-800',
-  'from-violet-500 to-purple-800',
-  'from-fuchsia-500 to-purple-800',
-  'from-purple-600 to-indigo-800',
-  'from-indigo-500 to-purple-800',
-]
 
 const ComerciosPage: React.FC = () => {
   const router = useRouter()
@@ -112,21 +105,12 @@ const ComerciosPage: React.FC = () => {
       <div className="p-6 pt-16 md:pt-6 overflow-x-hidden">
         {view === 'categories' ? (
           <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {categories.map((category, index) => (
-              <div
+            {categories.map((category) => (
+              <CategoryCard
                 key={category.id}
-                onClick={() => handleCategorySelect(category.id)}
-                className="cursor-pointer rounded-xl overflow-hidden h-[150px] relative hover:shadow-xl transition-shadow duration-300 group"
-              >
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${CARD_GRADIENTS[index % CARD_GRADIENTS.length]} group-hover:brightness-110 transition-all duration-300`}
-                />
-                <div className="absolute inset-0 flex items-center justify-center p-4">
-                  <span className="bg-white rounded-xl px-4 py-2 text-black text-sm font-semibold text-center">
-                    {category.name}
-                  </span>
-                </div>
-              </div>
+                category={category}
+                onClick={handleCategorySelect}
+              />
             ))}
           </div>
         ) : (
