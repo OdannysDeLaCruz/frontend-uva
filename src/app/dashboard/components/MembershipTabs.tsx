@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import ContributionsTab from '@/app/dashboard/membership/components/ContributionsTab';
+import PaymentHistoryTab from '@/app/dashboard/membership/components/PaymentHistoryTab';
 import LinkReferralTab from '@/app/dashboard/membership/components/LinkReferralTab';
 
 interface Tab {
@@ -19,7 +20,7 @@ const MembershipTabs: React.FC = () => {
     {
       id: 'history',
       label: 'HISTORIAL',
-      content: <div></div>
+      content: <PaymentHistoryTab />
     },
     {
       id: 'referral',

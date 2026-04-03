@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { WompiTransaction, WompiWidget } from '@/app/core/types/wompi';
+import { BoldCheckout } from '@/app/core/types/bold';
 import { useWompiPayment } from '@/app/core/hooks/useWompiPayment';
 
 const ContributionsTab: React.FC = () => {
@@ -14,74 +14,63 @@ const ContributionsTab: React.FC = () => {
 
   /**
    * Cuando el usuario hace clic en "Pagar":
-   * 1. Crea la transacción en el backend
-   * 2. Abre el widget de Wompi con los datos retornados
+   * 1. Crea la transacción en el backend (obtiene firma, orderId, apiKey)
+   * 2. Inicializa el widget Bold con los datos retornados
+   * 3. Abre el checkout Bold
    */
   const onPayClick = async () => {
-    // 1. Crear transacción
+    const host = process.env.NEXT_PUBLIC_HOST || '';
+    const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
     const transactionData = await createTransaction({
       membershipId: membershipInfo?.membershipId,
-      redirectUrl: process.env.NEXT_PUBLIC_WOMPI_REDIRECT_URL || ''
+      redirectUrl: isLocal ? undefined : `${host}/dashboard/membership/payment/callback`
     });
 
-    if (!transactionData) {
-      console.error('Failed to create transaction');
+    if (!transactionData) return;
+
+    if (!window.BoldCheckout) {
+      console.error('Bold checkout script not loaded');
       return;
     }
 
-    // 2. Abrir widget con los datos de la transacción
-    const checkout: WompiWidget | null = window.WidgetCheckout ? (new window.WidgetCheckout({
+    const checkout: BoldCheckout = new window.BoldCheckout({
+      orderId: transactionData.orderId,
       currency: transactionData.currency,
-      amountInCents: transactionData.amountInCents,
-      taxInCents: {
-        vat: transactionData.taxAmountInCents,
-        consumption: 0,
-      },
-      reference: transactionData.reference,
-      publicKey: transactionData.publicKey,
-      signature: {
-        integrity: transactionData.integritySignature,
-      },
-      redirectUrl: transactionData.redirectUrl,
-      onFinished: (transaction: WompiTransaction) => {
-        console.log('Transaction finished', transaction);
-        if (transaction.status === 'APPROVED') {
-          pollStatus(transactionData.transactionId);
-        } else {
-          console.error(
-            `Transaction ${transaction.status}: ${transaction.statusMessage || 'Unknown error'}`
-          );
-        }
-      },
-    })) : null;
+      amount: transactionData.amount,
+      apiKey: transactionData.apiKey,
+      integritySignature: transactionData.integritySignature,
+      description: transactionData.description,
+      tax: transactionData.tax,
+      ...(transactionData.redirectionUrl ? { redirectionUrl: transactionData.redirectionUrl } : {}),
+    });
 
-    if (checkout) {
-      checkout.open(function (result: { transaction: { id: string } }) {
-        console.log("Transaction ID: ", result.transaction.id);
-      });
-    }
+    checkout.open();
+
+    // Bold no tiene callback onFinished en la integración personalizada.
+    // El estado final llega por:
+    //   a) Webhook de Bold → procesado async en backend
+    //   b) Redirect a /payment/callback con bold-order-id como query param
+    // Para polling iniciado desde el widget (sin redirect), usamos pollStatus
+    // después de que el usuario regresa a la página.
+    // Si se usa redirectionUrl, el callback page maneja el resultado.
   };
 
-  // Cargar info de membresía al montar (sin crear transacción)
   useEffect(() => {
     loadMembershipInfo(1);
   }, [loadMembershipInfo]);
 
-  // Recargar info de membresía tras pago exitoso
   useEffect(() => {
     if (status === 'success') {
       loadMembershipInfo(1);
     }
   }, [status, loadMembershipInfo]);
 
-  // Formatear precio para mostrar
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-CO', {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0
     }).format(price);
-  };
 
   const getRegularity = (days: number) => {
     if (days <= 7) return 'Semanal';
@@ -110,7 +99,6 @@ const ContributionsTab: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className='grid grid-cols-3 gap-4'>
-        {/* Sección de Activación */}
         <div className='col-span-1'>
           <div className='flex flex-col'>
             <p className='text-center text-2xl text-sky-400 font-semibold mb-2'>Aporte en COP</p>
@@ -120,7 +108,7 @@ const ContributionsTab: React.FC = () => {
                 {membershipInfo?.membershipName || 'Membresía'}
               </p>
 
-              {/* Card activa — sin botón de pago */}
+              {/* Suscripción activa — sin botón de pago */}
               {isActive && membershipInfo?.subscription && (
                 <div className='mt-3 flex flex-col gap-1 text-center'>
                   <span className='text-green-400 font-semibold text-base'>● Activa</span>
@@ -133,17 +121,15 @@ const ContributionsTab: React.FC = () => {
                 </div>
               )}
 
-              {/* Panel de pago — solo cuando no activa o en grace period */}
+              {/* Panel de pago */}
               {showPaymentPanel && (
                 <>
-                  {/* Banner período de gracia */}
                   {membershipInfo?.isWithinGracePeriod && membershipInfo.subscription && (
                     <div className='mt-3 bg-yellow-900/40 border border-yellow-500 rounded px-3 py-2 text-yellow-300 text-sm text-center'>
                       ⚠ Tu membresía venció el {formatDate(membershipInfo.subscription.endDate)}
                     </div>
                   )}
 
-                  {/* Banner expirada (fuera de grace period) */}
                   {membershipInfo?.isExpired && !membershipInfo?.isWithinGracePeriod && membershipInfo?.subscription && (
                     <div className='mt-3 bg-red-900/40 border border-red-500 rounded px-3 py-2 text-red-300 text-sm text-center'>
                       Membresía expirada desde {formatDate(membershipInfo.subscription.endDate)}

@@ -3,36 +3,84 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Layout from '@/app/dashboard/components/layout/Layout';
-import { getWompiTransactionStatus } from '@/app/core/services/payments-service';
+import { getPaymentStatusByReference, pollPaymentStatus } from '@/app/core/services/payments-service';
 
-type PaymentStatus = 'loading' | 'APPROVED' | 'DECLINED' | 'VOIDED' | 'PENDING' | 'ERROR';
+type PaymentStatus = 'loading' | 'APPROVED' | 'DECLINED' | 'CANCELLED' | 'PENDING' | 'ERROR';
 
 export default function PaymentCallbackPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<PaymentStatus>('loading');
-  const [transactionId, setTransactionId] = useState<string | null>(null);
+  const [displayId, setDisplayId] = useState<string | null>(null);
 
   useEffect(() => {
-    const id = searchParams.get('id');
-    setTransactionId(id);
+    // Bold devuelve: bold-order-id, bold-tx-id, bold-status como query params
+    const boldOrderId = searchParams.get('bold-order-id');
+    const boldTxId = searchParams.get('bold-tx-id');
+    const boldStatus = searchParams.get('bold-status');
 
-    if (!id) {
-      setStatus('ERROR');
+    if (boldOrderId) {
+      setDisplayId(boldTxId ?? boldOrderId);
+      handleBoldCallback(boldOrderId, boldStatus);
       return;
     }
 
-    const checkTransaction = async () => {
-      try {
-        const data = await getWompiTransactionStatus(id);
-        setStatus(data.status);
-      } catch {
+    setStatus('ERROR');
+  }, [searchParams]);
+
+  /**
+   * Consulta el estado real de la transacción en nuestro backend.
+   * Bold puede devolver status en el redirect, pero el estado autoritativo
+   * es el que procesó el webhook.
+   */
+  const handleBoldCallback = async (orderId: string, boldStatus: string | null) => {
+    try {
+      // Si Bold ya nos dice el status en el redirect, lo usamos como estado inicial
+      // mientras esperamos la confirmación del backend
+      if (boldStatus === 'APPROVED') {
+        setStatus('APPROVED');
+      } else if (boldStatus === 'REJECTED' || boldStatus === 'FAILED') {
+        setStatus('DECLINED');
+      } else if (boldStatus === 'ABANDONED') {
+        setStatus('CANCELLED');
+      }
+
+      // Confirmar con nuestro backend (estado autoritativo procesado por el webhook)
+      const data = await getPaymentStatusByReference(orderId);
+
+      if (data.status === 'APPROVED') {
+        setStatus('APPROVED');
+      } else if (data.status === 'DECLINED') {
+        setStatus('DECLINED');
+      } else if (data.status === 'CANCELLED') {
+        setStatus('CANCELLED');
+      } else if (data.status === 'PENDING') {
+        // Webhook aún no llegó — hacer polling
+        await handlePendingStatus(data.id);
+      } else {
         setStatus('ERROR');
       }
-    };
+    } catch {
+      setStatus('ERROR');
+    }
+  };
 
-    checkTransaction();
-  }, [searchParams]);
+  /**
+   * Si el webhook aún no llegó cuando el usuario regresa,
+   * hacemos polling hasta obtener estado final.
+   */
+  const handlePendingStatus = async (transactionId: number) => {
+    try {
+      const result = await pollPaymentStatus(transactionId, 30, 3000);
+      if (result.status === 'APPROVED') setStatus('APPROVED');
+      else if (result.status === 'DECLINED') setStatus('DECLINED');
+      else if (result.status === 'CANCELLED') setStatus('CANCELLED');
+      else setStatus('ERROR');
+    } catch {
+      // Polling agotado — mostramos PENDING (el webhook llegará eventualmente)
+      setStatus('PENDING');
+    }
+  };
 
   const statusConfig: Record<PaymentStatus, { title: string; message: string; color: string; icon: string }> = {
     loading: {
@@ -53,14 +101,14 @@ export default function PaymentCallbackPage() {
       color: 'text-red-400',
       icon: '✗'
     },
-    VOIDED: {
-      title: 'Pago anulado',
-      message: 'La transacción fue anulada.',
+    CANCELLED: {
+      title: 'Pago cancelado',
+      message: 'Cerraste el proceso de pago. Puedes intentarlo de nuevo cuando quieras.',
       color: 'text-yellow-400',
       icon: '!'
     },
     PENDING: {
-      title: 'Pago pendiente',
+      title: 'Pago en proceso',
       message: 'Tu pago está siendo procesado. Te notificaremos cuando se complete.',
       color: 'text-yellow-400',
       icon: '⏳'
@@ -91,9 +139,9 @@ export default function PaymentCallbackPage() {
             {config.message}
           </p>
 
-          {transactionId && (
+          {displayId && (
             <p className="text-sm text-gray-500 mb-6">
-              ID: {transactionId}
+              ID: {displayId}
             </p>
           )}
 
@@ -106,7 +154,7 @@ export default function PaymentCallbackPage() {
                 Volver a Membresía
               </button>
 
-              {(status === 'DECLINED' || status === 'VOIDED' || status === 'ERROR') && (
+              {(status === 'DECLINED' || status === 'CANCELLED' || status === 'ERROR') && (
                 <button
                   onClick={() => router.push('/dashboard/membership')}
                   className="px-6 py-2 border border-sky-400 text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"

@@ -17,7 +17,8 @@ export interface MembershipInfoResponse {
   totalAmountInCents: number;
   amountInCents: number;
   currency: string;
-  publicKey: string;
+  /** API key pública de Bold para el widget */
+  apiKey: string;
   hasActiveSubscription: boolean;
   isExpired: boolean;
   isWithinGracePeriod: boolean;
@@ -66,6 +67,36 @@ export interface WompiTransactionStatusResponse {
   statusMessage?: string;
 }
 
+export interface BoldTransactionResponse {
+  transactionId: number;
+  /** orderId = nuestro reference interno */
+  orderId: string;
+  integritySignature: string;
+  /** BOLD_IDENTITY_KEY público */
+  apiKey: string;
+  /** Monto total en pesos COP como string (ej: "300000") */
+  amount: string;
+  currency: string;
+  description: string;
+  /** 'vat-19' para IVA 19% */
+  tax?: string;
+  redirectionUrl?: string;
+}
+
+export interface PaymentHistoryItem {
+  id: number;
+  reference: string;
+  gateway: 'WOMPI' | 'BOLD' | 'MANUAL';
+  status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'CANCELLED' | 'EXPIRED';
+  amount: number;
+  baseAmount: number | null;
+  taxAmount: number | null;
+  description: string | null;
+  membershipName: string;
+  createdAt: string;
+  processedAt: string | null;
+}
+
 export interface CreateTransactionRequest {
   membershipId?: number;
   redirectUrl?: string;
@@ -107,6 +138,59 @@ export async function createWompiTransaction(
   } catch (error) {
     throw new Error(
       `Failed to create payment transaction: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+}
+
+/**
+ * Crear transacción de pago con Bold
+ * Se llama cuando el usuario hace clic en "Pagar"
+ */
+export async function createBoldTransaction(
+  request: CreateTransactionRequest
+): Promise<BoldTransactionResponse> {
+  try {
+    const response = await apiClient.post<BoldTransactionResponse>(
+      '/v1/payments/bold/create-transaction',
+      request
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `Failed to create Bold payment transaction: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+}
+
+/**
+ * Obtener historial de pagos del usuario autenticado
+ */
+export async function getPaymentHistory(): Promise<PaymentHistoryItem[]> {
+  try {
+    const response = await apiClient.get<PaymentHistoryItem[]>('/v1/payments/history');
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `Failed to get payment history: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+}
+
+/**
+ * Consultar estado de pago por reference (orderId de Bold)
+ * Útil en la página callback donde Bold devuelve el orderId como query param
+ */
+export async function getPaymentStatusByReference(
+  reference: string
+): Promise<PaymentStatusResponse> {
+  try {
+    const response = await apiClient.get<PaymentStatusResponse>(
+      `/v1/payments/status/reference/${reference}`
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      `Failed to get payment status by reference: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 }

@@ -1,5 +1,5 @@
 'use client';
- 
+
 import Script from 'next/script'
 import Layout from '@/app/dashboard/components/layout/Layout';
 import MembershipTabs from '../components/MembershipTabs';
@@ -14,7 +14,7 @@ export default function MembershipPaymentPage() {
         <MembershipTabs />
       </section>
 
-      <Script src="https://checkout.wompi.co/widget.js" />
+      <Script src="https://checkout.bold.co/library/boldPaymentButton.js" />
     </Layout>
   );
 }

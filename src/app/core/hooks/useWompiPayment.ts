@@ -3,10 +3,10 @@
 import { useState, useCallback } from 'react';
 import {
   getMembershipInfo,
-  createWompiTransaction,
+  createBoldTransaction,
   pollPaymentStatus,
   MembershipInfoResponse,
-  WompiTransactionResponse,
+  BoldTransactionResponse,
   PaymentStatusResponse,
 } from '../services/payments-service';
 
@@ -17,84 +17,72 @@ export interface CreateTransactionOptions {
   redirectUrl?: string;
 }
 
-export interface UseWompiPaymentReturn {
+export interface UsePaymentReturn {
   status: PaymentStatus;
   error: string | null;
   membershipInfo: MembershipInfoResponse | null;
-  transactionData: WompiTransactionResponse | null;
+  transactionData: BoldTransactionResponse | null;
   paymentResult: PaymentStatusResponse | null;
   loadMembershipInfo: (membershipId?: number) => Promise<void>;
-  createTransaction: (options?: CreateTransactionOptions) => Promise<WompiTransactionResponse | null>;
+  createTransaction: (options?: CreateTransactionOptions) => Promise<BoldTransactionResponse | null>;
   pollStatus: (transactionId: number) => Promise<void>;
   reset: () => void;
 }
 
 /**
- * Hook para manejar lógica de pago con Wompi
+ * Hook para manejar lógica de pago con Bold
  *
  * Flujo:
- * 1. loadMembershipInfo() - Al cargar página, obtiene info de membresía
- * 2. createTransaction() - Cuando usuario hace clic en "Pagar", crea transacción
- * 3. Abrir widget con transactionData
- * 4. pollStatus() - Después del pago, consulta estado
+ * 1. loadMembershipInfo() — Al cargar página, obtiene info de membresía
+ * 2. createTransaction()  — Cuando usuario hace clic en "Pagar", crea transacción
+ * 3. Abrir widget Bold con transactionData (window.BoldCheckout)
+ * 4. pollStatus()         — Después del pago (vía redirect o evento), consulta estado
  */
-export function useWompiPayment(): UseWompiPaymentReturn {
+export function useWompiPayment(): UsePaymentReturn {
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [membershipInfo, setMembershipInfo] = useState<MembershipInfoResponse | null>(null);
-  const [transactionData, setTransactionData] = useState<WompiTransactionResponse | null>(null);
+  const [transactionData, setTransactionData] = useState<BoldTransactionResponse | null>(null);
   const [paymentResult, setPaymentResult] = useState<PaymentStatusResponse | null>(null);
 
-  /**
-   * Cargar información de membresía (sin crear transacción)
-   */
   const loadMembershipInfo = useCallback(async (membershipId?: number) => {
     try {
       setStatus('loading');
       setError(null);
-
       const response = await getMembershipInfo(membershipId);
       setMembershipInfo(response);
       setStatus('idle');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al cargar información';
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : 'Error al cargar información');
       setStatus('error');
     }
   }, []);
 
-  /**
-   * Crear transacción de pago (cuando usuario hace clic en "Pagar")
-   * Retorna los datos para abrir el widget
-   */
-  const createTransaction = useCallback(async (options?: CreateTransactionOptions): Promise<WompiTransactionResponse | null> => {
-    try {
-      setStatus('creating');
-      setError(null);
+  const createTransaction = useCallback(
+    async (options?: CreateTransactionOptions): Promise<BoldTransactionResponse | null> => {
+      try {
+        setStatus('creating');
+        setError(null);
+        const response = await createBoldTransaction({
+          membershipId: options?.membershipId,
+          redirectUrl: options?.redirectUrl,
+        });
+        setTransactionData(response);
+        setStatus('idle');
+        return response;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al crear transacción');
+        setStatus('error');
+        return null;
+      }
+    },
+    []
+  );
 
-      const response = await createWompiTransaction({
-        membershipId: options?.membershipId,
-        redirectUrl: options?.redirectUrl
-      });
-      setTransactionData(response);
-      setStatus('idle');
-      return response;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al crear transacción';
-      setError(errorMessage);
-      setStatus('error');
-      return null;
-    }
-  }, []);
-
-  /**
-   * Polling del estado del pago después de que el widget cierra
-   */
   const pollStatus = useCallback(async (transactionId: number) => {
     try {
       setStatus('polling');
       setError(null);
-
       const result = await pollPaymentStatus(transactionId);
       setPaymentResult(result);
 
@@ -108,8 +96,7 @@ export function useWompiPayment(): UseWompiPaymentReturn {
         setError('El enlace de pago expiró');
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al consultar estado';
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : 'Error al consultar estado');
       setStatus('error');
     }
   }, []);
