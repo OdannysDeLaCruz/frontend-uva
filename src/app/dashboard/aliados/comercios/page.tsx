@@ -102,9 +102,9 @@ const ComerciosPage: React.FC = () => {
         />
       }
     >
-      <div className="p-6 pt-16 md:pt-6 overflow-x-hidden">
+      <div className="max-w-[1500px] mx-auto p-6 md:p-16 overflow-x-hidden">
         {view === 'categories' ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-10">
             {categories.map((category) => (
               <CategoryCard
                 key={category.id}
