@@ -24,7 +24,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onClick }) => {
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-800 group-hover:brightness-110 transition-all duration-300" />
       )}
       <div className="absolute inset-0 flex items-end justify-center">
-        <p className="bg-white/80 w-full p-[1px] text-black text-[14px] font-semibold text-center mb-7">
+        <p className="bg-white/80 w-full p-[1px] text-black text-[10px] md:text-[14px] font-semibold text-center mb-7">
           {category.name}
         </p>
       </div>
