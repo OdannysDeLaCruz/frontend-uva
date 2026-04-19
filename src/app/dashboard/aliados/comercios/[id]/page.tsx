@@ -170,8 +170,8 @@ const AllyDetailPage: React.FC = () => {
               <Image
                 src={ally.photo}
                 alt={ally.name}
-                width={200}
-                height={200}
+                width={400}
+                height={400}
                 className="w-full object-content"
               />
             </div>
@@ -188,50 +188,50 @@ const AllyDetailPage: React.FC = () => {
 
         {/* Benefits Section */}
         {ally.benefits && ally.benefits.length > 0 && (
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="bg-white rounded-lg shadow-lg p-2 md:p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Beneficios Disponibles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-6">
+              {/* Benefit Card */}
               {ally.benefits.map((benefit) => (
                 <div
                   key={benefit.id}
-                  className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+                  className="border border-gray-200 rounded-4xl md:rounded-3xl overflow-hidden hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row p-2 md:p-6 gap-6"
                 >
-                  {/* <div className="h-48 bg-gray-200"> */}
-                    {/* <img
-                      src={benefit.image}
-                      alt={benefit.name}
-                      className="w-full h-full object-cover"
-                    /> */}
-                  {/* </div> */}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-lg text-gray-900 mb-2">
-                      {benefit.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-3">{benefit.description}</p>
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div className='text-black'>
+                      <h3 className="font-semibold text-xl mb-2">
+                        {benefit.name}
+                      </h3>
+                      <p className="text-md mb-5">{benefit.description}</p>
 
-                    {(benefit.dateStart || benefit.dateEnd) && (
-                      <div className="flex items-center text-xs text-gray-500">
-                        <Calendar size={14} className="mr-1" />
-                        {benefit.dateStart && formatDate(benefit.dateStart)}
-                        {benefit.dateStart && benefit.dateEnd && ' - '}
-                        {benefit.dateEnd && formatDate(benefit.dateEnd)}
-                      </div>
-                    )}
+                      {/* Promocion valida */}
+                      <p className="text-md font-semibold mb-2">Promoción válida</p>
 
-                    {/* {!benefit.isActive && (
-                      <span className="inline-block mt-2 px-2 py-1 bg-red-100 text-red-700 text-xs rounded">
-                        No disponible
-                      </span>
-                    )} */}
+                      {(benefit.dateStart || benefit.dateEnd) && (
+                        <div className="flex items-center text-md text-gray-500">
+                          <Calendar size={24} className="mr-2" />
+                          {benefit.dateStart && formatDate(benefit.dateStart)}
+                          {benefit.dateStart && benefit.dateEnd && ' - '}
+                          {benefit.dateEnd && formatDate(benefit.dateEnd)}
+                        </div>
+                      )}
+                    </div>
 
                     {/* Boton para reclamar descuento */}
                     <button
                       onClick={() => handleClaimBenefit(benefit.id)}
-                      className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                      className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-sm font-semibold hover:bg-purple-700 transition-colors self-start uppercase"
                     >
                       Reclamar tu beneficio
                     </button>
                   </div>
+                  <Image
+                    src={benefit.image}
+                    alt={benefit.name}
+                    width={200}
+                    height={200}
+                    className="flex-shrink-0 self-stretch w-auto object-contain rounded-r-3xl"
+                  />
                 </div>
               ))}
             </div>

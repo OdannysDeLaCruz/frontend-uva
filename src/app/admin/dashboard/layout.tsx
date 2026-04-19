@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Store,
   Gift,
+  Tag,
   LogOut,
   Menu,
   X,
@@ -32,6 +33,11 @@ const navItems = [
     label: 'Beneficios',
     href: '/admin/dashboard/beneficios',
     icon: Gift
+  },
+  {
+    label: 'Categorías',
+    href: '/admin/dashboard/categorias',
+    icon: Tag
   }
 ]
 
