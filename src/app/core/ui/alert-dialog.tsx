@@ -165,6 +165,7 @@ interface ServerAlertProps {
   onOpenChange: (open: boolean) => void
   title?: string
   description?: string
+  messages?: string[]
   variant?: "error" | "warning" | "success" | "info" | "default"
   confirmText?: string
   onConfirm?: () => void
@@ -178,6 +179,7 @@ const ServerAlert = ({
   onOpenChange,
   title,
   description,
+  messages,
   variant = "error",
   confirmText = "Aceptar",
   onConfirm,
@@ -225,7 +227,18 @@ const ServerAlert = ({
           <AlertDialogTitle className={variant === "error" ? 'text-red-600' : 'text-gray-600' }>
             {title || (variant === "error" ? "Error" : variant === "warning" ? "Advertencia" : variant === "success" ? "Éxito" : "Información")}
           </AlertDialogTitle>
-          <AlertDialogDescription className={variant === "error" ? 'text-red-600' : 'text-gray-600' }>{description}</AlertDialogDescription>
+          {messages && messages.length > 0 ? (
+            <ul className={`text-sm space-y-1 text-left list-none ${variant === "error" ? 'text-red-600' : 'text-gray-600'}`}>
+              {messages.map((msg, i) => (
+                <li key={i} className="flex items-start gap-1.5">
+                  <span className="mt-px select-none">•</span>
+                  <span>{msg}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <AlertDialogDescription className={variant === "error" ? 'text-red-600' : 'text-gray-600' }>{description}</AlertDialogDescription>
+          )}
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-4">
           {showCancel && (
