@@ -10,9 +10,9 @@ import {
   Gift,
   X,
   Check,
-  AlertCircle,
   UploadCloud
 } from 'lucide-react'
+import { ServerAlert } from '@/app/core/ui/alert-dialog'
 import {
   adminGetComercios,
   adminCreateComercio,
@@ -56,14 +56,14 @@ function ComercioFormModal({
   const [saving, setSaving] = useState(false)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [localPreview, setLocalPreview] = useState<string | null>(comercio?.photo || null)
-  const [error, setError] = useState<string | null>(null)
+  const [errors, setErrors] = useState<string[] | null>(null)
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     setPendingFile(file)
     setLocalPreview(URL.createObjectURL(file))
-    setError(null)
+    setErrors(null)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -72,13 +72,13 @@ function ComercioFormModal({
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }))
-    setError(null)
+    setErrors(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
-    setError(null)
+    setErrors(null)
     try {
       const dataToSend = { ...form }
       if (isEdit && !dataToSend.password) {
@@ -89,13 +89,22 @@ function ComercioFormModal({
       const msg = err && typeof err === 'object' && 'message' in err
         ? (err as ApiError).message
         : 'Error al guardar'
-      setError(Array.isArray(msg) ? msg[0] : (msg as string))
+      setErrors(Array.isArray(msg) ? msg : [msg as string])
     } finally {
       setSaving(false)
     }
   }
 
   return (
+    <>
+    <ServerAlert
+      open={!!errors}
+      onOpenChange={() => setErrors(null)}
+      title="Error al guardar"
+      messages={errors || []}
+      variant="error"
+      confirmText="Revisar"
+    />
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div
@@ -120,12 +129,6 @@ function ComercioFormModal({
 
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2 text-sm text-red-300">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              {error}
-            </div>
-          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
@@ -313,6 +316,7 @@ function ComercioFormModal({
         </form>
       </div>
     </div>
+    </>
   )
 }
 
