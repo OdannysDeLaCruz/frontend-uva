@@ -49,16 +49,19 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
             handleSelect(category.id)
           }}
           className={`
-            w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer
+            w-full flex items-center justify-between px-4 py-1 text-left transition-colors cursor-pointer
             ${level === 0
-              ? 'font-semibold hover:bg-purple-400 hover:text-white'
-              : 'pl-8 hover:bg-purple-100'
+              ? 'font-semibold hover:bg-purple-500 hover:text-white'
+              : 
+                isSelected 
+                  ? 'pl-8 hover:bg-purple-500 text-white'
+                  : 'pl-8 hover:bg-purple-400'
             }
             ${isSelected
               ? 'bg-purple-600 text-white'
               : level === 0
-                ? 'text-gray-700'
-                : 'text-gray-600 bg-gray-50'
+                ? 'text-gray-800'
+                : 'text-gray-600 hover:text-white'
             }
           `}
         >
@@ -119,10 +122,10 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
           </button>
         </div>
 
-        <div className="p-4 border-b border-purple-700">
+        <div className="py-4">
           <button
             onClick={() => router.push('/dashboard/aliados')}
-            className="flex items-center gap-2 p-0 py-3 text-left font-semibold uppercase transition-colors text-purple-700 hover:text-purple-900 cursor-pointer"
+            className="flex items-center gap-2 p-0 py-3 text-left uppercase transition-colors text-gray-400 hover:text-purple-900 cursor-pointer hover:bg-gray-100 px-4 rounded-r-full"
           >
             <ChevronLeft size={16} /> Volver
           </button>
@@ -131,8 +134,8 @@ const AlliesSidebar: React.FC<AlliesSidebarProps> = ({
         <button
           onClick={() => handleSelect(null)}
           className={`
-            w-full px-4 py-3 text-left text-sm font-semibold uppercase transition-colors
-            ${selectedCategoryId === null ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-purple-600'}
+            w-full px-4 py-1 text-left text-sm font-semibold uppercase transition-colors
+            ${selectedCategoryId === null ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-purple-600 hover:text-white'}
           `}
         >
           Todas

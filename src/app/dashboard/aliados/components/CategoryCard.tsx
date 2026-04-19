@@ -11,7 +11,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onClick }) => {
   return (
     <div
       onClick={() => onClick(category.id)}
-      className="cursor-pointer rounded-xl overflow-hidden h-[150px] relative hover:shadow-xl transition-shadow duration-300 group"
+      className="cursor-pointer overflow-hidden h-[150px] relative hover:shadow-xl transition-shadow duration-300 group"
     >
       {category.image ? (
         <Image
@@ -23,10 +23,10 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onClick }) => {
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-800 group-hover:brightness-110 transition-all duration-300" />
       )}
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <span className="bg-white rounded-xl px-4 py-2 text-black text-sm font-semibold text-center">
+      <div className="absolute inset-0 flex items-end justify-center">
+        <p className="bg-white/80 w-full p-[1px] text-black text-[10px] md:text-[14px] font-semibold text-center mb-7">
           {category.name}
-        </span>
+        </p>
       </div>
     </div>
   )
