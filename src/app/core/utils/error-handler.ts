@@ -20,8 +20,8 @@ export function handleAxiosError(error: unknown, contexto: string): ApiError {
     let message: string | string[];
 
     if (responseData?.message) {
-      message = Array.isArray(responseData.message) 
-        ? responseData.message[0] 
+      message = Array.isArray(responseData.message)
+        ? responseData.message
         : responseData.message;
     } else if (responseData?.error) {
       message = typeof responseData.error === 'string' 

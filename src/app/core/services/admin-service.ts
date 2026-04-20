@@ -89,7 +89,7 @@ export async function adminLogin(email: string, password: string): Promise<{ ok:
     const response = await apiClient.post('/v1/admin/auth/login', { email, password }, adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'iniciar sesión como administrador'));
+    throw handleAxiosError(error, 'iniciar sesión como administrador');
   }
 }
 
@@ -98,7 +98,7 @@ export async function adminGetMe(): Promise<AdminUser> {
     const response = await apiClient.get('/v1/admin/auth/me', adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'obtener perfil de administrador'));
+    throw handleAxiosError(error, 'obtener perfil de administrador');
   }
 }
 
@@ -106,7 +106,7 @@ export async function adminLogout(): Promise<void> {
   try {
     await apiClient.post('/v1/admin/auth/logout', {}, adminConfig);
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'cerrar sesión de administrador'));
+    throw handleAxiosError(error, 'cerrar sesión de administrador');
   }
 }
 
@@ -117,7 +117,7 @@ export async function adminGetComercios(): Promise<AdminComercio[]> {
     const response = await apiClient.get('/v1/admin/comercios', adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'obtener comercios'));
+    throw handleAxiosError(error, 'obtener comercios');
   }
 }
 
@@ -126,7 +126,7 @@ export async function adminGetComercio(id: number): Promise<AdminComercio> {
     const response = await apiClient.get(`/v1/admin/comercios/${id}`, adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'obtener comercio'));
+    throw handleAxiosError(error, 'obtener comercio');
   }
 }
 
@@ -138,7 +138,7 @@ export async function adminCreateComercio(data: CreateComercioData, file?: File)
     const response = await apiClient.post('/v1/admin/comercios', formData, adminMultipartConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'crear comercio'));
+    throw handleAxiosError(error, 'crear comercio');
   }
 }
 
@@ -150,7 +150,7 @@ export async function adminUpdateComercio(id: number, data: Partial<CreateComerc
     const response = await apiClient.patch(`/v1/admin/comercios/${id}`, formData, adminMultipartConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'actualizar comercio'));
+    throw handleAxiosError(error, 'actualizar comercio');
   }
 }
 
@@ -159,7 +159,7 @@ export async function adminToggleComercioStatus(id: number): Promise<{ id: numbe
     const response = await apiClient.patch(`/v1/admin/comercios/${id}/toggle-status`, {}, adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'cambiar estado del comercio'));
+    throw handleAxiosError(error, 'cambiar estado del comercio');
   }
 }
 
@@ -170,7 +170,7 @@ export async function adminGetBenefits(): Promise<AdminBenefit[]> {
     const response = await apiClient.get('/v1/admin/benefits', adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'obtener beneficios'));
+    throw handleAxiosError(error, 'obtener beneficios');
   }
 }
 
@@ -182,7 +182,7 @@ export async function adminCreateBenefit(data: CreateBenefitData, file?: File): 
     const response = await apiClient.post('/v1/admin/benefits', formData, adminMultipartConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'crear beneficio'));
+    throw handleAxiosError(error, 'crear beneficio');
   }
 }
 
@@ -194,7 +194,7 @@ export async function adminUpdateBenefit(id: number, data: Partial<CreateBenefit
     const response = await apiClient.patch(`/v1/admin/benefits/${id}`, formData, adminMultipartConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'actualizar beneficio'));
+    throw handleAxiosError(error, 'actualizar beneficio');
   }
 }
 
@@ -203,7 +203,7 @@ export async function adminToggleBenefitStatus(id: number): Promise<{ id: number
     const response = await apiClient.patch(`/v1/admin/benefits/${id}/toggle-status`, {}, adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'cambiar estado del beneficio'));
+    throw handleAxiosError(error, 'cambiar estado del beneficio');
   }
 }
 
@@ -218,7 +218,7 @@ export async function adminAssignBenefit(comercioId: number, benefitId: number):
     );
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'asignar beneficio al comercio'));
+    throw handleAxiosError(error, 'asignar beneficio al comercio');
   }
 }
 
@@ -226,7 +226,7 @@ export async function adminRemoveBenefit(comercioId: number, benefitId: number):
   try {
     await apiClient.delete(`/v1/admin/comercios/${comercioId}/benefits/${benefitId}`, adminConfig);
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'remover beneficio del comercio'));
+    throw handleAxiosError(error, 'remover beneficio del comercio');
   }
 }
 
@@ -259,7 +259,7 @@ export async function adminGetCategories(): Promise<AdminCategory[]> {
     const response = await apiClient.get('/v1/admin/categorias', adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'obtener categorías'));
+    throw handleAxiosError(error, 'obtener categorías');
   }
 }
 
@@ -271,7 +271,7 @@ export async function adminCreateCategory(data: CreateCategoryData, file?: File)
     const response = await apiClient.post('/v1/admin/categorias', formData, adminMultipartConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'crear categoría'));
+    throw handleAxiosError(error, 'crear categoría');
   }
 }
 
@@ -283,7 +283,7 @@ export async function adminUpdateCategory(id: number, data: Partial<CreateCatego
     const response = await apiClient.patch(`/v1/admin/categorias/${id}`, formData, adminMultipartConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'actualizar categoría'));
+    throw handleAxiosError(error, 'actualizar categoría');
   }
 }
 
@@ -292,7 +292,7 @@ export async function adminToggleCategoryStatus(id: number): Promise<{ id: numbe
     const response = await apiClient.patch(`/v1/admin/categorias/${id}/toggle-status`, {}, adminConfig);
     return response.data;
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'cambiar estado de la categoría'));
+    throw handleAxiosError(error, 'cambiar estado de la categoría');
   }
 }
 
@@ -300,6 +300,6 @@ export async function adminDeleteCategory(id: number): Promise<void> {
   try {
     await apiClient.delete(`/v1/admin/categorias/${id}`, adminConfig);
   } catch (error) {
-    throw Promise.reject(handleAxiosError(error, 'eliminar categoría'));
+    throw handleAxiosError(error, 'eliminar categoría');
   }
 }
