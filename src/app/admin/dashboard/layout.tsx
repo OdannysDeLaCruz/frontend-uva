@@ -76,7 +76,7 @@ export default function AdminDashboardLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--background)' }}>
+    <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
       {/* Overlay móvil */}
       {sidebarOpen && (
         <div
@@ -185,7 +185,7 @@ export default function AdminDashboardLayout({
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header
           className="flex items-center gap-4 px-4 sm:px-6 py-4 border-b shrink-0"
@@ -221,7 +221,7 @@ export default function AdminDashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

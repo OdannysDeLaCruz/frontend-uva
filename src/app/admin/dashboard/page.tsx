@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { Store, Gift, TrendingUp, Activity } from 'lucide-react'
+import { Store, Gift, TrendingUp, Activity, Link } from 'lucide-react'
 import { adminGetComercios, adminGetBenefits, type AdminComercio, type AdminBenefit } from '@/app/core/services/admin-service'
 import { useAdminAuth } from '../context/admin-auth-context'
 
@@ -95,13 +95,13 @@ export default function AdminDashboardPage() {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
           <h2 className="text-base font-semibold text-white">Comercios recientes</h2>
-          <a
+          <Link
             href="/admin/dashboard/comercios"
             className="text-xs font-medium transition-colors hover:opacity-80"
             style={{ color: 'var(--text-muted)' }}
           >
             Ver todos →
-          </a>
+          </Link>
         </div>
 
         {loading ? (
