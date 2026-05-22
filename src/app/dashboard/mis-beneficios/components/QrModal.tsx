@@ -19,7 +19,11 @@ function QrModal({
         </button>
 
         <h2 className="text-2xl font-bold mb-4">
-          {qr.status === "PENDING" ? "Beneficio activo" : "Beneficio usado"}
+          {qr.status === "PENDING"
+            ? "Beneficio activo"
+            : qr.status === "EXPIRED"
+              ? "Beneficio vencido"
+              : "Beneficio usado"}
         </h2>
 
         <div className="flex justify-center mb-4">

@@ -7,6 +7,7 @@ import { getMyBenefitsQr } from '@/app/core/services/benefits-service'
 import { QrBenefit } from '@/app/core/types/benefit'
 import QrModal from './components/QrModal'
 import QrCard from './components/QrCard'
+import QrHistoryItem from './components/QrHistoryItem'
 
 const MyBenefitsPage: React.FC = () => {
     const [qrs, setQrs] = useState<QrBenefit[]>([]);
@@ -29,8 +30,8 @@ const MyBenefitsPage: React.FC = () => {
       loadQrs();
     }, []);
 
-const activeQrs = qrs.filter(qr => qr.status === "PENDING");
-  const usedQrs = qrs.filter(qr => qr.status === "USED");
+  const activeQrs = qrs.filter(qr => qr.status === "PENDING");
+  const historyQrs = qrs.filter(qr => qr.status === "USED" || qr.status === "EXPIRED");
 
   if (loading) {
       return (
@@ -45,7 +46,7 @@ const activeQrs = qrs.filter(qr => qr.status === "PENDING");
 
   return (
       <Layout>
-        <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+        <div className="max-w-6xl mx-auto py-8 space-y-8">
           <Title title="Mis beneficios" />
 
           {/* ACTIVOS */}
@@ -55,12 +56,22 @@ const activeQrs = qrs.filter(qr => qr.status === "PENDING");
             onSelect={setSelectedQr}
           />
 
-          {/* USADOS */}
-          <QrCard
-            title="Beneficios usados"
-            qrs={usedQrs}
-            onSelect={setSelectedQr}
-          />
+          {/* HISTORIAL */}
+          <div className="bg-white rounded-xl p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Historial de beneficios
+            </h2>
+
+            {historyQrs.length === 0 ? (
+              <p className="text-gray-600 text-sm">No hay beneficios en el historial</p>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {historyQrs.map((qr) => (
+                  <QrHistoryItem key={qr.code} qr={qr} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* MODAL */}
