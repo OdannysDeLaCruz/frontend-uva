@@ -111,7 +111,7 @@ export async function getMembershipInfo(
 ): Promise<MembershipInfoResponse> {
   try {
     const response = await apiClient.get<MembershipInfoResponse>(
-      '/v1/payments/wompi/membership-info',
+      '/v1/payments/membership-info',
       { params: membershipId ? { membershipId } : {} }
     );
     return response.data;

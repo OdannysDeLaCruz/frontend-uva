@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BoldCheckout } from '@/app/core/types/bold';
-import { useWompiPayment } from '@/app/core/hooks/useWompiPayment';
+import { useBoldPayment } from '@/app/core/hooks/useBoldPayment';
 
 const ContributionsTab: React.FC = () => {
   const {
@@ -8,9 +8,8 @@ const ContributionsTab: React.FC = () => {
     error,
     membershipInfo,
     loadMembershipInfo,
-    createTransaction,
-    pollStatus
-  } = useWompiPayment();
+    createTransaction
+  } = useBoldPayment();
 
   /**
    * Cuando el usuario hace clic en "Pagar":
@@ -19,11 +18,13 @@ const ContributionsTab: React.FC = () => {
    * 3. Abre el checkout Bold
    */
   const onPayClick = async () => {
-    const host = process.env.NEXT_PUBLIC_HOST || '';
-    const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+    const redirectionUrl = process.env.NODE_ENV === 'development'
+      ? undefined
+      : `${process.env.NEXT_PUBLIC_HOST}/dashboard/membership/payment/callback`;
+
     const transactionData = await createTransaction({
       membershipId: membershipInfo?.membershipId,
-      redirectUrl: isLocal ? undefined : `${host}/dashboard/membership/payment/callback`
+      redirectUrl: redirectionUrl
     });
 
     if (!transactionData) return;

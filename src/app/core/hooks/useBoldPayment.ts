@@ -38,7 +38,7 @@ export interface UsePaymentReturn {
  * 3. Abrir widget Bold con transactionData (window.BoldCheckout)
  * 4. pollStatus()         — Después del pago (vía redirect o evento), consulta estado
  */
-export function useWompiPayment(): UsePaymentReturn {
+export function useBoldPayment(): UsePaymentReturn {
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [membershipInfo, setMembershipInfo] = useState<MembershipInfoResponse | null>(null);
