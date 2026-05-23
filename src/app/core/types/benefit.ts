@@ -1,14 +1,14 @@
 export interface GenerateQrBenefitResponse {
   qr: string
   code: string
-  status: 'PENDING' | 'USED'
+  status: 'PENDING' | 'USED' | 'EXPIRED'
   expiresAt: string
 }
 
 export interface QrBenefit {
   qr: string
   code: string
-  status: 'PENDING' | 'USED'
+  status: 'PENDING' | 'USED' | 'EXPIRED'
   expiresAt: string | Date
   updatedAt: string | Date
 

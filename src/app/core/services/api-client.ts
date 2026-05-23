@@ -32,12 +32,13 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    // Si es error 401 y no es una ruta de autenticación
+    // Si es error 401 y no es una ruta de autenticación ni del admin
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
       !originalRequest.url.includes('/v1/auth/login') &&
-      !originalRequest.url.includes('/v1/auth/refresh-token')
+      !originalRequest.url.includes('/v1/auth/refresh-token') &&
+      !originalRequest.url.includes('/v1/admin/')
     ) {
       originalRequest._retry = true
 
@@ -70,7 +71,11 @@ apiClient.interceptors.response.use(
         refreshSubscribers = []
 
         // Redirigir al login solo si no estamos ya en una ruta de autenticación
-        if (typeof window !== "undefined" && !window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/register')) {
+        if (typeof window !== "undefined" &&
+          !window.location.pathname.startsWith('/login') &&
+          !window.location.pathname.startsWith('/register') &&
+          !window.location.pathname.startsWith('/admin')
+        ) {
           window.location.href = "/login"
         }
         return Promise.reject(refreshError)
