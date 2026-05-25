@@ -26,6 +26,23 @@ function chainMiddleware(
   }
 }
 
+// Solo en desarrollo: redirige el callback de Bold desde / hacia la ruta real.
+// Bold no acepta localhost como redirectionUrl, así que en local llega a la raíz.
+const withBoldDevRedirect: MiddlewareFactory = (next) => {
+  return async (request, event) => {
+    if (process.env.NODE_ENV !== 'development') return next(request, event)
+
+    const { pathname, searchParams } = request.nextUrl
+    if (pathname === '/' && searchParams.has('bold-order-id')) {
+      const callbackUrl = new URL('/dashboard/membership/payment/callback', request.url)
+      searchParams.forEach((value, key) => callbackUrl.searchParams.set(key, value))
+      return NextResponse.redirect(callbackUrl)
+    }
+
+    return next(request, event)
+  }
+}
+
 // Middleware de autenticación para el admin panel
 const withAdminAuth: MiddlewareFactory = (next) => {
   return async (request, event) => {
@@ -159,7 +176,7 @@ const withAuth: MiddlewareFactory = (next) => {
 }
 
 // Exportar la cadena de middlewares
-export default chainMiddleware([withAdminAuth, withAuth])
+export default chainMiddleware([withBoldDevRedirect, withAdminAuth, withAuth])
 
 // Configurar qué rutas usan el middleware
 export const config = {
