@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { Home, Network, ChevronDown, ChevronUp, Cylinder, User, X, CreditCard, Wallet, ShieldCheck, GlobeLock, GraduationCap, Binary, ArrowBigRightDash, ListTree } from 'lucide-react';
+import { Home, Network, ChevronDown, ChevronUp, Cylinder, User, X, CreditCard, Wallet, ShieldCheck, GraduationCap, /*Binary,*/ ArrowBigRightDash, ListTree, QrCode, StoreIcon, Store } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/app/core/contexts/auth-context';
@@ -112,44 +112,36 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     // show: hasFullAccess
     // },
     {
-      id: 'perfil',
-      label: 'Perfil',
-      icon: <User size={20} />,
+      id: 'verification',
+      label: 'Verificación',
+      icon: <ShieldCheck size={20} />,
       isActive: false,
       show: hasFullAccess,
       children: [
         {
           id: 'kyc',
-          label: 'KYC (verificación)',
+          label: 'KYC (Verificación)',
           icon: <ShieldCheck size={18} />,
           href: '/dashboard/kyc',
           isActive: false,
           show: hasFullAccess
         },
         // {
-        //   id: 'ajustes',
-        //   label: 'Ajustes',
-        //   icon: <Bolt size={18} />,
-        //   href: '/dashboard/settings',
+        //   id: 'seguridad',
+        //   label: 'Seguridad',
+        //   icon: <GlobeLock size={18} />,
+        //   href: '/dashboard/seguridad',
         //   isActive: false,
         //   show: hasFullAccess
         // },
-        {
-          id: 'seguridad',
-          label: 'Seguridad',
-          icon: <GlobeLock size={18} />,
-          href: '/dashboard/seguridad',
-          isActive: false,
-          show: hasFullAccess
-        },
-        {
-          id: 'sorteo',
-          label: 'Sorteo',
-          icon: <Binary size={18} />,
-          href: '/dashboard/sorteo',
-          isActive: false,
-          show: hasFullAccess
-        },
+        // {
+        //   id: 'sorteo',
+        //   label: 'Sorteo',
+        //   icon: <Binary size={18} />,
+        //   href: '/dashboard/sorteo',
+        //   isActive: false,
+        //   show: hasFullAccess
+        // },
 
       ]
     },
@@ -189,14 +181,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     {
       id: 'uvaliados',
       label: 'UVAliados',
-      icon: <Wallet size={20} />,
+      icon: <Store size={20} />,
       href: '/dashboard/aliados',
       isActive: false,
       children: [
         {
           id: 'uvaliados',
           label: 'Aliados',
-          icon: <Wallet size={20} />,
+          icon: <StoreIcon size={20} />,
           href: '/dashboard/aliados',
           isActive: false,
           show: hasFullAccess
@@ -204,7 +196,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {
           id: 'misbeneficios',
           label: 'Historial de beneficios',
-          icon: <Wallet size={20} />,
+          icon: <QrCode size={20} />,
           href: '/dashboard/mis-beneficios',
           isActive: false,
           show: hasFullAccess
