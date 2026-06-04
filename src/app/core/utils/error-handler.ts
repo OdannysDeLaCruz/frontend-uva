@@ -8,6 +8,10 @@ export interface ApiError {
   isAuthError?: boolean;
 }
 
+export function isApiError(e: unknown): e is ApiError {
+  return typeof e === 'object' && e !== null && 'ok' in e && (e as ApiError).ok === false
+}
+
 export function handleAxiosError(error: unknown, contexto: string): ApiError {
   // Para debugging
   console.error(`Error al ${contexto}:`, error);

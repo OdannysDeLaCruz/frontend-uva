@@ -10,6 +10,7 @@ import { GenerateQrBenefitResponse } from '@/app/core/types/benefit'
 import { generateBenefitQr } from '@/app/core/services/benefits-service'
 import { getTimeRemaining } from '@/app/dashboard/util/util'
 import { QRCodeCanvas } from 'qrcode.react'
+import { isApiError } from '@/app/core/utils/error-handler'
 
 const AllyDetailPage: React.FC = () => {
   const params = useParams()
@@ -70,11 +71,11 @@ const AllyDetailPage: React.FC = () => {
       setShowQR(true)
       setShowModal(true)
     } catch (error: unknown) {
-      console.error(error)
-      if (error instanceof Error) {
-          alert(error.message)
+      if (isApiError(error)) {
+        const msg = Array.isArray(error.message) ? error.message.join(', ') : error.message
+        alert(msg)
       } else {
-          alert('Ocurrió un error inesperado')
+        alert('Ocurrió un error inesperado')
       }
     } finally {
       setQrLoading(false)
