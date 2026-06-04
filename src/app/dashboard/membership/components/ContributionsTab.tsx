@@ -95,7 +95,6 @@ const ContributionsTab: React.FC = () => {
   };
 
   const isActive = membershipInfo?.hasActiveSubscription && !membershipInfo?.isWithinGracePeriod;
-  const showPaymentPanel = !membershipInfo?.hasActiveSubscription || membershipInfo?.isWithinGracePeriod;
 
   const total = membershipInfo ? membershipInfo.price + membershipInfo.taxAmount : null;
 
