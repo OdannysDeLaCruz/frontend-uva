@@ -1,3 +1,5 @@
+import toast, {Toaster} from 'react-hot-toast';
+
 export function getTimeRemaining(expiresAt: string | Date): string {
   const now = new Date()
   const expiration = new Date(expiresAt)
@@ -14,3 +16,8 @@ export function getTimeRemaining(expiresAt: string | Date): string {
 
   return `${minutes} minutos`
 }
+
+export const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+  return true
+};

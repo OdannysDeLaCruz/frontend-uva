@@ -1,7 +1,9 @@
 import React from 'react';
 import { Copy, Link } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
+
 import { useAuth } from '@/app/core/contexts/auth-context';
+import { copyToClipboard } from '../../util/util';
 
 const MembershipContributionsTab: React.FC = () => {
   const { user } = useAuth();
@@ -9,13 +11,15 @@ const MembershipContributionsTab: React.FC = () => {
   // const automaticLink = `${process.env.NEXT_PUBLIC_HOST}/register/automatic/${user?.referralCode}`;
   const manualLink = `${process.env.NEXT_PUBLIC_HOST}/register/manual/${user?.referralCode}`;
 
-  const copyToClipboard = (text: string, message: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success(message, {
-      duration: 5000,
-      position: "bottom-right",
-    });
-  };
+  const handleCopy = (text: string, message: string) => {
+    if(copyToClipboard(text)) {
+      toast.success(message, {
+        position: 'top-right',
+      })
+    } else {
+      toast.error('Error al copiar el enlace')
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -26,7 +30,7 @@ const MembershipContributionsTab: React.FC = () => {
         <div className="flex items-center space-x-4">
               <Link size={16} />
               <p className="text-sm text-white">{manualLink}</p>
-              <button onClick={() => copyToClipboard(manualLink, 'Enlace manual copiado al portapapeles')} className='border border-gray-600 bg-green-600 rounded-lg py-1 px-2 flex gap-2 justify-center items-center cursor-pointer'>
+              <button onClick={() => handleCopy(manualLink, 'Enlace manual copiado al portapapeles')} className='border border-gray-600 bg-green-600 rounded-lg py-1 px-2 flex gap-2 justify-center items-center cursor-pointer'>
                 <Copy size={16} className="cursor-pointer" />
                   Copiar
                 </button>
