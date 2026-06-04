@@ -1,86 +1,155 @@
-import React from 'react';
-// import { useTheme } from 'next-themes';
-import { User, Mail, Phone, IdCard, AtSign } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { User, Mail, Phone, IdCard, AtSign, ShieldCheck, ShieldX, Clock, CreditCard } from 'lucide-react';
 import { useAuth } from '@/app/core/contexts/auth-context';
-// import toast, { Toaster } from 'react-hot-toast';
+import { useBoldPayment } from '@/app/core/hooks/useBoldPayment';
 
 const Profile: React.FC = () => {
-  // const { theme } = useTheme();
   const { user } = useAuth();
-  // const automaticLink = `${process.env.NEXT_PUBLIC_HOST}/register/automatic/${user?.referralCode}`;
-  // const manualLink = `${process.env.NEXT_PUBLIC_HOST}/register/manual/${user?.referralCode}`;
+  const { membershipInfo, loadMembershipInfo, status } = useBoldPayment();
 
-  // const copyToClipboard = (text: string, message: string) => {
-  //   navigator.clipboard.writeText(text);
-  //   toast.success(message, {
-  //     duration: 5000,
-  //     position: "bottom-right",
-  //   });
-  // };
+  useEffect(() => {
+    loadMembershipInfo(1);
+  }, [loadMembershipInfo]);
+
+  const getDaysRemaining = () => {
+    if (!membershipInfo?.subscription?.endDate) return null;
+    const end = new Date(membershipInfo.subscription.endDate);
+    const now = new Date();
+    return Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  };
+
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('es-CO', {
+      day: 'numeric', month: 'long', year: 'numeric',
+    });
+
+  const getRegularity = (days: number) => {
+    if (days <= 7) return 'Semanal';
+    if (days <= 31) return 'Mensual';
+    if (days <= 366) return 'Anual';
+    return `Cada ${days} días`;
+  };
+
+  const daysRemaining = getDaysRemaining();
+  const isActive = membershipInfo?.hasActiveSubscription && !membershipInfo?.isWithinGracePeriod;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Perfil</h2>
+        <h2 className="text-2xl font-semibold">Mi Perfil</h2>
       </div>
 
-      <div className="flex flex-col gap-6">
-        {/* Datos personales */}
-        <div className="border border-gray-600 rounded-lg p-4">
-          <div className="flex flex-col space-y-4">
-            <div className="flex items-center space-x-4">
-              <User size={16} />
-              <p className="text-sm font-medium">{user?.name} {user?.lastname}</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Información Personal */}
+        <div className="border border-gray-600 rounded-lg p-6 space-y-4">
+          <h3 className="text-base font-semibold text-gray-200 mb-1">Información Personal</h3>
+          {[
+            { icon: <User size={15} />, value: `${user?.name} ${user?.lastname}` },
+            { icon: <AtSign size={15} />, value: user?.username },
+            { icon: <IdCard size={15} />, value: `${user?.doc_type} ${user?.doc_number}` },
+            { icon: <Mail size={15} />, value: user?.email },
+            { icon: <Phone size={15} />, value: user?.phone },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center space-x-3">
+              <span className="text-gray-400 flex-shrink-0">{item.icon}</span>
+              <p className="text-sm font-medium text-gray-200">{item.value}</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <AtSign size={16} />
-              <p className="text-sm font-medium">{user?.username}</p>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <IdCard size={16} />
-              <p className="text-sm font-medium">{user?.doc_type} {user?.doc_number}</p>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Mail size={16} />
-              <p className="text-sm font-medium">{user?.email}</p>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Phone size={16} />
-              <p className="text-sm font-medium">{user?.phone}</p>
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* Datos de la referencia */}
-        {/* <div className="border border-gray-600 rounded-lg p-4">
-          <p className="text-sm font-medium mb-2">Código de referencia</p>
-          <div className="flex flex-col space-y-4">
-            <div className="flex items-center space-x-4">
-              <IdCard size={16} />
-              <p className="text-sm font-medium">{user?.referralCode}</p>
-              <Copy size={16} className="cursor-pointer" onClick={() => copyToClipboard(user?.referralCode || "", 'Código de referencia copiado al portapapeles')} />
-            </div>
+        <div className="space-y-4">
+          {/* Estado de la cuenta */}
+          <div className="border border-gray-600 rounded-lg p-4 flex items-center space-x-3">
+            {user?.isActive ? (
+              <>
+                <ShieldCheck className="text-green-500 flex-shrink-0" size={20} />
+                <div>
+                  <p className="text-sm font-semibold text-green-400">Cuenta Activa</p>
+                  <p className="text-xs text-gray-400">Tu cuenta está activa y en buen estado</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <ShieldX className="text-red-500 flex-shrink-0" size={20} />
+                <div>
+                  <p className="text-sm font-semibold text-red-400">Cuenta Inactiva</p>
+                  <p className="text-xs text-gray-400">Tu cuenta requiere activación</p>
+                </div>
+              </>
+            )}
           </div>
-        </div> */}
 
-        {/* Numero de rifa */}
-        {/* <div className="border border-gray-600 rounded-lg p-4"> */}
-          {/* Descripcion */}
-          {/* <p className="text-sm font-medium mb-2">Numero de rifa</p>
-          <p className={`text-sm mb-6 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-600'}`}>El número de rifa es un identificador único que se asigna a cada usuario al momento de su registro. Este número es utilizado para identificar a cada usuario cuando se realizan rifas.</p>
-          <div className="flex flex-col space-y-4">
-            <div className="flex items-center space-x-4">
-              <Hash size={16} />
-              <p className="text-sm font-medium">{user?.raffleNumber}</p>
+          {/* Membresía */}
+          <div className="border border-gray-600 rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold text-gray-200 flex items-center gap-2">
+                <CreditCard size={15} />
+                Membresía
+              </h3>
+              {status === 'loading' ? (
+                <span className="text-xs text-gray-500">Cargando...</span>
+              ) : isActive ? (
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-full px-2 py-0.5 uppercase tracking-wide">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Activa
+                </span>
+              ) : membershipInfo?.isWithinGracePeriod ? (
+                <span className="text-[10px] font-semibold text-amber-400 bg-amber-400/10 border border-amber-400/20 rounded-full px-2 py-0.5 uppercase tracking-wide">
+                  Vencida
+                </span>
+              ) : (
+                <span className="text-[10px] font-semibold text-red-400 bg-red-400/10 border border-red-400/20 rounded-full px-2 py-0.5 uppercase tracking-wide">
+                  {membershipInfo?.subscription ? 'Expirada' : 'Sin membresía'}
+                </span>
+              )}
             </div>
-          </div> */}
-        {/* </div> */}
-      </div>
 
-      {/* <Toaster /> */}
+            {membershipInfo ? (
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Plan</span>
+                  <span className="text-gray-200">{membershipInfo.membershipName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Frecuencia</span>
+                  <span className="text-gray-200">{getRegularity(membershipInfo.durationDays)}</span>
+                </div>
+                {membershipInfo.subscription && (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Inicio</span>
+                      <span className="text-gray-200">{formatDate(membershipInfo.subscription.startDate)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Vencimiento</span>
+                      <span className={isActive ? 'text-emerald-400' : 'text-amber-400'}>
+                        {formatDate(membershipInfo.subscription.endDate)}
+                      </span>
+                    </div>
+                    {daysRemaining !== null && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 flex items-center gap-1">
+                          <Clock size={12} />
+                          Tiempo restante
+                        </span>
+                        <span className={
+                          daysRemaining > 7 ? 'text-emerald-400' :
+                          daysRemaining > 0 ? 'text-amber-400' :
+                          'text-red-400'
+                        }>
+                          {daysRemaining > 0 ? `${daysRemaining} días` : 'Vencida'}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            ) : status !== 'loading' && (
+              <p className="text-sm text-gray-500">No tienes una membresía activa.</p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
