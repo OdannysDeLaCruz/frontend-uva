@@ -41,22 +41,22 @@ const STATUS_CONFIG: Record<
   },
   IN_REVIEW: {
     label: 'En revisión',
-    badgeClass: 'text-blue-400 bg-blue-400/10 border border-blue-400/20',
+    badgeClass: 'text-white bg-blue-400/80 border border-blue-400/20',
     icon: <Loader2 size={14} className="animate-spin" />
   },
   APPROVED: {
     label: 'Aprobado',
-    badgeClass: 'text-emerald-400 bg-emerald-400/10 border border-emerald-400/20',
+    badgeClass: 'text-white bg-green-400/80 border border-emerald-400/20',
     icon: <CheckCircle2 size={14} />
   },
   REJECTED: {
     label: 'Rechazado',
-    badgeClass: 'text-red-400 bg-red-400/10 border border-red-400/20',
+    badgeClass: 'text-white bg-red-500 border border-red-500',
     icon: <ShieldX size={14} />
   },
   EXPIRED: {
     label: 'Expirado',
-    badgeClass: 'text-gray-400 bg-gray-400/10 border border-gray-400/20',
+    badgeClass: 'text-white bg-red-500 border border-red-500',
     icon: <AlertTriangle size={14} />
   }
 };
@@ -168,84 +168,21 @@ export default function KycPage() {
             )}
 
             {hasRejected && (
-              <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <AlertTriangle
-                    size={20}
-                    className="text-amber-400 flex-shrink-0"
-                  />
-                  <div>
-                    <p className="font-medium text-amber-300">
-                      Algunos documentos requieren atención
-                    </p>
-                    <p className="text-sm text-gray-400 mt-0.5">
-                      Revisa los detalles abajo y vuelve a subir los documentos
-                      rechazados.
-                    </p>
-                  </div>
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 flex items-center gap-3">
+                <AlertTriangle
+                  size={20}
+                  className="text-amber-400 flex-shrink-0"
+                />
+                <div>
+                  <p className="font-medium text-amber-300">
+                    Algunos documentos requieren atención
+                  </p>
+                  <p className="text-sm text-gray-400 mt-0.5">
+                    Revisa los documentos rechazados abajo y vuelve a subirlos.
+                  </p>
                 </div>
-                <button
-                  onClick={() => router.push('/dashboard/kyc/upload')}
-                  className="flex-shrink-0 flex items-center gap-1.5 text-sm font-medium text-amber-300 hover:text-amber-200 transition-colors"
-                >
-                  Actualizar
-                  <ArrowRight size={14} />
-                </button>
               </div>
             )}
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {KYC_DOCUMENT_TYPES.map((docType) => {
-                const verification = getVerification(docType);
-                const status = (verification?.status ?? 'NOT_SUBMITTED') as
-                  | KycStatus
-                  | 'NOT_SUBMITTED';
-
-                return (
-                  <div
-                    key={docType}
-                    className="rounded-xl border border-white/[0.06] bg-[#1E1B3A] p-5 flex flex-col gap-4"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        {DOC_ICONS[docType]}
-                        <p className="text-sm font-semibold text-gray-100 leading-tight">
-                          {KYC_DOCUMENT_LABELS[docType]}
-                        </p>
-                      </div>
-                      <StatusBadge status={status} />
-                    </div>
-
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                      {KYC_DOCUMENT_DESCRIPTIONS[docType]}
-                    </p>
-
-                    {verification?.rejection_reason && (
-                      <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3">
-                        <p className="text-xs text-red-400">
-                          <span className="font-semibold">Motivo: </span>
-                          {verification.rejection_reason}
-                        </p>
-                      </div>
-                    )}
-
-                    {verification && (
-                      <p className="text-[10px] text-gray-600">
-                        Actualizado:{' '}
-                        {new Date(verification.updated_at).toLocaleDateString(
-                          'es-CO',
-                          {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                          }
-                        )}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
 
             {!hasSubmitted && (
               <div className="rounded-xl border border-white/[0.06] bg-[#1E1B3A] p-8 flex flex-col items-center text-center gap-5">
@@ -271,6 +208,76 @@ export default function KycPage() {
                 </button>
               </div>
             )}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {KYC_DOCUMENT_TYPES.map((docType) => {
+                const verification = getVerification(docType);
+                const status = (verification?.status ?? 'NOT_SUBMITTED') as
+                  | KycStatus
+                  | 'NOT_SUBMITTED';
+
+                return (
+                  <div
+                    key={docType}
+                    className="rounded-xl border border-blue-500/50 bg- [#1E1B3A] p-5 flex flex-col gap-4"
+                  >
+                    <div className="flex items-start justify-between flex-col gap-2">
+                      <div className="flex items-center gap-2.5">
+                        {DOC_ICONS[docType]}
+                        <p className="text-sm font-semibold text-gray-100 leading-tight">
+                          {KYC_DOCUMENT_LABELS[docType]}
+                        </p>
+                      </div>
+                      <StatusBadge status={status} />
+                    </div>
+
+                    {status !== 'APPROVED' && (
+                      <p className="text-sm text-white leading-relaxed">
+                        {KYC_DOCUMENT_DESCRIPTIONS[docType]}
+                      </p>
+                    )}
+
+
+                    {verification?.rejection_reason && (
+                      <div className="rounded-lg bg-[#FF6B6B]/20 p-3">
+                        <p className="text-sm text-[#FF6B6B]">
+                          <span className="font-semibold">Motivo: </span>
+                          {verification.rejection_reason}
+                        </p>
+                      </div>
+                    )}
+
+                    {verification && (
+                      <p className="text-sm text-gray-400">
+                        Archivo enviado el {' '}
+                        {new Date(verification.updated_at).toLocaleDateString(
+                          'es-CO',
+                          {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          }
+                        )}
+                      </p>
+                    )}
+
+                    {(status === 'REJECTED' || status === 'EXPIRED') && (
+                      <button
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/kyc/re-upload?document=${docType}`
+                          )
+                        }
+                        className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-black bg-[#00F2FE] hover:bg-[#00F2FE]/60 rounded-lg py-2 transition-colors uppercase cursor-pointer"
+                      >
+                        Reintentar
+                        <ArrowRight size={12} />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
 
             {hasSubmitted &&
               verifications.length < 3 &&
