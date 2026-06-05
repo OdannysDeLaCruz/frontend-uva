@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  ScanFace
 } from 'lucide-react'
 import { useAdminAuth } from '../context/admin-auth-context'
 
@@ -38,6 +39,11 @@ const navItems = [
     label: 'Categorías',
     href: '/admin/dashboard/categorias',
     icon: Tag
+  },
+  {
+    label: 'Verificación KYC',
+    href: '/admin/dashboard/kyc',
+    icon: ScanFace
   }
 ]
 

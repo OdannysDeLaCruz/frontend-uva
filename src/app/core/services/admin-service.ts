@@ -230,6 +230,80 @@ export async function adminRemoveBenefit(comercioId: number, benefitId: number):
   }
 }
 
+// ─── KYC ─────────────────────────────────────────────────────────────────────
+
+export type KycDocumentType =
+  | 'NATIONAL_IDENTITY_CARD_FRONT'
+  | 'NATIONAL_IDENTITY_CARD_BACK'
+  | 'NATIONAL_IDENTITY_CARD_SELFIE';
+
+export type KycStatus = 'PENDING' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
+
+export interface KycDocument {
+  id: number;
+  document_type: KycDocumentType;
+  document_url: string;
+  status: KycStatus;
+  rejection_reason?: string | null;
+  verified_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KycUserSubmission {
+  id: number;
+  name: string;
+  lastname: string;
+  email: string;
+  doc_number: string;
+  kycVerified: boolean;
+  kycVerifications: KycDocument[];
+}
+
+export async function adminGetKycSubmissions(): Promise<KycUserSubmission[]> {
+  try {
+    const response = await apiClient.get('/v1/admin/kyc', adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'obtener solicitudes KYC');
+  }
+}
+
+export async function adminApproveKycDocument(documentId: number): Promise<KycDocument> {
+  try {
+    const response = await apiClient.patch(`/v1/admin/kyc/documents/${documentId}/approve`, {}, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'aprobar documento KYC');
+  }
+}
+
+export async function adminRejectKycDocument(documentId: number, reason: string): Promise<KycDocument> {
+  try {
+    const response = await apiClient.patch(
+      `/v1/admin/kyc/documents/${documentId}/reject`,
+      { reason },
+      adminConfig
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'rechazar documento KYC');
+  }
+}
+
+export async function adminSetKycVerified(userId: number, verified: boolean): Promise<{ id: number; kycVerified: boolean; message: string }> {
+  try {
+    const response = await apiClient.patch(
+      `/v1/admin/users/${userId}/kyc-verified`,
+      { verified },
+      adminConfig
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'actualizar verificación KYC del usuario');
+  }
+}
+
 // ─── CATEGORIES ─────────────────────────────────────────────────────────────
 
 export interface AdminCategory {
