@@ -29,6 +29,7 @@ export interface UseKycReturn {
   uploadError: string | null;
   uploadProgress: Record<KycDocumentType, KycDocProgress>;
   submitAll: () => Promise<void>;
+  submitSingle: (docType: KycDocumentType) => Promise<void>;
   allSelected: boolean;
 
   reset: () => void;
@@ -116,6 +117,31 @@ export function useKyc(): UseKycReturn {
     }
   }, [allSelected, selections, fetchStatus]);
 
+  const submitSingle = useCallback(
+    async (docType: KycDocumentType) => {
+      const { file } = selections[docType];
+      if (!file) return;
+
+      setUploadStatus('loading');
+      setUploadError(null);
+      setUploadProgress((prev) => ({ ...prev, [docType]: 'uploading' }));
+
+      try {
+        await uploadKycDocument(docType, file);
+        setUploadProgress((prev) => ({ ...prev, [docType]: 'done' }));
+        setUploadStatus('success');
+        await fetchStatus();
+      } catch (err) {
+        setUploadProgress((prev) => ({ ...prev, [docType]: 'error' }));
+        setUploadError(
+          err instanceof Error ? err.message : 'Error al subir documento'
+        );
+        setUploadStatus('error');
+      }
+    },
+    [selections, fetchStatus]
+  );
+
   const reset = useCallback(() => {
     setSelections((prev) => {
       KYC_DOCUMENT_TYPES.forEach((t) => {
@@ -139,6 +165,7 @@ export function useKyc(): UseKycReturn {
     uploadError,
     uploadProgress,
     submitAll,
+    submitSingle,
     allSelected,
     reset
   };

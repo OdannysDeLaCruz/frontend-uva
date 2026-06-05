@@ -16,7 +16,8 @@ export async function uploadKycDocument(
       formData,
       {
         withCredentials: true,
-        headers: { 'Content-Type': undefined }
+        headers: { 'Content-Type': undefined },
+        timeout: 60000
       }
     );
     return response.data;

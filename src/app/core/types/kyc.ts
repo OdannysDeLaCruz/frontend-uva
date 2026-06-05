@@ -27,9 +27,9 @@ export const KYC_DOCUMENT_TYPES: KycDocumentType[] = [
 ];
 
 export const KYC_DOCUMENT_LABELS: Record<KycDocumentType, string> = {
-  NATIONAL_IDENTITY_CARD_FRONT: 'Cédula — Frente',
-  NATIONAL_IDENTITY_CARD_BACK: 'Cédula — Reverso',
-  NATIONAL_IDENTITY_CARD_SELFIE: 'Selfie con Documento',
+  NATIONAL_IDENTITY_CARD_FRONT: 'DOCUMENTO — FRONTAL',
+  NATIONAL_IDENTITY_CARD_BACK: 'DOCUMENTO — REVERSO',
+  NATIONAL_IDENTITY_CARD_SELFIE: 'SELFIE CON DOCUMENTO EN LA MANO',
 };
 
 export const KYC_DOCUMENT_DESCRIPTIONS: Record<KycDocumentType, string> = {
