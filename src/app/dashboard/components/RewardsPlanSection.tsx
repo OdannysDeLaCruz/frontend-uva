@@ -54,7 +54,7 @@ const RewardsPlanSection: React.FC = () => {
             value={formatCurrency(accumulatedRewards)}
           />
           <CircleMetric
-            label="desembolso en PROCESO"
+            label="Desembolso en PROCESO"
             value={formatCurrency(rewardsAvailable)}
           />
           <CircleMetric

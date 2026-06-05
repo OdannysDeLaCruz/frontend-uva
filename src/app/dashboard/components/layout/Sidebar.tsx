@@ -274,7 +274,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     return (
       <React.Fragment key={item.id}>
        {item.show && (
-          <ul className="mb-1">
+          <ul className="mb-1" style={{ marginLeft: isMobile ? 0 : `${marginLeft}px` }}>
             <button
               onClick={() => {
                 if (hasChildren) {
@@ -284,7 +284,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 }
               }}
               className={`w-full flex items-center justify-between p-3 md:p-[8px] rounded-lg md:rounded-[5px] transition-all duration-200 ${activeClass} touch-manipulation`}
-              style={{ marginLeft: isMobile ? 0 : `${marginLeft}px` }}
             >
               <div className="flex items-center">
                 <span className="mr-3 text-lg md:text-base">{item.icon}</span>
