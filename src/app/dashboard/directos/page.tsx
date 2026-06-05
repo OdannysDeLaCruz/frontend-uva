@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { AlertCircle, RefreshCw, User as UserIcon } from 'lucide-react'
+import { AlertCircle, RefreshCw, User as UserIcon, Users, UserCheck, LayoutGrid } from 'lucide-react'
 
 import { useTheme } from 'next-themes'
 import toast, { Toaster } from 'react-hot-toast'
@@ -11,18 +11,14 @@ import Title from '../components/ui/Title'
 
 const UnilevelPage: React.FC = () => {
   const { theme } = useTheme()
-  // const { user: authUser } = useAuth()
 
   const [data, setData] = useState<DirectosResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  // const [refreshing, setRefreshing] = useState(false)
 
   const fetchDirectos = useCallback(async (showToast = false) => {
     try {
-      // setRefreshing(true)
       const response = await getDirectos()
-      console.log('Directos', response)
       setData(response)
       setError(null)
       if (showToast) {
@@ -34,7 +30,6 @@ const UnilevelPage: React.FC = () => {
       toast.error('Error al cargar los directos')
     } finally {
       setLoading(false)
-      // setRefreshing(false)
     }
   }, [])
 
@@ -101,78 +96,8 @@ const UnilevelPage: React.FC = () => {
     })
   }
 
-  // const UserCard = ({ user: u, type }: { user: typeof data.usuario | typeof data.primarios[0]; type?: 'primary' | 'secondary' }) => {
-  //   const bgColor = type === 'primary'
-  //     ? theme === 'dark' ? 'bg-blue-950/50 border-blue-800/50' : 'bg-blue-50 border-blue-200'
-  //     : type === 'secondary'
-  //     ? theme === 'dark' ? 'bg-orange-950/50 border-orange-800/50' : 'bg-orange-50 border-orange-200'
-  //     : theme === 'dark' ? 'bg-purple-950/50 border-purple-800/50' : 'bg-purple-50 border-purple-200'
-
-  //   // const borderColor = type === 'primary'
-  //   //   ? 'border-blue-800'
-  //   //   : type === 'secondary'
-  //   //   ? 'border-orange-800'
-  //   //   : 'border-purple-800'
-
-  //   const headerColor = type === 'primary'
-  //     ? theme === 'dark' ? 'text-blue-400' : 'text-blue-700'
-  //     : type === 'secondary'
-  //     ? theme === 'dark' ? 'text-orange-400' : 'text-orange-700'
-  //     : theme === 'dark' ? 'text-purple-400' : 'text-purple-700'
-
-  //   return (
-  //     <div className={`p-6 rounded-xl border ${bgColor}`}>
-  //       <div className="flex items-start gap-4">
-  //         <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
-  //           type === 'primary'
-  //             ? theme === 'dark' ? 'bg-blue-900/50' : 'bg-blue-100'
-  //             : type === 'secondary'
-  //             ? theme === 'dark' ? 'bg-orange-900/50' : 'bg-orange-100'
-  //             : theme === 'dark' ? 'bg-purple-900/50' : 'bg-purple-100'
-  //         }`}>
-  //           <UserIcon className={`h-6 w-6 ${headerColor}`} />
-  //         </div>
-  //         <div className="flex-1 min-w-0">
-  //           <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-  //             {u.name} {u.lastname}
-  //           </h3>
-  //           <div className={`mt-3 space-y-2 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-  //             <div className="flex items-center gap-2">
-  //               <Mail className="h-4 w-4" />
-  //               <span className="truncate">{u.email}</span>
-  //             </div>
-  //             <div className="flex items-center gap-2">
-  //               <Phone className="h-4 w-4" />
-  //               <span>{u.phone}</span>
-  //             </div>
-  //             <div className={`text-xs mt-2 font-mono ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
-  //               Código: {u.referralCode}
-  //             </div>
-  //           </div>
-  //         </div>
-  //         <div className={`text-right`}>
-  //           {u.isActive ? (
-  //             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-  //               theme === 'dark'
-  //                 ? 'bg-green-900/50 text-green-400'
-  //                 : 'bg-green-100 text-green-800'
-  //             }`}>
-  //               Activo
-  //             </span>
-  //           ) : (
-  //             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-  //               theme === 'dark'
-  //                 ? 'bg-gray-700 text-gray-300'
-  //                 : 'bg-gray-200 text-gray-700'
-  //             }`}>
-  //               Inactivo
-  //             </span>
-  //           )}
-  //         </div>
-  //       </div>
-  //     </div>
-  //   )
-  // }
+  const totalDirectos = data.primarios.length + data.secundarios.length
+  const isEmpty = data.primarios.length === 0 && data.secundarios.length === 0
 
   return (
     <Layout>
@@ -181,19 +106,76 @@ const UnilevelPage: React.FC = () => {
         <div className="space-y-8">
           <Title title='UVA AMIGOS' />
 
-          {/* Directos Primarios (Azul) */}
-          {data.primarios.length > 0 && (
-            <div>
-              <div className='flex items-center justify-between mb-4'>
-                <h2 className={`text-xl font-semibold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  <div className="w-3 h-3 rounded-full bg-blue-500" />
-                  Primarios ({data.primarios.length}/10)
-                </h2>
-                <div className='ml-auto'>
-                  Directos totales: {data.primarios.length + data.secundarios.length}
-                </div>
-
+          {/* Contadores */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className={`p-5 rounded-xl border flex items-center gap-4 ${
+              theme === 'dark'
+                ? 'bg-purple-950/30 border-purple-800/40'
+                : 'bg-purple-50 border-purple-200'
+            }`}>
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                theme === 'dark' ? 'bg-purple-900/60' : 'bg-purple-100'
+              }`}>
+                <Users className={`h-5 w-5 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
               </div>
+              <div>
+                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  {totalDirectos}
+                </p>
+                <p className={`text-xs font-medium ${theme === 'dark' ? 'text-purple-300' : 'text-purple-700'}`}>
+                  Directos totales
+                </p>
+              </div>
+            </div>
+
+            <div className={`p-5 rounded-xl border flex items-center gap-4 ${
+              theme === 'dark'
+                ? 'bg-green-950/30 border-green-800/40'
+                : 'bg-green-50 border-green-200'
+            }`}>
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                theme === 'dark' ? 'bg-green-900/60' : 'bg-green-100'
+              }`}>
+                <UserCheck className={`h-5 w-5 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
+              </div>
+              <div>
+                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  {data.totalPersonales}
+                </p>
+                <p className={`text-xs font-medium ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>
+                  Directos personales
+                </p>
+              </div>
+            </div>
+
+            <div className={`p-5 rounded-xl border flex items-center gap-4 ${
+              theme === 'dark'
+                ? 'bg-blue-950/30 border-blue-800/40'
+                : 'bg-blue-50 border-blue-200'
+            }`}>
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                theme === 'dark' ? 'bg-blue-900/60' : 'bg-blue-100'
+              }`}>
+                <LayoutGrid className={`h-5 w-5 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+              </div>
+              <div>
+                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  {data.primarios.length}<span className={`text-sm font-normal ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>/10</span>
+                </p>
+                <p className={`text-xs font-medium ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>
+                  Espacios ocupados
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Directos Primarios */}
+          <div>
+            <h2 className={`text-xl font-semibold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              Primarios ({data.primarios.length}/10)
+            </h2>
+            {data.primarios.length > 0 ? (
               <div className="space-y-4">
                 {data.primarios.map((direct, index) => (
                   <div key={direct.id} className={`p-4 rounded-lg border flex items-start justify-between ${
@@ -211,14 +193,24 @@ const UnilevelPage: React.FC = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          <span className='capitalize'>{direct.name} {direct.lastname}</span> | <small className='font-normal'>{direct.email}</small>
+                          <span className='capitalize'>{direct.name} {direct.lastname}</span>{' '}
+                          <small className='font-normal'>{direct.email}</small>
                         </h4>
                         <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
                           Registrado: {formatDate(direct.createdAt)}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {!direct.isPersonal && (
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          theme === 'dark'
+                            ? 'bg-amber-900/50 text-amber-400 border border-amber-700/40'
+                            : 'bg-amber-100 text-amber-800 border border-amber-300'
+                        }`}>
+                          Derrame
+                        </span>
+                      )}
                       {direct.isActive ? (
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
                           theme === 'dark'
@@ -240,10 +232,14 @@ const UnilevelPage: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-  
-          {/* Directos Secundarios (Naranja) */}
+            ) : (
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
+                Aún no tienes directos primarios. Comparte tu enlace de referido para conseguirlos.
+              </p>
+            )}
+          </div>
+
+          {/* Directos Secundarios */}
           {data.secundarios.length > 0 && (
             <div>
               <h2 className={`text-xl font-semibold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -263,7 +259,7 @@ const UnilevelPage: React.FC = () => {
                           ? 'bg-orange-900 text-orange-400'
                           : 'bg-orange-200 text-orange-800'
                       }`}>
-                        {index + 11}
+                        {index + 1}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className={`font-semibold capitalize ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -301,9 +297,9 @@ const UnilevelPage: React.FC = () => {
               </div>
             </div>
           )}
-  
-          {/* Mensaje vacío */}
-          {data.primarios.length === 0 && (
+
+          {/* Estado vacío */}
+          {isEmpty && (
             <div className={`p-8 rounded-lg border text-center ${
               theme === 'dark'
                 ? 'bg-gray-900/50 border-gray-700'
