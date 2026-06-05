@@ -1,23 +1,294 @@
-'use client'
+'use client';
 
-import React from 'react'
-import Layout from '../components/layout/Layout'
-import Title from '../components/ui/Title'
-import UnderConstruction from '../components/common/UnderConstruction'
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  ShieldCheck,
+  ShieldX,
+  Clock,
+  AlertTriangle,
+  IdCard,
+  Camera,
+  CheckCircle2,
+  Loader2,
+  ArrowRight,
+  RefreshCw
+} from 'lucide-react';
+import Layout from '../components/layout/Layout';
+import Title from '../components/ui/Title';
+import { useKyc } from '@/app/core/hooks/useKyc';
+import {
+  KYC_DOCUMENT_TYPES,
+  KYC_DOCUMENT_LABELS,
+  KYC_DOCUMENT_DESCRIPTIONS,
+  type KycDocumentType,
+  type KycStatus
+} from '@/app/core/types/kyc';
 
-const KYCPage: React.FC = () => {
+const STATUS_CONFIG: Record<
+  KycStatus | 'NOT_SUBMITTED',
+  { label: string; badgeClass: string; icon: React.ReactNode }
+> = {
+  NOT_SUBMITTED: {
+    label: 'Sin enviar',
+    badgeClass: 'text-gray-400 bg-gray-400/10 border border-gray-400/20',
+    icon: <Clock size={14} />
+  },
+  PENDING: {
+    label: 'Pendiente',
+    badgeClass: 'text-amber-400 bg-amber-400/10 border border-amber-400/20',
+    icon: <Clock size={14} />
+  },
+  IN_REVIEW: {
+    label: 'En revisión',
+    badgeClass: 'text-blue-400 bg-blue-400/10 border border-blue-400/20',
+    icon: <Loader2 size={14} className="animate-spin" />
+  },
+  APPROVED: {
+    label: 'Aprobado',
+    badgeClass: 'text-emerald-400 bg-emerald-400/10 border border-emerald-400/20',
+    icon: <CheckCircle2 size={14} />
+  },
+  REJECTED: {
+    label: 'Rechazado',
+    badgeClass: 'text-red-400 bg-red-400/10 border border-red-400/20',
+    icon: <ShieldX size={14} />
+  },
+  EXPIRED: {
+    label: 'Expirado',
+    badgeClass: 'text-gray-400 bg-gray-400/10 border border-gray-400/20',
+    icon: <AlertTriangle size={14} />
+  }
+};
+
+const DOC_ICONS: Record<KycDocumentType, React.ReactNode> = {
+  NATIONAL_IDENTITY_CARD_FRONT: <IdCard size={22} className="text-purple-400" />,
+  NATIONAL_IDENTITY_CARD_BACK: <IdCard size={22} className="text-purple-400" />,
+  NATIONAL_IDENTITY_CARD_SELFIE: <Camera size={22} className="text-purple-400" />
+};
+
+function StatusBadge({ status }: { status: KycStatus | 'NOT_SUBMITTED' }) {
+  const cfg = STATUS_CONFIG[status];
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${cfg.badgeClass}`}
+    >
+      {cfg.icon}
+      {cfg.label}
+    </span>
+  );
+}
+
+export default function KycPage() {
+  const router = useRouter();
+  const { verifications, statusLoading, statusError, fetchStatus } = useKyc();
+
+  useEffect(() => {
+    fetchStatus();
+  }, [fetchStatus]);
+
+  const getVerification = (docType: KycDocumentType) =>
+    verifications.find((v) => v.document_type === docType);
+
+  const allApproved =
+    verifications.length === 3 &&
+    verifications.every((v) => v.status === 'APPROVED');
+
+  const hasRejected = verifications.some(
+    (v) => v.status === 'REJECTED' || v.status === 'EXPIRED'
+  );
+
+  const hasSubmitted = verifications.length > 0;
+
+  const allPendingOrReview =
+    hasSubmitted &&
+    !allApproved &&
+    !hasRejected &&
+    verifications.every(
+      (v) => v.status === 'PENDING' || v.status === 'IN_REVIEW'
+    );
+
   return (
     <Layout>
       <div className="space-y-6 p-1 md:p-4">
-        <Title title="KYC (Verificación)" />
+        <Title title="Verificación KYC" />
 
-        <UnderConstruction
-          title="¡No temas, todos en UVA estarán 100% verificados!"
-          message="Estamos trabajando en la implementación de nuevas medidas de seguridad para proteger tus datos y tus transacciones."
-        />
+        {statusLoading && (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 size={32} className="text-purple-400 animate-spin" />
+          </div>
+        )}
+
+        {statusError && !statusLoading && (
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 flex items-center justify-between">
+            <p className="text-sm text-red-400">{statusError}</p>
+            <button
+              onClick={fetchStatus}
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-200 transition-colors"
+            >
+              <RefreshCw size={12} />
+              Reintentar
+            </button>
+          </div>
+        )}
+
+        {!statusLoading && !statusError && (
+          <>
+            {allApproved && (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                  <ShieldCheck size={24} className="text-emerald-400" />
+                </div>
+                <div>
+                  <p className="font-semibold text-emerald-300 text-lg">
+                    Identidad Verificada
+                  </p>
+                  <p className="text-sm text-gray-400 mt-0.5">
+                    Todos tus documentos han sido aprobados correctamente.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {allPendingOrReview && (
+              <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-5 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                  <Clock size={20} className="text-blue-400" />
+                </div>
+                <div>
+                  <p className="font-medium text-blue-300">
+                    Documentos en revisión
+                  </p>
+                  <p className="text-sm text-gray-400 mt-0.5">
+                    Estamos revisando tus documentos. Te notificaremos cuando
+                    haya novedades.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {hasRejected && (
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <AlertTriangle
+                    size={20}
+                    className="text-amber-400 flex-shrink-0"
+                  />
+                  <div>
+                    <p className="font-medium text-amber-300">
+                      Algunos documentos requieren atención
+                    </p>
+                    <p className="text-sm text-gray-400 mt-0.5">
+                      Revisa los detalles abajo y vuelve a subir los documentos
+                      rechazados.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => router.push('/dashboard/kyc/upload')}
+                  className="flex-shrink-0 flex items-center gap-1.5 text-sm font-medium text-amber-300 hover:text-amber-200 transition-colors"
+                >
+                  Actualizar
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {KYC_DOCUMENT_TYPES.map((docType) => {
+                const verification = getVerification(docType);
+                const status = (verification?.status ?? 'NOT_SUBMITTED') as
+                  | KycStatus
+                  | 'NOT_SUBMITTED';
+
+                return (
+                  <div
+                    key={docType}
+                    className="rounded-xl border border-white/[0.06] bg-[#1E1B3A] p-5 flex flex-col gap-4"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        {DOC_ICONS[docType]}
+                        <p className="text-sm font-semibold text-gray-100 leading-tight">
+                          {KYC_DOCUMENT_LABELS[docType]}
+                        </p>
+                      </div>
+                      <StatusBadge status={status} />
+                    </div>
+
+                    <p className="text-xs text-gray-500 leading-relaxed">
+                      {KYC_DOCUMENT_DESCRIPTIONS[docType]}
+                    </p>
+
+                    {verification?.rejection_reason && (
+                      <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3">
+                        <p className="text-xs text-red-400">
+                          <span className="font-semibold">Motivo: </span>
+                          {verification.rejection_reason}
+                        </p>
+                      </div>
+                    )}
+
+                    {verification && (
+                      <p className="text-[10px] text-gray-600">
+                        Actualizado:{' '}
+                        {new Date(verification.updated_at).toLocaleDateString(
+                          'es-CO',
+                          {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          }
+                        )}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {!hasSubmitted && (
+              <div className="rounded-xl border border-white/[0.06] bg-[#1E1B3A] p-8 flex flex-col items-center text-center gap-5">
+                <div className="w-16 h-16 rounded-full bg-purple-500/10 flex items-center justify-center">
+                  <ShieldCheck size={32} className="text-purple-400" />
+                </div>
+                <div className="space-y-2 max-w-sm">
+                  <h3 className="text-lg font-semibold text-gray-100">
+                    Verifica tu identidad
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    Para acceder a todos los beneficios de UVA, necesitas
+                    completar la verificación de tu identidad. El proceso toma
+                    menos de 5 minutos.
+                  </p>
+                </div>
+                <button
+                  onClick={() => router.push('/dashboard/kyc/upload')}
+                  className="gradient-bg hover:scale-105 transition-all duration-200 text-white font-semibold py-3 px-8 rounded-xl border border-white/20 shadow-lg flex items-center gap-2"
+                >
+                  Iniciar Verificación
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            )}
+
+            {hasSubmitted &&
+              verifications.length < 3 &&
+              !allPendingOrReview &&
+              !allApproved && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => router.push('/dashboard/kyc/upload')}
+                    className="flex items-center gap-2 text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors"
+                  >
+                    Completar verificación
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              )}
+          </>
+        )}
       </div>
     </Layout>
-  )
+  );
 }
-
-export default KYCPage
