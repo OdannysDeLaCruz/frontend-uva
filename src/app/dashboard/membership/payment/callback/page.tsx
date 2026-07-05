@@ -19,68 +19,69 @@ export default function PaymentCallbackPage() {
     const boldTxId = searchParams.get('bold-tx-id');
     const boldStatus = searchParams.get('bold-status');
 
-    if (boldOrderId) {
-      setDisplayId(boldTxId ?? boldOrderId);
-      handleBoldCallback(boldOrderId, boldStatus);
+    if (!boldOrderId) {
+      setStatus('ERROR');
       return;
     }
 
-    setStatus('ERROR');
-  }, [searchParams]);
+    setDisplayId(boldTxId ?? boldOrderId);
 
-  /**
-   * Consulta el estado real de la transacción en nuestro backend.
-   * Bold puede devolver status en el redirect, pero el estado autoritativo
-   * es el que procesó el webhook.
-   */
-  const handleBoldCallback = async (orderId: string, boldStatus: string | null) => {
-    try {
-      // Si Bold ya nos dice el status en el redirect, lo usamos como estado inicial
-      // mientras esperamos la confirmación del backend
-      if (boldStatus === 'APPROVED') {
-        setStatus('APPROVED');
-      } else if (boldStatus === 'REJECTED' || boldStatus === 'FAILED') {
-        setStatus('DECLINED');
-      } else if (boldStatus === 'ABANDONED') {
-        setStatus('CANCELLED');
+    /**
+     * Si el webhook aún no llegó cuando el usuario regresa,
+     * hacemos polling hasta obtener estado final.
+     */
+    const handlePendingStatus = async (transactionId: number) => {
+      try {
+        const result = await pollPaymentStatus(transactionId, 30, 3000);
+        if (result.status === 'APPROVED') setStatus('APPROVED');
+        else if (result.status === 'DECLINED') setStatus('DECLINED');
+        else if (result.status === 'CANCELLED') setStatus('CANCELLED');
+        else setStatus('ERROR');
+      } catch {
+        // Polling agotado — mostramos PENDING (el webhook llegará eventualmente)
+        setStatus('PENDING');
       }
+    };
 
-      // Confirmar con nuestro backend (estado autoritativo procesado por el webhook)
-      const data = await getPaymentStatusByReference(orderId);
+    /**
+     * Consulta el estado real de la transacción en nuestro backend.
+     * Bold puede devolver status en el redirect, pero el estado autoritativo
+     * es el que procesó el webhook.
+     */
+    const handleBoldCallback = async (orderId: string, boldStatus: string | null) => {
+      try {
+        // Si Bold ya nos dice el status en el redirect, lo usamos como estado inicial
+        // mientras esperamos la confirmación del backend
+        if (boldStatus === 'APPROVED') {
+          setStatus('APPROVED');
+        } else if (boldStatus === 'REJECTED' || boldStatus === 'FAILED') {
+          setStatus('DECLINED');
+        } else if (boldStatus === 'ABANDONED') {
+          setStatus('CANCELLED');
+        }
 
-      if (data.status === 'APPROVED') {
-        setStatus('APPROVED');
-      } else if (data.status === 'DECLINED') {
-        setStatus('DECLINED');
-      } else if (data.status === 'CANCELLED') {
-        setStatus('CANCELLED');
-      } else if (data.status === 'PENDING') {
-        // Webhook aún no llegó — hacer polling
-        await handlePendingStatus(data.id);
-      } else {
+        // Confirmar con nuestro backend (estado autoritativo procesado por el webhook)
+        const data = await getPaymentStatusByReference(orderId);
+
+        if (data.status === 'APPROVED') {
+          setStatus('APPROVED');
+        } else if (data.status === 'DECLINED') {
+          setStatus('DECLINED');
+        } else if (data.status === 'CANCELLED') {
+          setStatus('CANCELLED');
+        } else if (data.status === 'PENDING') {
+          // Webhook aún no llegó — hacer polling
+          await handlePendingStatus(data.id);
+        } else {
+          setStatus('ERROR');
+        }
+      } catch {
         setStatus('ERROR');
       }
-    } catch {
-      setStatus('ERROR');
-    }
-  };
+    };
 
-  /**
-   * Si el webhook aún no llegó cuando el usuario regresa,
-   * hacemos polling hasta obtener estado final.
-   */
-  const handlePendingStatus = async (transactionId: number) => {
-    try {
-      const result = await pollPaymentStatus(transactionId, 30, 3000);
-      if (result.status === 'APPROVED') setStatus('APPROVED');
-      else if (result.status === 'DECLINED') setStatus('DECLINED');
-      else if (result.status === 'CANCELLED') setStatus('CANCELLED');
-      else setStatus('ERROR');
-    } catch {
-      // Polling agotado — mostramos PENDING (el webhook llegará eventualmente)
-      setStatus('PENDING');
-    }
-  };
+    handleBoldCallback(boldOrderId, boldStatus);
+  }, [searchParams]);
 
   const statusConfig: Record<PaymentStatus, { title: string; message: string; color: string; icon: string }> = {
     loading: {
