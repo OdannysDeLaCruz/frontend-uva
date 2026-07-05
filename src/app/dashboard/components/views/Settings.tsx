@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Lock, Users, Info } from 'lucide-react';
+import { Lock, Users } from 'lucide-react';
 
 interface ToggleSetting {
   id: string;
@@ -52,7 +52,7 @@ const Settings: React.FC = () => {
   const [allowDerrame, setAllowDerrame] = useState(false);
 
   // Privacidad y Seguridad
-  const [twoFa, setTwoFa] = useState(false);
+  const [twoFa] = useState(false);
 
   // Cuenta
   const [language, setLanguage] = useState('Español');

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BoldCheckout } from '@/app/core/types/bold';
+// import { BoldCheckout } from '@/app/core/types/bold';
 import { useBoldPayment } from '@/app/core/hooks/useBoldPayment';
 
 const ContributionsTab: React.FC = () => {
@@ -8,7 +8,7 @@ const ContributionsTab: React.FC = () => {
     error,
     membershipInfo,
     loadMembershipInfo,
-    createTransaction
+    // createTransaction
   } = useBoldPayment();
 
   /**
