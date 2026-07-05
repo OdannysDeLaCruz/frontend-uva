@@ -24,7 +24,7 @@ import {
   type KycStatus,
   type KycDocumentType
 } from '@/app/core/services/admin-service'
-import { ApiError } from '@/app/core/utils/error-handler'
+// import { ApiError } from '@/app/core/utils/error-handler'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

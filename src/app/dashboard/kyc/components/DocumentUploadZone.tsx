@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import type { KycDocumentType, KycStatus } from '@/app/core/types/kyc';
 import type { KycDocProgress, KycFileSelection } from '@/app/core/hooks/useKyc';
+import Image from 'next/image';
 
 interface DocumentUploadZoneProps {
   documentType: KycDocumentType;
@@ -113,7 +114,7 @@ export default function DocumentUploadZone({
         {PROGRESS_OVERLAY[progress]}
 
         {selection.preview ? (
-          <img
+          <Image
             src={selection.preview}
             alt={label}
             className="w-full h-full object-cover"
