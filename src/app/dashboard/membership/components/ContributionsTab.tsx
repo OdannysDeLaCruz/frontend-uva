@@ -18,34 +18,38 @@ const ContributionsTab: React.FC = () => {
    * 3. Abre el checkout Bold
    */
   const onPayClick = async () => {
-    const redirectionUrl = process.env.NODE_ENV === 'development'
-      ? undefined
-      : `${process.env.NEXT_PUBLIC_HOST}/dashboard/membership/payment/callback`;
 
-    const transactionData = await createTransaction({
-      membershipId: membershipInfo?.membershipId,
-      redirectUrl: redirectionUrl
-    });
+    alert("Estamos trabajando fuertemente para que muy pronto puedas realizar las activaciones de tu membresía. Falta poco.");
+    return;
+  
+    // const redirectionUrl = process.env.NODE_ENV === 'development'
+    //   ? undefined
+    //   : `${process.env.NEXT_PUBLIC_HOST}/dashboard/membership/payment/callback`;
 
-    if (!transactionData) return;
+    // const transactionData = await createTransaction({
+    //   membershipId: membershipInfo?.membershipId,
+    //   redirectUrl: redirectionUrl
+    // });
 
-    if (!window.BoldCheckout) {
-      console.error('Bold checkout script not loaded');
-      return;
-    }
+    // if (!transactionData) return;
 
-    const checkout: BoldCheckout = new window.BoldCheckout({
-      orderId: transactionData.orderId,
-      currency: transactionData.currency,
-      amount: transactionData.amount,
-      apiKey: transactionData.apiKey,
-      integritySignature: transactionData.integritySignature,
-      description: transactionData.description,
-      tax: transactionData.tax,
-      ...(transactionData.redirectionUrl ? { redirectionUrl: transactionData.redirectionUrl } : {}),
-    });
+    // if (!window.BoldCheckout) {
+    //   console.error('Bold checkout script not loaded');
+    //   return;
+    // }
 
-    checkout.open();
+    // const checkout: BoldCheckout = new window.BoldCheckout({
+    //   orderId: transactionData.orderId,
+    //   currency: transactionData.currency,
+    //   amount: transactionData.amount,
+    //   apiKey: transactionData.apiKey,
+    //   integritySignature: transactionData.integritySignature,
+    //   description: transactionData.description,
+    //   tax: transactionData.tax,
+    //   ...(transactionData.redirectionUrl ? { redirectionUrl: transactionData.redirectionUrl } : {}),
+    // });
+
+    // checkout.open();
 
     // Bold no tiene callback onFinished en la integración personalizada.
     // El estado final llega por:
