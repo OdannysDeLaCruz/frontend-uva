@@ -14,13 +14,14 @@ export interface DirectoUser extends User {
   createdAt: string
 }
 
+export interface DirectoPrimario extends DirectoUser {
+  isPersonal: boolean
+}
+
 export interface DirectosResponse {
-  usuario: User
-  primarios: DirectoUser[]
+  primarios: DirectoPrimario[]
   secundarios: DirectoUser[]
-  totalDirectos: number
-  totalPrimarios: number
-  totalSecundarios: number
+  totalPersonales: number
 }
 
 export async function getDirectos(): Promise<DirectosResponse> {
