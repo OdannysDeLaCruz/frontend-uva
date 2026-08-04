@@ -89,14 +89,14 @@ export default function OfrecemosCarousel() {
         {/* Botón Anterior */}
         <button
           onClick={() => swiperInstance?.slidePrev()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 bg-principal hover:bg-principal/90 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 bg-principal hover:bg-principal/90 text-white p-2 rounded-full shadow-lg transition-all hover:scale-110"
           aria-label="Anterior"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
 
         {/* Carrusel con Swiper */}
-        <div className="px-1">
+        <div>
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={24}
@@ -128,17 +128,17 @@ export default function OfrecemosCarousel() {
                   onClick={() => setSelectedItem(item)}
                   className="bg-principal rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 p-2 border border-gray-400 cursor-pointer"
                 >
-                  <div className="relative h-64 w-full rounded-2xl overflow-hidden">
+                  <div className="relative h-53 pb-7 w-full rounded-2xl overflow-hidden">
                     <Image
                       src={item.image}
                       alt={item.description}
                       fill
-                      className="object-cover object-top"
+                      className="object-contain object-top lg:object-fill rounded-2xl"
                     />
                   </div>
                   <div className="p-2">
                     <p
-                      className="text-white font-light text-md mb-4 line-clamp-3"
+                      className="text-white font-light text-md mb-4 line-clamp-3 pt-4"
                       style={{ lineHeight: "1.1" }}
                       dangerouslySetInnerHTML={{ __html: item.description }}
                     />
@@ -163,7 +163,7 @@ export default function OfrecemosCarousel() {
         {/* Botón Siguiente */}
         <button
           onClick={() => swiperInstance?.slideNext()}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 bg-principal hover:bg-principal/90 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 bg-principal hover:bg-principal/90 text-white p-2 rounded-full shadow-lg transition-all hover:scale-110"
           aria-label="Siguiente"
         >
           <ChevronRight className="w-6 h-6" />
