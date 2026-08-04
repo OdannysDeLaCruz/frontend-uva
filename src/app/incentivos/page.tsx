@@ -14,19 +14,19 @@ export default function Ahorro() {
 
   return (
     <div 
-      className="max-h-[1100px] w-full bg-cover bg-no-repeat bg-[#d5bbad] bg-[position:top_center] relative flex flex-col pb-12 md:pb-24"
+      className="w-full bg-cover bg-no-repeat bg-[#d5bbad] bg-[position:top_center] relative flex flex-col md:pb-24"
       style={{
         backgroundImage: "url('/images/ahorro/ahorro-background.webp')"
       }}
     >
       {/* Container principal con menú lateral */}
-      <div className="flex min-h-screen">
+      <div className="flex">
         {/* Contenido principal */}
         <div className="flex-1 w-full">
           <section
-            className="min-h-screen max-h-[1100px] w-full relative flex py-0 md:py-12"
+            className="w-full relative flex py-0 md:py-12"
           >
-            <div className="">
+            <div>
               {/* Grid responsive - 1 columna en mobile, 2 en desktop */}
               <div className="flex flex-col-reverse md:flex-row md:grid grid-cols-1 md:grid-cols-2 pt-0 md:pt-4 gap-4 md:gap-8 lg:gap-20 bg-[#a79c92] md:bg-transparent">
                 {/* Columna izquierda - Contenido */}
@@ -55,7 +55,7 @@ export default function Ahorro() {
                   />
                 </article>
                 <div className="block md:hidden">
-                  <h1 className="absolute top-8 right-8 text-4xl md:text-5xl lg:text-7xl font-bold text-principal mb-6 mt-10">
+                  <h1 className="absolute top-12 sm:top-18 right-8 left-5 text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6 mt-10 drop-shadow-[10px_0_10px_rgba(0,0,0,1)]">
                     Incentivos por Logros
                   </h1>
                   <Image
