@@ -13,18 +13,18 @@ export default function Nosotros() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Container principal con menú lateral */}
-      <div className="flex min-h-screen">
+      <div className="flex">
         {/* Contenido principal */}
         <div className="flex-1 w-full">
           <section
             id="nosotros"
-            className="min-h-screen max-h-[1100px] w-full bg-white relative flex items-center py-12"
+            className="w-full bg-white relative flex items-center py-12"
           >
             <div className="container mx-auto px-4 md:px-8 lg:px-16 lg:pl-0 lg:pr-40">
               {/* Grid responsive - 1 columna en mobile, 2 en desktop */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 pt-20 gap-8 lg:gap-12">
+              <div className="grid grid-cols-1 lg:grid-cols-2 pt-10 md:pt-20 gap-8 lg:gap-12">
                 {/* Columna izquierda - Contenido */}
                 <article className="space-y-6">
                   <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-principal mb-12">
@@ -44,7 +44,7 @@ export default function Nosotros() {
                 </article>
 
                 {/* Columna derecha - Imagen */}
-                <div className="flex justify-center lg:justify-end">
+                <div className="flex justify-center lg:justify-end pb-16 lg:pb-0">
                   <div className="relative w-full max-w-md lg:max-w-lg">
                     <Image
                       src="/images/backgrounds/section2.webp"
