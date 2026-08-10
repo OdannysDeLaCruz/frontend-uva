@@ -5,6 +5,26 @@ export interface GenerateQrBenefitResponse {
   expiresAt: string
 }
 
+export interface BenefitCustomField {
+  id: number
+  key: string
+  label: string
+  fieldType: 'TEXT' | 'NUMBER' | 'DATE'
+  isRequired: boolean
+  placeholder: string | null
+  order: number
+}
+
+export interface CustomFieldValueInput {
+  customFieldId: number
+  value: string
+}
+
+export interface BenefitFieldValue {
+  label: string
+  value: string
+}
+
 export interface QrBenefit {
   qr: string
   code: string
@@ -21,12 +41,16 @@ export interface QrBenefit {
     name: string
     description: string
   }
+
+  customFields?: BenefitFieldValue[]
 }
 
 export interface ValidateQrResponse {
   valid: true
   qrId: string
   benefitName: string
+  userName: string
+  customFields?: BenefitFieldValue[]
   expiresAt: string
 }
 
@@ -39,6 +63,7 @@ export interface BenefitUsagePartnerQr {
   userName: string
   benefitStartDate: string | null
   benefitEndDate: string | null
+  customFields?: BenefitFieldValue[]
 }
 
 export interface UseQrResponse {
@@ -52,5 +77,24 @@ export interface ValidateCodeResponse {
   qrId: string
   benefitName: string
   userId: string
+  userName: string
+  customFields?: BenefitFieldValue[]
   expiresAt: string
+}
+
+export interface SearchByFieldResponse {
+  valid: true
+  qrId: string
+  benefitName: string
+  userId: string
+  userName: string
+  customFields?: BenefitFieldValue[]
+  expiresAt: string
+}
+
+export interface SearchableBenefitField {
+  benefitId: number
+  benefitName: string
+  customFieldId: number
+  customFieldLabel: string
 }
