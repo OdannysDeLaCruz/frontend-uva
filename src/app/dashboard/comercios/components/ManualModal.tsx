@@ -3,7 +3,6 @@ import Modal from './BenefitValidationBaseModal'
 
 interface ManualModalSubmitPayload {
   code: string
-  document: string
 }
 
 interface ManualModalProps {
@@ -13,7 +12,6 @@ interface ManualModalProps {
 
 function ManualModal({ onSubmit, onClose }: ManualModalProps) {
   const [code, setCode] = useState('')
-  const [document, setDocument] = useState('')
 
   return (
     <Modal onClose={onClose}>
@@ -21,21 +19,14 @@ function ManualModal({ onSubmit, onClose }: ManualModalProps) {
 
       <input
         maxLength={6}
-        className="w-full border p-2 rounded mb-3 bg-white text-gray-900 placeholder-gray-400"
+        className="w-full border p-2 rounded mb-4 bg-white text-gray-900 placeholder-gray-400"
         placeholder="Código del beneficio"
         value={code}
         onChange={(e) => setCode(e.target.value)}
       />
 
-      <input
-        className="w-full border p-2 rounded mb-4 bg-white text-gray-900 placeholder-gray-400"
-        placeholder="Número de documento"
-        value={document}
-        onChange={(e) => setDocument(e.target.value)}
-      />
-
       <button
-        onClick={() => onSubmit({ code, document })}
+        onClick={() => onSubmit({ code })}
         className="w-full bg-emerald-600 text-white py-2 rounded"
       >
         Verificar
