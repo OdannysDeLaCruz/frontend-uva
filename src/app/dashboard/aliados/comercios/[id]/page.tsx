@@ -6,11 +6,14 @@ import { ArrowLeft, Calendar, X } from 'lucide-react'
 import { getAllyById } from '@/app/core/services/allies-service'
 import { Ally } from '@/app/core/types/ally'
 import Image from 'next/image'
-import { GenerateQrBenefitResponse } from '@/app/core/types/benefit'
-import { generateBenefitQr } from '@/app/core/services/benefits-service'
+import { GenerateQrBenefitResponse, BenefitCustomField, CustomFieldValueInput } from '@/app/core/types/benefit'
+import { generateBenefitQr, getBenefitCustomFields } from '@/app/core/services/benefits-service'
 import { getTimeRemaining } from '@/app/dashboard/util/util'
 import { QRCodeCanvas } from 'qrcode.react'
 import { isApiError } from '@/app/core/utils/error-handler'
+import BenefitCustomFieldsForm from '@/app/dashboard/aliados/components/BenefitCustomFieldsForm'
+
+type ModalStep = 'terms' | 'fields' | 'qr'
 
 const AllyDetailPage: React.FC = () => {
   const params = useParams()
@@ -19,11 +22,14 @@ const AllyDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [modalStep, setModalStep] = useState<ModalStep>('terms')
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const [showQR, setShowQR] = useState(false)
   const [qrData, setQrData] = useState<GenerateQrBenefitResponse | null>(null)
   const [qrLoading, setQrLoading] = useState(false)
   const [pendingBenefitId, setPendingBenefitId] = useState<number | null>(null)
+  const [customFields, setCustomFields] = useState<BenefitCustomField[]>([])
+  const [fieldValues, setFieldValues] = useState<Record<number, string>>({})
+  const [fieldsLoading, setFieldsLoading] = useState(false)
 
   useEffect(() => {
     const loadAlly = async () => {
@@ -53,65 +59,105 @@ const AllyDetailPage: React.FC = () => {
     }
   }, [])
 
-  const handleClaimBenefit = async (benefitId: number) => {
+  const handleBenefitError = (error: unknown) => {
+    if (isApiError(error)) {
+      const msg = Array.isArray(error.message) ? error.message.join(', ') : error.message
+      alert(msg)
+    } else {
+      alert('Ocurrió un error inesperado')
+    }
+  }
+
+  const requestQr = async (benefitId: number, customFieldValues: CustomFieldValueInput[]) => {
     if (!ally) return;
     try {
-      if (!termsAccepted) {
-        setPendingBenefitId(benefitId)
-        setShowQR(false)
-        setShowModal(true)
-        return
-      }
-
       setQrLoading(true)
 
-      const qr = await generateBenefitQr(benefitId,ally.id)
+      const qr = await generateBenefitQr(benefitId, ally.id, customFieldValues)
 
       setQrData(qr)
-      setShowQR(true)
+      setModalStep('qr')
       setShowModal(true)
     } catch (error: unknown) {
-      if (isApiError(error)) {
-        const msg = Array.isArray(error.message) ? error.message.join(', ') : error.message
-        alert(msg)
-      } else {
-        alert('Ocurrió un error inesperado')
+      handleBenefitError(error)
+      if (customFields.length > 0) {
+        setModalStep('fields')
+        setShowModal(true)
       }
     } finally {
       setQrLoading(false)
     }
   }
 
+  const proceedAfterTerms = async (benefitId: number) => {
+    if (!ally) return;
+    try {
+      setFieldsLoading(true)
+
+      const fields = await getBenefitCustomFields(benefitId)
+      const sortedFields = [...fields].sort((a, b) => a.order - b.order)
+      setCustomFields(sortedFields)
+      setFieldValues({})
+
+      if (sortedFields.length === 0) {
+        await requestQr(benefitId, [])
+      } else {
+        setModalStep('fields')
+        setShowModal(true)
+      }
+    } catch (error: unknown) {
+      handleBenefitError(error)
+    } finally {
+      setFieldsLoading(false)
+    }
+  }
+
+  const handleClaimBenefit = async (benefitId: number) => {
+    if (!ally) return;
+    setPendingBenefitId(benefitId)
+
+    if (!termsAccepted) {
+      setModalStep('terms')
+      setShowModal(true)
+      return
+    }
+
+    await proceedAfterTerms(benefitId)
+  }
 
   const handleAcceptTerms = async () => {
     if (!ally) return;
     setTermsAccepted(true)
     localStorage.setItem('benefit-terms-accepted', 'true')
     if (pendingBenefitId) {
-        try {
-          setQrLoading(true)
+      await proceedAfterTerms(pendingBenefitId)
+    }
+  }
 
-          const qr = await generateBenefitQr(pendingBenefitId,ally.id)
+  const handleFieldChange = (fieldId: number, value: string) => {
+    setFieldValues((prev) => ({ ...prev, [fieldId]: value }))
+  }
 
-          setQrData(qr)
-          setShowQR(true)
-        } catch (error: unknown) {
-            console.error(error)
-            if (error instanceof Error) {
-                alert(error.message)
-              } else {
-                alert('Ocurrió un error inesperado')
-              }
-        } finally {
-          setQrLoading(false)
-          setPendingBenefitId(null)
-        }
-      }
+  const isFieldsFormValid = customFields.every(
+    (field) => !field.isRequired || (fieldValues[field.id] ?? '').trim().length > 0
+  )
+
+  const handleSubmitFields = async () => {
+    if (!pendingBenefitId) return
+    const customFieldValues: CustomFieldValueInput[] = customFields
+      .filter((field) => (fieldValues[field.id] ?? '').trim().length > 0)
+      .map((field) => ({ customFieldId: field.id, value: fieldValues[field.id].trim() }))
+
+    await requestQr(pendingBenefitId, customFieldValues)
   }
 
   const handleCloseModal = () => {
     setShowModal(false)
-    setShowQR(false)
+    setModalStep('terms')
+    setPendingBenefitId(null)
+    setCustomFields([])
+    setFieldValues({})
+    setQrData(null)
   }
 
   const formatDate = (date?: Date) => {
@@ -221,7 +267,8 @@ const AllyDetailPage: React.FC = () => {
                     {/* Boton para reclamar descuento */}
                     <button
                       onClick={() => handleClaimBenefit(benefit.id)}
-                      className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-sm font-semibold hover:bg-purple-700 transition-colors self-start uppercase"
+                      disabled={fieldsLoading || qrLoading}
+                      className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-sm font-semibold hover:bg-purple-700 transition-colors self-start uppercase disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Reclamar tu beneficio
                     </button>
@@ -258,7 +305,7 @@ const AllyDetailPage: React.FC = () => {
               <X size={24} className="text-gray-600" />
             </button>
 
-            {!showQR ? (
+            {modalStep === 'terms' && (
               // Términos y Condiciones
               <div className="p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Términos y Condiciones</h2>
@@ -289,13 +336,46 @@ const AllyDetailPage: React.FC = () => {
                   </button>
                   <button
                     onClick={handleAcceptTerms}
-                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                    disabled={fieldsLoading || qrLoading}
+                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Aceptar
                   </button>
                 </div>
               </div>
-            ) : (
+            )}
+
+            {modalStep === 'fields' && (
+              // Campos extra del beneficio
+              <div className="p-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Información adicional</h2>
+                <p className="text-gray-600 mb-6">
+                  Este comercio requiere algunos datos adicionales para procesar tu beneficio.
+                </p>
+                <BenefitCustomFieldsForm
+                  fields={customFields}
+                  values={fieldValues}
+                  onChange={handleFieldChange}
+                />
+                <div className="flex justify-end gap-4 mt-6">
+                  <button
+                    onClick={handleCloseModal}
+                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleSubmitFields}
+                    disabled={!isFieldsFormValid || qrLoading}
+                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Continuar
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {modalStep === 'qr' && (
               // Código QR
               <div className="p-8 text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Tu Código QR</h2>
