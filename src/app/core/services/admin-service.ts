@@ -15,6 +15,7 @@ export interface AdminComercio {
   legalName?: string;
   docNumber?: string;
   address?: string;
+  city?: string;
   email?: string;
   phone?: string;
   photo?: string;
@@ -23,7 +24,50 @@ export interface AdminComercio {
   createdAt: string;
   updatedAt: string;
   categories?: { id: number; name: string }[];
-  benefits?: AdminBenefit[];
+  benefits?: AdminAssignedBenefit[];
+}
+
+export interface AdminAssignedBenefit extends AdminBenefit {
+  searchableCustomFieldId?: number | null;
+}
+
+export type CustomFieldType = 'TEXT' | 'NUMBER' | 'DATE';
+
+export interface AdminBenefitCustomField {
+  id: number;
+  benefitId: number;
+  key: string;
+  label: string;
+  fieldType: CustomFieldType;
+  isRequired: boolean;
+  placeholder?: string | null;
+  order: number;
+  isActive: boolean;
+}
+
+export interface CreateBenefitCustomFieldData {
+  key: string;
+  label: string;
+  fieldType?: CustomFieldType;
+  isRequired?: boolean;
+  placeholder?: string;
+  order?: number;
+}
+
+export interface AdminBenefitAllowedCity {
+  id: number;
+  city: string;
+}
+
+export interface AdminBenefitConfig {
+  id: number;
+  maxUsesPerUser: number | null;
+  allowedCities: AdminBenefitAllowedCity[];
+}
+
+export interface UpdateBenefitConfigData {
+  maxUsesPerUser?: number | null;
+  allowedCities?: string[];
 }
 
 export interface AdminBenefit {
@@ -36,6 +80,8 @@ export interface AdminBenefit {
   dateEnd?: string;
   createdAt?: string;
   updatedAt?: string;
+  customFields?: AdminBenefitCustomField[];
+  config?: AdminBenefitConfig | null;
 }
 
 export interface CreateComercioData {
@@ -44,6 +90,7 @@ export interface CreateComercioData {
   legalName?: string;
   docNumber?: string;
   address?: string;
+  city?: string;
   email?: string;
   phone?: string;
   password?: string;
@@ -207,18 +254,87 @@ export async function adminToggleBenefitStatus(id: number): Promise<{ id: number
   }
 }
 
+// ─── BENEFIT CUSTOM FIELDS ─────────────────────────────────────────────────
+
+export async function adminGetBenefitCustomFields(benefitId: number): Promise<AdminBenefitCustomField[]> {
+  try {
+    const response = await apiClient.get(`/v1/admin/benefits/${benefitId}/custom-fields`, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'obtener campos extra del beneficio');
+  }
+}
+
+export async function adminCreateBenefitCustomField(benefitId: number, data: CreateBenefitCustomFieldData): Promise<AdminBenefitCustomField> {
+  try {
+    const response = await apiClient.post(`/v1/admin/benefits/${benefitId}/custom-fields`, data, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'crear campo extra del beneficio');
+  }
+}
+
+export async function adminUpdateBenefitCustomField(benefitId: number, fieldId: number, data: Partial<CreateBenefitCustomFieldData> & { isActive?: boolean }): Promise<AdminBenefitCustomField> {
+  try {
+    const response = await apiClient.patch(`/v1/admin/benefits/${benefitId}/custom-fields/${fieldId}`, data, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'actualizar campo extra del beneficio');
+  }
+}
+
+export async function adminDeleteBenefitCustomField(benefitId: number, fieldId: number): Promise<{ softDeleted: boolean }> {
+  try {
+    const response = await apiClient.delete(`/v1/admin/benefits/${benefitId}/custom-fields/${fieldId}`, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'eliminar campo extra del beneficio');
+  }
+}
+
+export async function adminReorderBenefitCustomFields(benefitId: number, items: { id: number; order: number }[]): Promise<AdminBenefitCustomField[]> {
+  try {
+    const response = await apiClient.patch(`/v1/admin/benefits/${benefitId}/custom-fields/reorder`, { items }, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'reordenar campos extra del beneficio');
+  }
+}
+
+export async function adminUpdateBenefitConfig(benefitId: number, data: UpdateBenefitConfigData): Promise<AdminBenefitConfig> {
+  try {
+    const response = await apiClient.patch(`/v1/admin/benefits/${benefitId}/config`, data, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'actualizar configuración del beneficio');
+  }
+}
+
 // ─── COMERCIO BENEFITS ─────────────────────────────────────────────────────
 
-export async function adminAssignBenefit(comercioId: number, benefitId: number): Promise<{ benefit: AdminBenefit }> {
+export async function adminAssignBenefit(comercioId: number, benefitId: number, searchableCustomFieldId?: number): Promise<{ benefit: AdminBenefit }> {
   try {
     const response = await apiClient.post(
       `/v1/admin/comercios/${comercioId}/benefits`,
-      { benefitId },
+      { benefitId, searchableCustomFieldId },
       adminConfig
     );
     return response.data;
   } catch (error) {
     throw handleAxiosError(error, 'asignar beneficio al comercio');
+  }
+}
+
+export async function adminUpdatePartnerBusinessBenefit(comercioId: number, benefitId: number, searchableCustomFieldId: number | null): Promise<{ benefit: AdminBenefit }> {
+  try {
+    const response = await apiClient.patch(
+      `/v1/admin/comercios/${comercioId}/benefits/${benefitId}`,
+      { searchableCustomFieldId },
+      adminConfig
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'actualizar configuración de búsqueda del beneficio');
   }
 }
 

@@ -24,6 +24,7 @@ import {
   adminGetCategories,
   adminAssignBenefit,
   adminRemoveBenefit,
+  adminUpdatePartnerBusinessBenefit,
   type AdminComercio,
   type AdminBenefit,
   type AdminCategory,
@@ -48,6 +49,7 @@ function InfoSection({
     legalName: comercio.legalName || '',
     docNumber: comercio.docNumber || '',
     address: comercio.address || '',
+    city: comercio.city || '',
     email: comercio.email || '',
     phone: comercio.phone || '',
     description: comercio.description || '',
@@ -203,10 +205,17 @@ function InfoSection({
             </div>
 
             {/* Dirección */}
-            <div className="sm:col-span-2">
+            <div>
               <label className={labelClass}>Dirección <span className="text-red-400">*</span></label>
               <input name="address" required value={form.address} onChange={handleChange}
-                placeholder="Calle 1 # 2-3, Ciudad" className={inputClass} style={inputStyle} />
+                placeholder="Calle 1 # 2-3" className={inputClass} style={inputStyle} />
+            </div>
+
+            {/* Ciudad */}
+            <div>
+              <label className={labelClass}>Ciudad</label>
+              <input name="city" value={form.city} onChange={handleChange}
+                placeholder="Ej. Bogotá" className={inputClass} style={inputStyle} />
             </div>
 
             {/* Descripción */}
@@ -274,6 +283,7 @@ function BenefitsSection({
   const [search, setSearch] = useState('')
   const [assigning, setAssigning] = useState<number | null>(null)
   const [removing, setRemoving] = useState<number | null>(null)
+  const [updatingSearchField, setUpdatingSearchField] = useState<number | null>(null)
   const [toast, setToast] = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
 
   const showToast = (msg: string, type: 'ok' | 'err') => {
@@ -309,6 +319,20 @@ function BenefitsSection({
       showToast('Error al remover', 'err')
     } finally {
       setRemoving(null)
+    }
+  }
+
+  const handleSearchFieldChange = async (benefitId: number, value: string) => {
+    const parsed = value === '' ? null : Number(value)
+    setUpdatingSearchField(benefitId)
+    try {
+      await adminUpdatePartnerBusinessBenefit(comercio.id, benefitId, parsed)
+      onRefresh()
+      showToast('Campo de búsqueda actualizado', 'ok')
+    } catch {
+      showToast('Error al actualizar el campo de búsqueda', 'err')
+    } finally {
+      setUpdatingSearchField(null)
     }
   }
 
@@ -350,35 +374,55 @@ function BenefitsSection({
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {comercio.benefits.map(b => (
-                <div
-                  key={b.id}
-                  className="flex items-center justify-between p-3 rounded-xl border"
-                  style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-8 w-8 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
-                      <Gift className="h-4 w-4 text-purple-400" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-white truncate">{b.name}</p>
-                      {b.description && (
-                        <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{b.description}</p>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleRemove(b.id)}
-                    disabled={removing === b.id}
-                    className="ml-3 p-1.5 rounded-lg text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all shrink-0"
+              {comercio.benefits.map(b => {
+                const fullBenefit = allBenefits.find(fb => fb.id === b.id)
+                const customFields = fullBenefit?.customFields || []
+                return (
+                  <div
+                    key={b.id}
+                    className="rounded-xl border p-3 space-y-2"
+                    style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}
                   >
-                    {removing === b.id
-                      ? <span className="h-4 w-4 border border-red-400/30 border-t-red-400 rounded-full animate-spin block" />
-                      : <X className="h-4 w-4" />
-                    }
-                  </button>
-                </div>
-              ))}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-8 w-8 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+                          <Gift className="h-4 w-4 text-purple-400" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-white truncate">{b.name}</p>
+                          {b.description && (
+                            <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{b.description}</p>
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleRemove(b.id)}
+                        disabled={removing === b.id}
+                        className="ml-3 p-1.5 rounded-lg text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all shrink-0"
+                      >
+                        {removing === b.id
+                          ? <span className="h-4 w-4 border border-red-400/30 border-t-red-400 rounded-full animate-spin block" />
+                          : <X className="h-4 w-4" />
+                        }
+                      </button>
+                    </div>
+                    {customFields.length > 0 && (
+                      <select
+                        value={b.searchableCustomFieldId ?? ''}
+                        onChange={e => handleSearchFieldChange(b.id, e.target.value)}
+                        disabled={updatingSearchField === b.id}
+                        className="w-full text-xs px-2 py-1.5 rounded-lg text-white/70 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all disabled:opacity-50"
+                        style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+                      >
+                        <option value="">Buscar clientes por: Ninguno</option>
+                        {customFields.map(f => (
+                          <option key={f.id} value={f.id}>Buscar clientes por: {f.label}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Search, Gift, Power, Pencil, X, Check, AlertCircle, Store, UploadCloud } from 'lucide-react'
+import { Plus, Search, Gift, Power, Pencil, X, Check, AlertCircle, Store, UploadCloud, ChevronUp, ChevronDown } from 'lucide-react'
 import {
   adminGetBenefits,
   adminCreateBenefit,
@@ -10,13 +10,335 @@ import {
   adminGetComercios,
   adminAssignBenefit,
   adminRemoveBenefit,
+  adminCreateBenefitCustomField,
+  adminUpdateBenefitCustomField,
+  adminDeleteBenefitCustomField,
+  adminReorderBenefitCustomFields,
+  adminUpdateBenefitConfig,
+  adminUpdatePartnerBusinessBenefit,
   type AdminBenefit,
   type AdminComercio,
-  type CreateBenefitData
+  type CreateBenefitData,
+  type AdminBenefitCustomField,
+  type CreateBenefitCustomFieldData,
+  type AdminBenefitConfig,
+  type CustomFieldType
 } from '@/app/core/services/admin-service'
 import { ApiError } from '@/app/core/utils/error-handler'
 
 type FilterStatus = 'all' | 'active' | 'inactive'
+
+// ─── Campos extra del beneficio ────────────────────────────────────────────
+
+function BenefitCustomFieldsSection({
+  benefitId,
+  initialFields
+}: {
+  benefitId: number
+  initialFields: AdminBenefitCustomField[]
+}) {
+  const [fields, setFields] = useState<AdminBenefitCustomField[]>(
+    [...initialFields].sort((a, b) => a.order - b.order)
+  )
+  const [showForm, setShowForm] = useState(false)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [formData, setFormData] = useState<CreateBenefitCustomFieldData>({
+    key: '', label: '', fieldType: 'TEXT', isRequired: false, placeholder: ''
+  })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const resetForm = () => {
+    setFormData({ key: '', label: '', fieldType: 'TEXT', isRequired: false, placeholder: '' })
+    setShowForm(false)
+    setEditingId(null)
+    setError(null)
+  }
+
+  const startEdit = (f: AdminBenefitCustomField) => {
+    setEditingId(f.id)
+    setShowForm(true)
+    setFormData({
+      key: f.key,
+      label: f.label,
+      fieldType: f.fieldType,
+      isRequired: f.isRequired,
+      placeholder: f.placeholder || ''
+    })
+  }
+
+  const handleSubmitField = async () => {
+    if (!formData.key.trim() || !formData.label.trim()) {
+      setError('La clave y la etiqueta son obligatorias')
+      return
+    }
+    setSaving(true)
+    setError(null)
+    try {
+      if (editingId) {
+        const updated = await adminUpdateBenefitCustomField(benefitId, editingId, formData)
+        setFields(prev => prev.map(f => f.id === editingId ? updated : f))
+      } else {
+        const created = await adminCreateBenefitCustomField(benefitId, { ...formData, order: fields.length })
+        setFields(prev => [...prev, created])
+      }
+      resetForm()
+    } catch (err: ApiError | unknown) {
+      const msg = err && typeof err === 'object' && 'message' in err
+        ? (err as ApiError).message : 'Error al guardar campo'
+      setError(Array.isArray(msg) ? msg[0] : (msg as string))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDelete = async (fieldId: number) => {
+    try {
+      await adminDeleteBenefitCustomField(benefitId, fieldId)
+      setFields(prev => prev.filter(f => f.id !== fieldId))
+    } catch {
+      setError('Error al eliminar el campo')
+    }
+  }
+
+  const move = async (index: number, direction: -1 | 1) => {
+    const target = index + direction
+    if (target < 0 || target >= fields.length) return
+    const reordered = [...fields]
+    ;[reordered[index], reordered[target]] = [reordered[target], reordered[index]]
+    setFields(reordered)
+    try {
+      await adminReorderBenefitCustomFields(benefitId, reordered.map((f, i) => ({ id: f.id, order: i })))
+    } catch {
+      setError('Error al reordenar los campos')
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <label className="text-sm font-medium text-white/70">Campos extra</label>
+        <button
+          type="button"
+          onClick={() => { if (showForm) { resetForm() } else { setShowForm(true) } }}
+          className="text-xs px-2.5 py-1 rounded-lg text-purple-300 border border-purple-500/30 hover:bg-purple-500/10 transition-all flex items-center gap-1"
+        >
+          <Plus className="h-3 w-3" /> Agregar campo
+        </button>
+      </div>
+
+      {error && (
+        <div className="mb-2 p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-300">{error}</div>
+      )}
+
+      {fields.length === 0 && !showForm && (
+        <p className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>Sin campos extra configurados</p>
+      )}
+
+      {fields.length > 0 && (
+        <div className="space-y-2 mb-2">
+          {fields.map((f, idx) => (
+            <div
+              key={f.id}
+              className="flex items-center justify-between p-2.5 rounded-lg border"
+              style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}
+            >
+              <div className="min-w-0">
+                <p className="text-sm text-white truncate">
+                  {f.label} <span className="text-xs" style={{ color: 'var(--text-muted)' }}>({f.key})</span>
+                </p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                  {f.fieldType}{f.isRequired ? ' · requerido' : ''}
+                </p>
+              </div>
+              <div className="flex items-center gap-0.5 shrink-0">
+                <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}
+                  className="p-1 text-white/40 hover:text-white disabled:opacity-20 transition-colors">
+                  <ChevronUp className="h-3.5 w-3.5" />
+                </button>
+                <button type="button" onClick={() => move(idx, 1)} disabled={idx === fields.length - 1}
+                  className="p-1 text-white/40 hover:text-white disabled:opacity-20 transition-colors">
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </button>
+                <button type="button" onClick={() => startEdit(f)} className="p-1.5 text-white/40 hover:text-white transition-colors">
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+                <button type="button" onClick={() => handleDelete(f.id)} className="p-1.5 text-red-400/60 hover:text-red-400 transition-colors">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showForm && (
+        <div className="p-3 rounded-lg border space-y-2" style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              placeholder="Clave (key)"
+              value={formData.key}
+              onChange={e => setFormData(p => ({ ...p, key: e.target.value }))}
+              className="px-3 py-2 rounded-lg text-sm text-white placeholder-white/30 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+            />
+            <input
+              placeholder="Etiqueta"
+              value={formData.label}
+              onChange={e => setFormData(p => ({ ...p, label: e.target.value }))}
+              className="px-3 py-2 rounded-lg text-sm text-white placeholder-white/30 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <select
+              value={formData.fieldType}
+              onChange={e => setFormData(p => ({ ...p, fieldType: e.target.value as CustomFieldType }))}
+              className="px-3 py-2 rounded-lg text-sm text-white border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+            >
+              <option value="TEXT">Texto</option>
+              <option value="NUMBER">Número</option>
+              <option value="DATE">Fecha</option>
+            </select>
+            <input
+              placeholder="Placeholder (opcional)"
+              value={formData.placeholder}
+              onChange={e => setFormData(p => ({ ...p, placeholder: e.target.value }))}
+              className="px-3 py-2 rounded-lg text-sm text-white placeholder-white/30 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+            />
+          </div>
+          <label className="flex items-center gap-2 text-xs text-white/70">
+            <input
+              type="checkbox"
+              checked={formData.isRequired}
+              onChange={e => setFormData(p => ({ ...p, isRequired: e.target.checked }))}
+            />
+            Requerido
+          </label>
+          <div className="flex gap-2">
+            <button type="button" onClick={resetForm}
+              className="flex-1 px-3 py-1.5 rounded-lg text-xs text-white/60 border border-white/10 hover:bg-white/5 transition-all">
+              Cancelar
+            </button>
+            <button type="button" disabled={saving} onClick={handleSubmitField}
+              className="flex-1 px-3 py-1.5 rounded-lg text-xs font-medium text-white gradient-bg hover:opacity-90 transition-all disabled:opacity-50">
+              {editingId ? 'Guardar cambios' : 'Agregar campo'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Límite de usos y restricción de ciudad ────────────────────────────────
+
+function BenefitConfigSection({
+  benefitId,
+  initialConfig
+}: {
+  benefitId: number
+  initialConfig: AdminBenefitConfig | null | undefined
+}) {
+  const [maxUses, setMaxUses] = useState<string>(
+    initialConfig?.maxUsesPerUser != null ? String(initialConfig.maxUsesPerUser) : ''
+  )
+  const [cities, setCities] = useState<string[]>(initialConfig?.allowedCities.map(c => c.city) || [])
+  const [cityInput, setCityInput] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const addCity = () => {
+    const c = cityInput.trim()
+    if (!c || cities.includes(c)) { setCityInput(''); return }
+    setCities(prev => [...prev, c])
+    setCityInput('')
+  }
+
+  const removeCity = (c: string) => setCities(prev => prev.filter(x => x !== c))
+
+  const handleSave = async () => {
+    setSaving(true)
+    setError(null)
+    setSaved(false)
+    try {
+      await adminUpdateBenefitConfig(benefitId, {
+        maxUsesPerUser: maxUses.trim() === '' ? null : Number(maxUses),
+        allowedCities: cities
+      })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } catch {
+      setError('Error al guardar la configuración')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-white/70 mb-1.5">Límite de usos por usuario</label>
+        <input
+          type="number"
+          min={1}
+          value={maxUses}
+          onChange={e => setMaxUses(e.target.value)}
+          placeholder="Ilimitado"
+          className="w-full px-4 py-2.5 rounded-lg text-sm text-white placeholder-white/30 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+          style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-white/70 mb-1.5">Restricción de ciudad</label>
+        <div className="flex gap-2 mb-2">
+          <input
+            value={cityInput}
+            onChange={e => setCityInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCity() } }}
+            placeholder="Ej. Bogotá"
+            className="flex-1 px-4 py-2.5 rounded-lg text-sm text-white placeholder-white/30 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+            style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}
+          />
+          <button type="button" onClick={addCity}
+            className="px-3 py-2.5 rounded-lg text-sm text-white/70 border border-white/10 hover:bg-white/5 transition-all">
+            Agregar
+          </button>
+        </div>
+        {cities.length === 0 ? (
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Sin restricción — aplica en todas las ciudades</p>
+        ) : (
+          <div className="flex flex-wrap gap-1.5">
+            {cities.map(c => (
+              <span key={c} className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-300">
+                {c}
+                <button type="button" onClick={() => removeCity(c)} className="hover:text-white transition-colors">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {error && <p className="text-xs text-red-300">{error}</p>}
+
+      <button
+        type="button"
+        onClick={handleSave}
+        disabled={saving}
+        className="px-4 py-2 rounded-lg text-xs font-medium text-white gradient-bg hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+      >
+        {saving && <span className="h-3 w-3 border border-white/30 border-t-white rounded-full animate-spin" />}
+        {saved ? 'Guardado ✓' : 'Guardar configuración'}
+      </button>
+    </div>
+  )
+}
 
 // ─── Modal de formulario ────────────────────────────────────────────────────
 
@@ -48,6 +370,31 @@ function BenefitFormModal({
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [localPreview, setLocalPreview] = useState<string | null>(benefit?.image || null)
   const [error, setError] = useState<string | null>(null)
+  const [searchFieldMap, setSearchFieldMap] = useState<Record<number, number | null>>(() => {
+    const map: Record<number, number | null> = {}
+    if (benefit) {
+      allComercios.forEach(c => {
+        const assigned = c.benefits?.find(b => b.id === benefit.id)
+        if (assigned) map[c.id] = assigned.searchableCustomFieldId ?? null
+      })
+    }
+    return map
+  })
+  const [savingSearchField, setSavingSearchField] = useState<number | null>(null)
+
+  const handleSearchFieldChange = async (comercioId: number, value: string) => {
+    if (!benefit) return
+    const parsed = value === '' ? null : Number(value)
+    setSavingSearchField(comercioId)
+    try {
+      await adminUpdatePartnerBusinessBenefit(comercioId, benefit.id, parsed)
+      setSearchFieldMap(prev => ({ ...prev, [comercioId]: parsed }))
+    } catch {
+      setError('Error al actualizar el campo de búsqueda del comercio')
+    } finally {
+      setSavingSearchField(null)
+    }
+  }
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -232,6 +579,17 @@ function BenefitFormModal({
             <span className="text-sm text-white/70">Beneficio activo</span>
           </div>
 
+          {isEdit && benefit && (
+            <>
+              <div className="border-t pt-5" style={{ borderColor: 'var(--border)' }}>
+                <BenefitCustomFieldsSection benefitId={benefit.id} initialFields={benefit.customFields || []} />
+              </div>
+              <div className="border-t pt-5" style={{ borderColor: 'var(--border)' }}>
+                <BenefitConfigSection benefitId={benefit.id} initialConfig={benefit.config} />
+              </div>
+            </>
+          )}
+
           {/* ─── Comercios ─── */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -272,38 +630,57 @@ function BenefitFormModal({
               ) : (
                 filteredComercios.map((c, idx) => {
                   const checked = selectedComercioIds.includes(c.id)
+                  const showSearchField =
+                    isEdit && benefit && assignedComercioIds.includes(c.id) &&
+                    !!benefit.customFields?.length
                   return (
-                    <label
-                      key={c.id}
-                      className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
-                        checked ? 'bg-purple-500/10' : 'hover:bg-white/3'
-                      } ${idx !== 0 ? 'border-t' : ''}`}
-                      style={{ borderColor: 'var(--border)' }}
-                    >
-                      {/* Checkbox personalizado */}
-                      <div
-                        className={`h-4 w-4 rounded flex items-center justify-center shrink-0 border transition-all ${
-                          checked
-                            ? 'bg-purple-600 border-purple-600'
-                            : 'bg-transparent border-white/20'
+                    <div key={c.id} className={idx !== 0 ? 'border-t' : ''} style={{ borderColor: 'var(--border)' }}>
+                      <label
+                        className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
+                          checked ? 'bg-purple-500/10' : 'hover:bg-white/3'
                         }`}
-                        onClick={() => toggleComercio(c.id)}
                       >
-                        {checked && <Check className="h-2.5 w-2.5 text-white" />}
-                      </div>
-                      <div className="flex items-center gap-2 min-w-0 flex-1" onClick={() => toggleComercio(c.id)}>
+                        {/* Checkbox personalizado */}
                         <div
-                          className="h-6 w-6 rounded-md flex items-center justify-center text-xs font-bold text-white shrink-0"
-                          style={{ background: 'var(--gradient-primary)' }}
+                          className={`h-4 w-4 rounded flex items-center justify-center shrink-0 border transition-all ${
+                            checked
+                              ? 'bg-purple-600 border-purple-600'
+                              : 'bg-transparent border-white/20'
+                          }`}
+                          onClick={() => toggleComercio(c.id)}
                         >
-                          {c.name.charAt(0).toUpperCase()}
+                          {checked && <Check className="h-2.5 w-2.5 text-white" />}
                         </div>
-                        <span className="text-sm text-white truncate">{c.name}</span>
-                        {!c.isActive && (
-                          <span className="text-xs text-red-400/70 shrink-0">(inactivo)</span>
-                        )}
-                      </div>
-                    </label>
+                        <div className="flex items-center gap-2 min-w-0 flex-1" onClick={() => toggleComercio(c.id)}>
+                          <div
+                            className="h-6 w-6 rounded-md flex items-center justify-center text-xs font-bold text-white shrink-0"
+                            style={{ background: 'var(--gradient-primary)' }}
+                          >
+                            {c.name.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-sm text-white truncate">{c.name}</span>
+                          {!c.isActive && (
+                            <span className="text-xs text-red-400/70 shrink-0">(inactivo)</span>
+                          )}
+                        </div>
+                      </label>
+                      {showSearchField && (
+                        <div className="px-4 pb-2.5 pl-11">
+                          <select
+                            value={searchFieldMap[c.id] ?? ''}
+                            onChange={e => handleSearchFieldChange(c.id, e.target.value)}
+                            disabled={savingSearchField === c.id}
+                            className="text-xs px-2 py-1.5 rounded-lg text-white/70 border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all disabled:opacity-50"
+                            style={{ background: 'var(--surface-light)', borderColor: 'var(--border)' }}
+                          >
+                            <option value="">Buscar clientes por: Ninguno</option>
+                            {benefit!.customFields!.map(f => (
+                              <option key={f.id} value={f.id}>Buscar clientes por: {f.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
                   )
                 })
               )}
