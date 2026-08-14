@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { Lock, Users } from 'lucide-react';
+import { getUserSettings, updateUserSettings } from '@/app/core/services/user-service';
 
 interface ToggleSetting {
   id: string;
@@ -48,8 +49,36 @@ interface SettingsSection {
 const Settings: React.FC = () => {
   const { theme } = useTheme();
 
-  // Permitir Derrame
-  const [allowDerrame, setAllowDerrame] = useState(false);
+  // Permitir Derrame — el default coincide con el default real del backend
+  // (UserSettings.allowSpillover @default(true)) para no mostrar "Desactivado"
+  // si falla la carga inicial y el valor real del usuario es "Activado".
+  const [allowDerrame, setAllowDerrame] = useState(true);
+  const [derrameLoading, setDerrameLoading] = useState(true);
+  const [derrameSaving, setDerrameSaving] = useState(false);
+
+  useEffect(() => {
+    getUserSettings()
+      .then((settings) => setAllowDerrame(settings.allowSpillover))
+      .catch(() => {
+        // Si falla la carga, se mantiene el valor por defecto (true) y el usuario puede reintentar togglear.
+      })
+      .finally(() => setDerrameLoading(false));
+  }, []);
+
+  const handleToggleDerrame = () => {
+    if (derrameSaving) return;
+
+    const nextValue = !allowDerrame;
+    setDerrameSaving(true);
+    setAllowDerrame(nextValue);
+
+    updateUserSettings({ allowSpillover: nextValue })
+      .catch(() => {
+        // Revertir si la actualización falla en el backend
+        setAllowDerrame(!nextValue);
+      })
+      .finally(() => setDerrameSaving(false));
+  };
 
   // Privacidad y Seguridad
   const [twoFa] = useState(false);
@@ -148,11 +177,12 @@ const Settings: React.FC = () => {
                     </p>
                   </div>
                   <button
-                    onClick={() => setAllowDerrame(v => !v)}
+                    onClick={handleToggleDerrame}
+                    disabled={derrameLoading || derrameSaving}
                     className={`relative inline-flex items-center h-8 w-14 rounded-full transition-colors flex-shrink-0 ${allowDerrame
                         ? 'bg-green-600'
                         : 'bg-gray-600'
-                      }`}
+                      } ${(derrameLoading || derrameSaving) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     role="switch"
                     aria-checked={allowDerrame}
                     aria-label="Permitir derrame"

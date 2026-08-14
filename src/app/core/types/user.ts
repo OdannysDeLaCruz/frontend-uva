@@ -68,6 +68,14 @@ export interface ReferralMarketingCount {
   tanque: number;
 }
 
+export interface UserSettings {
+  allowSpillover: boolean;
+}
+
+export interface UpdateUserSettingsDto {
+  allowSpillover: boolean;
+}
+
 export interface RegisterPartnerData {
   name: string
   representativeName: string

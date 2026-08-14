@@ -1,4 +1,4 @@
-import { User, PublicUserDto, RewardsCount, ReferralMarketingCount } from "@/app/core/types/user";
+import { User, PublicUserDto, RewardsCount, ReferralMarketingCount, UserSettings, UpdateUserSettingsDto } from "@/app/core/types/user";
 import { handleAxiosError } from "@/app/core/utils/error-handler";
 import apiClient from "@/app/core/services/api-client";
 import { AssignParentDto } from "@/app/core/types/mlm";
@@ -60,10 +60,28 @@ export async function getRewardsCount(user_id: number): Promise<RewardsCount> {
 export async function getReferralMarketingCount(user_id: number): Promise<ReferralMarketingCount> {
   try {
     const response = await apiClient.get(`/v1/users/${user_id}/referral-marketing/count`)
-    
+
     return response.data
   } catch (error) {
     return Promise.reject(handleAxiosError(error, "obtener datos de marketing"))
+  }
+}
+
+export async function getUserSettings(): Promise<UserSettings> {
+  try {
+    const response = await apiClient.get<UserSettings>("/v1/users/me/settings")
+    return response.data
+  } catch (error) {
+    return Promise.reject(handleAxiosError(error, "obtener configuración del usuario"))
+  }
+}
+
+export async function updateUserSettings(dto: UpdateUserSettingsDto): Promise<UserSettings> {
+  try {
+    const response = await apiClient.patch<UserSettings>("/v1/users/me/settings", dto)
+    return response.data
+  } catch (error) {
+    return Promise.reject(handleAxiosError(error, "actualizar configuración del usuario"))
   }
 }
 
