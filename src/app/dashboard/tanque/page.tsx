@@ -145,50 +145,53 @@ const TanquePage: React.FC = () => {
         console.error("Error assigning parent:", err);
         setErrorInModal(errorObj.message);
       }
+      throw err;
     }
   };
 
   const autoAssignParent = async () => {
-    if (user) {
-      const assignParentPayload = {
-        affiliateId: affiliateToAssign.id,
-        parentId: user.id,
-        tanqueOwnerId: user.id
-      }
+    if (!user) return;
 
+    const assignParentPayload = {
+      affiliateId: affiliateToAssign.id,
+      parentId: user.id,
+      tanqueOwnerId: user.id
+    }
+
+    try {
       await assignParent(assignParentPayload);
 
       toast.success("Autoasignación exitosa", {
         duration: 5000,
         position: "bottom-right",
       });
+    } catch {
+      // El error ya se muestra en el modal de error (errorInModal)
     }
   }
-  
+
   const handleAssignParent = async () => {
+    if (!user || !affiliateToAssign || !parentToAssign) {
+      return;
+    }
+
+    setAssigningParent(true);
+
+    const assignParentPayload = {
+      affiliateId: affiliateToAssign.id,
+      parentId: parentToAssign.id,
+      tanqueOwnerId: user.id
+    }
+
     try {
-      setAssigningParent(true);
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-      
-      if (!affiliateToAssign || !parentToAssign) {
-        throw new Error("Affiliate or parent not found");
-      }
-
-      const assignParentPayload = {
-        affiliateId: affiliateToAssign.id,
-        parentId: parentToAssign.id,
-        tanqueOwnerId: user.id
-      }
-
       await assignParent(assignParentPayload);
 
       toast.success("Padre asignado exitosamente", {
         duration: 5000,
         position: "bottom-right",
       });
+    } catch {
+      // El error ya se muestra en el modal de error (errorInModal)
     } finally {
       setAssigningParent(false);
     }
@@ -326,11 +329,6 @@ const TanquePage: React.FC = () => {
                   </div>
                 )}
 
-                {errorInModal && (
-                  <div className="mt-4">
-                    <p className="text-sm text-red-500">{errorInModal}</p>
-                  </div>
-                )}
               </form>
             </div>
           </div>
@@ -360,6 +358,18 @@ const TanquePage: React.FC = () => {
           confirmText="Sí, colocar"
           onConfirm={handleAssignParent}
           onCancel={() => setShowAssignConfirm(false)}
+        />
+
+        <ServerAlert
+          open={!!errorInModal}
+          onOpenChange={(open) => {
+            if (!open) setErrorInModal(null);
+          }}
+          variant="error"
+          title="No se pudo completar la colocación"
+          description={errorInModal || ''}
+          confirmText="Entendido"
+          onConfirm={() => setErrorInModal(null)}
         />
 
         <Toaster />
