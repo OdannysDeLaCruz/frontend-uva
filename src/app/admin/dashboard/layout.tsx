@@ -14,7 +14,8 @@ import {
   X,
   ChevronRight,
   ShieldCheck,
-  ScanFace
+  ScanFace,
+  Users
 } from 'lucide-react'
 import { useAdminAuth } from '../context/admin-auth-context'
 
@@ -24,6 +25,11 @@ const navItems = [
     href: '/admin/dashboard',
     icon: LayoutDashboard,
     exact: true
+  },
+  {
+    label: 'Miembros',
+    href: '/admin/dashboard/miembros',
+    icon: Users
   },
   {
     label: 'Comercios',

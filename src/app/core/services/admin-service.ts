@@ -8,6 +8,59 @@ export interface AdminUser {
   role: string;
 }
 
+export type DocType = 'CC' | 'CE' | 'TI' | 'PP' | 'NIT';
+
+export interface AdminMemberListItem {
+  id: number;
+  name: string;
+  lastname: string;
+  username: string;
+  doc_number: string;
+  doc_type: DocType;
+  email: string;
+  phone: string;
+  isActive: boolean;
+  kycVerified: boolean;
+  referralCode: string;
+  raffleNumber: string;
+  createdAt: string;
+  role?: { id: number; name: string } | null;
+  membership?: { id: number; name: string } | null;
+  _count?: { children: number; recruits: number };
+}
+
+export interface AdminMemberHierarchyPerson {
+  id: number;
+  name: string;
+  lastname: string;
+  email: string;
+  isActive: boolean;
+}
+
+export interface AdminMemberHierarchy {
+  parent: AdminMemberHierarchyPerson | null;
+  recruiter: AdminMemberHierarchyPerson | null;
+  directChildren: number;
+  indirectChildren: number;
+  personalRecruits: number;
+  totalStructure: number;
+}
+
+export interface AdminMember extends AdminMemberListItem {
+  hierarchy: AdminMemberHierarchy;
+}
+
+export interface UpdateAdminMemberData {
+  name?: string;
+  lastname?: string;
+  doc_number?: string;
+  doc_type?: DocType;
+  email?: string;
+  phone?: string;
+  password?: string;
+  isActive?: boolean;
+}
+
 export interface AdminComercio {
   id: number;
   name: string;
@@ -154,6 +207,44 @@ export async function adminLogout(): Promise<void> {
     await apiClient.post('/v1/admin/auth/logout', {}, adminConfig);
   } catch (error) {
     throw handleAxiosError(error, 'cerrar sesión de administrador');
+  }
+}
+
+// ─── MIEMBROS ─────────────────────────────────────────────────────────────
+
+export async function adminGetMembers(): Promise<AdminMemberListItem[]> {
+  try {
+    const response = await apiClient.get('/v1/admin/miembros', adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'obtener miembros');
+  }
+}
+
+export async function adminGetMember(id: number): Promise<AdminMember> {
+  try {
+    const response = await apiClient.get(`/v1/admin/miembros/${id}`, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'obtener miembro');
+  }
+}
+
+export async function adminUpdateMember(id: number, data: UpdateAdminMemberData): Promise<AdminMember> {
+  try {
+    const response = await apiClient.patch(`/v1/admin/miembros/${id}`, data, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'actualizar miembro');
+  }
+}
+
+export async function adminToggleMemberStatus(id: number): Promise<{ id: number; isActive: boolean; message: string }> {
+  try {
+    const response = await apiClient.patch(`/v1/admin/miembros/${id}/toggle-status`, {}, adminConfig);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, 'cambiar estado del miembro');
   }
 }
 
