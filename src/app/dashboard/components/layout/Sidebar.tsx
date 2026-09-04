@@ -30,9 +30,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
   const { user } = useAuth();
 
-  // Usuario con acceso completo: activo o con earlyAccess (prelanzamiento)
-  const hasFullAccess = user?.isActive || user?.earlyAccess;
-
   // Detectar dispositivos móviles
   useEffect(() => {
     const checkMobile = () => {
@@ -100,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       href: '/dashboard/aprendizaje',
       isActive: false,
       children: [],
-      show: hasFullAccess
+      show: true
     },
     // {
     //   id: 'ahorros',
@@ -109,14 +106,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     //   href: '/dashboard/ahorros',
     //   isActive: false,
     //   children: [],
-    // show: hasFullAccess
+    // show: true
     // },
     {
       id: 'verification',
       label: 'Verificación',
       icon: <ShieldCheck size={20} />,
       isActive: false,
-      show: hasFullAccess,
+      show: true,
       children: [
         {
           id: 'kyc',
@@ -124,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           icon: <ShieldCheck size={18} />,
           href: '/dashboard/kyc',
           isActive: false,
-          show: hasFullAccess
+          show: true
         },
         // {
         //   id: 'seguridad',
@@ -132,7 +129,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         //   icon: <GlobeLock size={18} />,
         //   href: '/dashboard/seguridad',
         //   isActive: false,
-        //   show: hasFullAccess
+        //   show: true
         // },
         // {
         //   id: 'sorteo',
@@ -140,7 +137,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         //   icon: <Binary size={18} />,
         //   href: '/dashboard/sorteo',
         //   isActive: false,
-        //   show: hasFullAccess
+        //   show: true
         // },
 
       ]
@@ -150,7 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       label: 'UVAmigos',
       icon: <Network size={20} />,
       isActive: false,
-      show: hasFullAccess,
+      show: true,
       children: [
         {
           id: 'directos',
@@ -158,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           icon: <ArrowBigRightDash size={20} />,
           href: '/dashboard/directos',
           isActive: false,
-          show: hasFullAccess
+          show: true
         },
         {
           id: 'unilevel',
@@ -166,7 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           icon: <ListTree size={18} />,
           href: '/dashboard/unilevel',
           isActive: false,
-          show: hasFullAccess
+          show: true
         },
         {
           id: 'tanque',
@@ -174,7 +171,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           icon: <Cylinder size={20} />,
           href: '/dashboard/tanque',
           isActive: false,
-          show: hasFullAccess
+          show: true
         },
       ]
     },
@@ -191,7 +188,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           icon: <StoreIcon size={20} />,
           href: '/dashboard/aliados',
           isActive: false,
-          show: hasFullAccess
+          show: true
         },
         {
           id: 'misbeneficios',
@@ -199,10 +196,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           icon: <QrCode size={20} />,
           href: '/dashboard/mis-beneficios',
           isActive: false,
-          show: hasFullAccess
+          show: true
         }
       ],
-      show: hasFullAccess
+      show: true
     },
     {
       id: 'recompensas',
@@ -211,7 +208,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       href: '/dashboard/recompensas',
       isActive: false,
       children: [],
-      show: hasFullAccess
+      show: true
     },
     // {
     //   id: 'uvasuenos',
@@ -220,7 +217,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     //   href: '/dashboard/uvasuenos',
     //   isActive: false,
     //   children: [],
-    //   show: hasFullAccess
+    //   show: true
     // },
     {
       id: 'soporte',
@@ -229,9 +226,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       href: '/dashboard/soporte',
       isActive: false,
       children: [],
-      show: hasFullAccess
+      show: true
     }
-  ], [hasFullAccess]);
+  ], [true]);
 
   useEffect(() => {
     // poner en activo un item si la ruta es la misma del path
