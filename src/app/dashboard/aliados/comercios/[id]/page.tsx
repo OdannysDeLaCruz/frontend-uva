@@ -11,7 +11,9 @@ import { generateBenefitQr, getBenefitCustomFields } from '@/app/core/services/b
 import { getTimeRemaining } from '@/app/dashboard/util/util'
 import { QRCodeCanvas } from 'qrcode.react'
 import { isApiError } from '@/app/core/utils/error-handler'
+import { useAuth } from '@/app/core/contexts/auth-context';
 import BenefitCustomFieldsForm from '@/app/dashboard/aliados/components/BenefitCustomFieldsForm'
+import { ServerAlert } from "@/app/core/ui/alert-dialog"
 
 type ModalStep = 'terms' | 'fields' | 'qr'
 
@@ -30,6 +32,9 @@ const AllyDetailPage: React.FC = () => {
   const [customFields, setCustomFields] = useState<BenefitCustomField[]>([])
   const [fieldValues, setFieldValues] = useState<Record<number, string>>({})
   const [fieldsLoading, setFieldsLoading] = useState(false)
+  const [isUserInactive, setIsUserInactive] = useState(false)
+
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadAlly = async () => {
@@ -113,6 +118,13 @@ const AllyDetailPage: React.FC = () => {
   }
 
   const handleClaimBenefit = async (benefitId: number) => {
+    // Verificar que el usuario esté activo, si no esta activo informar que no puede generar código QR
+
+    if (!user?.isActive) {
+      setIsUserInactive(true)
+      return;
+    }
+
     if (!ally) return;
     setPendingBenefitId(benefitId)
 
@@ -427,6 +439,15 @@ const AllyDetailPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ServerAlert
+        open={isUserInactive}
+        onOpenChange={() => setIsUserInactive(false)}
+        title="Lo sentimos"
+        description={"No puedes acceder a los beneficios porque tu usuario está en estado inactivo."}
+        variant="warning"
+        confirmText="Entendido"
+      />
     </div>
   )
 }
