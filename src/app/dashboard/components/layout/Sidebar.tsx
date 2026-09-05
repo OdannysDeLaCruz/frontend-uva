@@ -228,7 +228,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       children: [],
       show: true
     }
-  ], [true]);
+  ], []);
 
   useEffect(() => {
     // poner en activo un item si la ruta es la misma del path
