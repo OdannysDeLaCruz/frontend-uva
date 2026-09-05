@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-// import { BoldCheckout } from '@/app/core/types/bold';
+import { BoldCheckout } from '@/app/core/types/bold';
 import { useBoldPayment } from '@/app/core/hooks/useBoldPayment';
 
 const ContributionsTab: React.FC = () => {
@@ -8,7 +8,7 @@ const ContributionsTab: React.FC = () => {
     error,
     membershipInfo,
     loadMembershipInfo,
-    // createTransaction
+    createTransaction
   } = useBoldPayment();
 
   /**
@@ -19,37 +19,34 @@ const ContributionsTab: React.FC = () => {
    */
   const onPayClick = async () => {
 
-    alert("Estamos trabajando fuertemente para que muy pronto puedas realizar las activaciones de tu membresía. Falta poco.");
-    return;
-  
-    // const redirectionUrl = process.env.NODE_ENV === 'development'
-    //   ? undefined
-    //   : `${process.env.NEXT_PUBLIC_HOST}/dashboard/membership/payment/callback`;
+    const redirectionUrl = process.env.NODE_ENV === 'development'
+      ? undefined
+      : `${process.env.NEXT_PUBLIC_HOST}/dashboard/membership/payment/callback`;
 
-    // const transactionData = await createTransaction({
-    //   membershipId: membershipInfo?.membershipId,
-    //   redirectUrl: redirectionUrl
-    // });
+    const transactionData = await createTransaction({
+      membershipId: membershipInfo?.membershipId,
+      redirectUrl: redirectionUrl
+    });
 
-    // if (!transactionData) return;
+    if (!transactionData) return;
 
-    // if (!window.BoldCheckout) {
-    //   console.error('Bold checkout script not loaded');
-    //   return;
-    // }
+    if (!window.BoldCheckout) {
+      console.error('Bold checkout script not loaded');
+      return;
+    }
 
-    // const checkout: BoldCheckout = new window.BoldCheckout({
-    //   orderId: transactionData.orderId,
-    //   currency: transactionData.currency,
-    //   amount: transactionData.amount,
-    //   apiKey: transactionData.apiKey,
-    //   integritySignature: transactionData.integritySignature,
-    //   description: transactionData.description,
-    //   tax: transactionData.tax,
-    //   ...(transactionData.redirectionUrl ? { redirectionUrl: transactionData.redirectionUrl } : {}),
-    // });
+    const checkout: BoldCheckout = new window.BoldCheckout({
+      orderId: transactionData.orderId,
+      currency: transactionData.currency,
+      amount: transactionData.amount,
+      apiKey: transactionData.apiKey,
+      integritySignature: transactionData.integritySignature,
+      description: transactionData.description,
+      tax: transactionData.tax,
+      ...(transactionData.redirectionUrl ? { redirectionUrl: transactionData.redirectionUrl } : {}),
+    });
 
-    // checkout.open();
+    checkout.open();
 
     // Bold no tiene callback onFinished en la integración personalizada.
     // El estado final llega por:
